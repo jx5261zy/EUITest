@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<e:Skin class="DZHeadSkin" width="120" height="165" xmlns:e="http://ns.egret.com/eui" xmlns:w="http://ns.egret.com/wing">
+	<e:Group id="gp_face" width="120" height="165" horizontalCenter="0" verticalCenter="0">
+		<e:Image id="img_bg" source="dz_main_headbg_png" scaleX="1" scaleY="1" anchorOffsetY="0" left="0" right="0" top="0" bottom="0"/>
+		<e:Label id="lb_name" text="我是谁" top="8" textAlign="center" fontFamily="Microsoft YaHei" size="16" width="113" y="8" scaleX="1" scaleY="1" horizontalCenter="0"/>
+		<e:Label id="lb_gold" text="1000" textAlign="center" fontFamily="Microsoft YaHei" size="18" scaleX="1" scaleY="1" horizontalCenter="0" width="120" bottom="8" textColor="0xffd000"/>
+		<e:Image id="img_faceID" width="106" height="106" verticalCenter="0" horizontalCenter="0" x="17" y="32" scaleX="1" scaleY="1" source="dz_eg_faceID_png"/>
+		<e:Image id="img_operation_bar" left="0" right="0" top="0" bottom="0" x="0" y="0" scaleX="1" scaleY="1" source="dz_operation_bar_png" visible="false"/>
+		<e:Image id="img_head_mask" source="dz_main_headbg_png" scaleX="1" scaleY="1" anchorOffsetY="0" left="0" right="0" top="0" bottom="0" x="10" y="10" visible="false"/>
+	</e:Group>
+</e:Skin>

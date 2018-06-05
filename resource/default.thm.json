@@ -1,0 +1,29 @@
+{
+  "skins": {
+    "eui.Button": "resource/eui_skins/ButtonSkin.exml",
+    "eui.CheckBox": "resource/eui_skins/CheckBoxSkin.exml",
+    "eui.HScrollBar": "resource/eui_skins/HScrollBarSkin.exml",
+    "eui.HSlider": "resource/eui_skins/HSliderSkin.exml",
+    "eui.Panel": "resource/eui_skins/PanelSkin.exml",
+    "eui.TextInput": "resource/eui_skins/TextInputSkin.exml",
+    "eui.ProgressBar": "resource/eui_skins/ProgressBarSkin.exml",
+    "eui.RadioButton": "resource/eui_skins/RadioButtonSkin.exml",
+    "eui.Scroller": "resource/eui_skins/ScrollerSkin.exml",
+    "eui.ToggleSwitch": "resource/eui_skins/ToggleSwitchSkin.exml",
+    "eui.VScrollBar": "resource/eui_skins/VScrollBarSkin.exml",
+    "eui.VSlider": "resource/eui_skins/VSliderSkin.exml",
+    "eui.ItemRenderer": "resource/eui_skins/ItemRendererSkin.exml"
+  },
+  "autoGenerateExmlsList": true,
+  "exmls": [
+    "resource/eui_skin/component/DZChipSkin.exml",
+    "resource/eui_skin/component/DZHeadSkin.exml",
+    "resource/eui_skin/component/DZPokerSkin.exml",
+    "resource/eui_skin/game/DZPokerOnGameSkin.exml",
+    "resource/eui_skin/view/DZAudioSetSkin.exml",
+    "resource/eui_skin/view/DZDropDownSkin.exml",
+    "resource/eui_skin/view/DZHelpSkin.exml",
+    "resource/eui_skin/view/DZPlayerInfoSkin.exml",
+    "resource/eui_skin/view/DZPopWindowSkin.exml"
+  ]
+}

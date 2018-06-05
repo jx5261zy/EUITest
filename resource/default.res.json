@@ -1,0 +1,430 @@
+{
+	"groups": [
+		{
+			"keys": "description_json,dz_chip_bg_png,dz_userchip_0_png,dz_userchip_1_png,dz_userchip_2_png,dz_userchip_3_png,dz_userchip_4_png,dz_abandon_btn_png,dz_add_btn_png,dz_allin_btn_png,dz_btn_ready_png,dz_change_table_png,dz_cingl_btn_bg_png,dz_dropdown_bg_png,dz_drop_down_png,dz_drop_up_png,dz_eg_faceID_png,dz_gameView_bg_jpg,dz_head_light_png,dz_i_img_png,dz_main_headbg_png,dz_operation_bar_png,dz_pass_btn_png,dz_readyed_png,dz_return_png,dz_setting_png,dz_type_eg_png,dz_zhuang_png,dz_font_cingl_png,dz_num_0_png,dz_num_1_png,dz_num_2_png,dz_num_3_png,dz_num_4_png,dz_num_5_png,dz_num_6_png,dz_num_7_png,dz_num_8_png,dz_num_9_png,dz_back_bg_png,dz_b_1_png,dz_b_10_png,dz_b_11_png,dz_b_12_png,dz_b_13_png,dz_b_2_png,dz_b_3_png,dz_b_4_png,dz_b_5_png,dz_b_6_png,dz_b_7_png,dz_b_8_png,dz_b_9_png,dz_poker_bg_png,dz_poker_mask_png,dz_r_1_png,dz_r_10_png,dz_r_11_png,dz_r_12_png,dz_r_13_png,dz_r_2_png,dz_r_3_png,dz_r_4_png,dz_r_5_png,dz_r_6_png,dz_r_7_png,dz_r_8_png,dz_r_9_png,dz_type0_11_png,dz_type0_12_png,dz_type0_13_png,dz_type1_11_png,dz_type1_12_png,dz_type1_13_png,dz_type2_11_png,dz_type2_12_png,dz_type2_13_png,dz_type3_11_png,dz_type3_12_png,dz_type3_13_png,dz_type_0_png,dz_type_1_png,dz_type_2_png,dz_type_3_png",
+			"name": "preload"
+		}
+	],
+	"resources": [
+		{
+			"name": "description_json",
+			"type": "json",
+			"url": "config/description.json"
+		},
+		{
+			"name": "dz_chip_bg_png",
+			"type": "image",
+			"url": "assets/chip/dz_chip_bg.png"
+		},
+		{
+			"name": "dz_userchip_0_png",
+			"type": "image",
+			"url": "assets/chip/dz_userchip_0.png"
+		},
+		{
+			"name": "dz_userchip_1_png",
+			"type": "image",
+			"url": "assets/chip/dz_userchip_1.png"
+		},
+		{
+			"name": "dz_userchip_2_png",
+			"type": "image",
+			"url": "assets/chip/dz_userchip_2.png"
+		},
+		{
+			"name": "dz_userchip_3_png",
+			"type": "image",
+			"url": "assets/chip/dz_userchip_3.png"
+		},
+		{
+			"name": "dz_userchip_4_png",
+			"type": "image",
+			"url": "assets/chip/dz_userchip_4.png"
+		},
+		{
+			"name": "dz_abandon_btn_png",
+			"type": "image",
+			"url": "assets/dz_abandon_btn.png"
+		},
+		{
+			"name": "dz_add_btn_png",
+			"type": "image",
+			"url": "assets/dz_add_btn.png"
+		},
+		{
+			"name": "dz_allin_btn_png",
+			"type": "image",
+			"url": "assets/dz_allin_btn.png"
+		},
+		{
+			"name": "dz_btn_ready_png",
+			"type": "image",
+			"url": "assets/dz_btn_ready.png"
+		},
+		{
+			"name": "dz_change_table_png",
+			"type": "image",
+			"url": "assets/dz_change_table.png"
+		},
+		{
+			"name": "dz_cingl_btn_bg_png",
+			"type": "image",
+			"url": "assets/dz_cingl_btn_bg.png"
+		},
+		{
+			"name": "dz_dropdown_bg_png",
+			"type": "image",
+			"url": "assets/dz_dropdown_bg.png"
+		},
+		{
+			"name": "dz_drop_down_png",
+			"type": "image",
+			"url": "assets/dz_drop_down.png"
+		},
+		{
+			"name": "dz_drop_up_png",
+			"type": "image",
+			"url": "assets/dz_drop_up.png"
+		},
+		{
+			"name": "dz_eg_faceID_png",
+			"type": "image",
+			"url": "assets/dz_eg_faceID.png"
+		},
+		{
+			"name": "dz_gameView_bg_jpg",
+			"type": "image",
+			"url": "assets/dz_gameView_bg.jpg"
+		},
+		{
+			"name": "dz_head_light_png",
+			"type": "image",
+			"url": "assets/dz_head_light.png"
+		},
+		{
+			"name": "dz_i_img_png",
+			"type": "image",
+			"url": "assets/dz_i_img.png"
+		},
+		{
+			"name": "dz_main_headbg_png",
+			"type": "image",
+			"url": "assets/dz_main_headbg.png"
+		},
+		{
+			"name": "dz_operation_bar_png",
+			"type": "image",
+			"url": "assets/dz_operation_bar.png"
+		},
+		{
+			"name": "dz_pass_btn_png",
+			"type": "image",
+			"url": "assets/dz_pass_btn.png"
+		},
+		{
+			"name": "dz_readyed_png",
+			"type": "image",
+			"url": "assets/dz_readyed.png"
+		},
+		{
+			"name": "dz_return_png",
+			"type": "image",
+			"url": "assets/dz_return.png"
+		},
+		{
+			"name": "dz_setting_png",
+			"type": "image",
+			"url": "assets/dz_setting.png"
+		},
+		{
+			"name": "dz_type_eg_png",
+			"type": "image",
+			"url": "assets/dz_type_eg.png"
+		},
+		{
+			"name": "dz_zhuang_png",
+			"type": "image",
+			"url": "assets/dz_zhuang.png"
+		},
+		{
+			"name": "dz_font_cingl_png",
+			"type": "image",
+			"url": "assets/font/dz_font_cingl.png"
+		},
+		{
+			"name": "dz_num_0_png",
+			"type": "image",
+			"url": "assets/font/dz_num_0.png"
+		},
+		{
+			"name": "dz_num_1_png",
+			"type": "image",
+			"url": "assets/font/dz_num_1.png"
+		},
+		{
+			"name": "dz_num_2_png",
+			"type": "image",
+			"url": "assets/font/dz_num_2.png"
+		},
+		{
+			"name": "dz_num_3_png",
+			"type": "image",
+			"url": "assets/font/dz_num_3.png"
+		},
+		{
+			"name": "dz_num_4_png",
+			"type": "image",
+			"url": "assets/font/dz_num_4.png"
+		},
+		{
+			"name": "dz_num_5_png",
+			"type": "image",
+			"url": "assets/font/dz_num_5.png"
+		},
+		{
+			"name": "dz_num_6_png",
+			"type": "image",
+			"url": "assets/font/dz_num_6.png"
+		},
+		{
+			"name": "dz_num_7_png",
+			"type": "image",
+			"url": "assets/font/dz_num_7.png"
+		},
+		{
+			"name": "dz_num_8_png",
+			"type": "image",
+			"url": "assets/font/dz_num_8.png"
+		},
+		{
+			"name": "dz_num_9_png",
+			"type": "image",
+			"url": "assets/font/dz_num_9.png"
+		},
+		{
+			"name": "dz_back_bg_png",
+			"type": "image",
+			"url": "assets/poker/dz_back_bg.png"
+		},
+		{
+			"name": "dz_b_1_png",
+			"type": "image",
+			"url": "assets/poker/dz_b_1.png"
+		},
+		{
+			"name": "dz_b_10_png",
+			"type": "image",
+			"url": "assets/poker/dz_b_10.png"
+		},
+		{
+			"name": "dz_b_11_png",
+			"type": "image",
+			"url": "assets/poker/dz_b_11.png"
+		},
+		{
+			"name": "dz_b_12_png",
+			"type": "image",
+			"url": "assets/poker/dz_b_12.png"
+		},
+		{
+			"name": "dz_b_13_png",
+			"type": "image",
+			"url": "assets/poker/dz_b_13.png"
+		},
+		{
+			"name": "dz_b_2_png",
+			"type": "image",
+			"url": "assets/poker/dz_b_2.png"
+		},
+		{
+			"name": "dz_b_3_png",
+			"type": "image",
+			"url": "assets/poker/dz_b_3.png"
+		},
+		{
+			"name": "dz_b_4_png",
+			"type": "image",
+			"url": "assets/poker/dz_b_4.png"
+		},
+		{
+			"name": "dz_b_5_png",
+			"type": "image",
+			"url": "assets/poker/dz_b_5.png"
+		},
+		{
+			"name": "dz_b_6_png",
+			"type": "image",
+			"url": "assets/poker/dz_b_6.png"
+		},
+		{
+			"name": "dz_b_7_png",
+			"type": "image",
+			"url": "assets/poker/dz_b_7.png"
+		},
+		{
+			"name": "dz_b_8_png",
+			"type": "image",
+			"url": "assets/poker/dz_b_8.png"
+		},
+		{
+			"name": "dz_b_9_png",
+			"type": "image",
+			"url": "assets/poker/dz_b_9.png"
+		},
+		{
+			"name": "dz_poker_bg_png",
+			"type": "image",
+			"url": "assets/poker/dz_poker_bg.png"
+		},
+		{
+			"name": "dz_poker_mask_png",
+			"type": "image",
+			"url": "assets/poker/dz_poker_mask.png"
+		},
+		{
+			"name": "dz_r_1_png",
+			"type": "image",
+			"url": "assets/poker/dz_r_1.png"
+		},
+		{
+			"name": "dz_r_10_png",
+			"type": "image",
+			"url": "assets/poker/dz_r_10.png"
+		},
+		{
+			"name": "dz_r_11_png",
+			"type": "image",
+			"url": "assets/poker/dz_r_11.png"
+		},
+		{
+			"name": "dz_r_12_png",
+			"type": "image",
+			"url": "assets/poker/dz_r_12.png"
+		},
+		{
+			"name": "dz_r_13_png",
+			"type": "image",
+			"url": "assets/poker/dz_r_13.png"
+		},
+		{
+			"name": "dz_r_2_png",
+			"type": "image",
+			"url": "assets/poker/dz_r_2.png"
+		},
+		{
+			"name": "dz_r_3_png",
+			"type": "image",
+			"url": "assets/poker/dz_r_3.png"
+		},
+		{
+			"name": "dz_r_4_png",
+			"type": "image",
+			"url": "assets/poker/dz_r_4.png"
+		},
+		{
+			"name": "dz_r_5_png",
+			"type": "image",
+			"url": "assets/poker/dz_r_5.png"
+		},
+		{
+			"name": "dz_r_6_png",
+			"type": "image",
+			"url": "assets/poker/dz_r_6.png"
+		},
+		{
+			"name": "dz_r_7_png",
+			"type": "image",
+			"url": "assets/poker/dz_r_7.png"
+		},
+		{
+			"name": "dz_r_8_png",
+			"type": "image",
+			"url": "assets/poker/dz_r_8.png"
+		},
+		{
+			"name": "dz_r_9_png",
+			"type": "image",
+			"url": "assets/poker/dz_r_9.png"
+		},
+		{
+			"name": "dz_type0_11_png",
+			"type": "image",
+			"url": "assets/poker/dz_type0_11.png"
+		},
+		{
+			"name": "dz_type0_12_png",
+			"type": "image",
+			"url": "assets/poker/dz_type0_12.png"
+		},
+		{
+			"name": "dz_type0_13_png",
+			"type": "image",
+			"url": "assets/poker/dz_type0_13.png"
+		},
+		{
+			"name": "dz_type1_11_png",
+			"type": "image",
+			"url": "assets/poker/dz_type1_11.png"
+		},
+		{
+			"name": "dz_type1_12_png",
+			"type": "image",
+			"url": "assets/poker/dz_type1_12.png"
+		},
+		{
+			"name": "dz_type1_13_png",
+			"type": "image",
+			"url": "assets/poker/dz_type1_13.png"
+		},
+		{
+			"name": "dz_type2_11_png",
+			"type": "image",
+			"url": "assets/poker/dz_type2_11.png"
+		},
+		{
+			"name": "dz_type2_12_png",
+			"type": "image",
+			"url": "assets/poker/dz_type2_12.png"
+		},
+		{
+			"name": "dz_type2_13_png",
+			"type": "image",
+			"url": "assets/poker/dz_type2_13.png"
+		},
+		{
+			"name": "dz_type3_11_png",
+			"type": "image",
+			"url": "assets/poker/dz_type3_11.png"
+		},
+		{
+			"name": "dz_type3_12_png",
+			"type": "image",
+			"url": "assets/poker/dz_type3_12.png"
+		},
+		{
+			"name": "dz_type3_13_png",
+			"type": "image",
+			"url": "assets/poker/dz_type3_13.png"
+		},
+		{
+			"name": "dz_type_0_png",
+			"type": "image",
+			"url": "assets/poker/dz_type_0.png"
+		},
+		{
+			"name": "dz_type_1_png",
+			"type": "image",
+			"url": "assets/poker/dz_type_1.png"
+		},
+		{
+			"name": "dz_type_2_png",
+			"type": "image",
+			"url": "assets/poker/dz_type_2.png"
+		},
+		{
+			"name": "dz_type_3_png",
+			"type": "image",
+			"url": "assets/poker/dz_type_3.png"
+		}
+	]
+}
