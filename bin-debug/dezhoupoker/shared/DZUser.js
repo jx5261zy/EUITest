@@ -27,14 +27,17 @@ var DZUser = (function (_super) {
     DZUser.prototype.Init = function (_component) {
         this.headComponent = _component;
         this.headComponent.visible = true;
-        //初始化组件变量
+        //初始化组件变量(多此一举)
         // this.img_bg = this.headComponent.getChildByName("img_bg") as eui.Image;
         this.img_bg = this.headComponent["img_bg"];
         this.lb_name = this.headComponent["lb_name"];
         this.lb_gold = this.headComponent["lb_gold"];
         this.img_faceID = this.headComponent["img_faceID"];
-        this.img_operation_bar = this.headComponent["img_operation_bar"];
+        this.img_time_bar = this.headComponent["img_time_bar"];
         //TODO ：倒计时条
+        var barW = this.img_time_bar.width;
+        var barH = this.img_time_bar.height;
+        this._borderProgressBarDraw = new BorderProgressBarDraw(this.img_time_bar, barW, barH);
         Utils.loadHeadImg(this.role.iFaceUrl, this.img_bg); //加载用户头像，这个方法不清楚怎么实现的
         this.headComponent.touchChildren = false;
         this.headComponent.touchEnabled = true;
@@ -69,13 +72,19 @@ var DZUser = (function (_super) {
     DZUser.prototype.HideHeadMask = function () {
     };
     /**开始头像框操作进度条倒计时动画 */
-    DZUser.prototype.StartOperationBarAnim = function () {
+    DZUser.prototype.StartOperationBarAnim = function (_time) {
+        this._borderProgressBarDraw.startDraw(_time);
+        this.img_time_bar.visible = true;
     };
     /**结束头像框操作进度条倒计时动画 */
     DZUser.prototype.EndOperationBarAnim = function () {
+        this._borderProgressBarDraw.clearDraw();
+        this.img_time_bar.visible = false;
     };
     /**隐藏头像框操作进度条倒计时条 */
     DZUser.prototype.HideOperationBar = function () {
+        this._borderProgressBarDraw.stopDraw();
+        this.img_time_bar.visible = false;
     };
     /**改变玩家的操作状态  弃牌，加注，跟注，让牌，全下 */
     DZUser.prototype.ChangeState = function () {

@@ -32,7 +32,7 @@
 		<e:HorizontalLayout gap="3"/>
 		</e:layout>
 	</e:Group>
-	<e:Component id="user_0" width="120" height="165" anchorOffsetX="0" anchorOffsetY="0" skinName="DZHeadSkin" scaleX="1" scaleY="1" right="314" top="36"/>
+	<e:Component id="user_0" width="120" height="165" anchorOffsetX="0" anchorOffsetY="0" skinName="DZHeadSkin" scaleX="1" scaleY="1" right="314" top="36" enabled="true"/>
 	<e:Component id="user_1" width="120" height="165" anchorOffsetX="0" anchorOffsetY="0" skinName="DZHeadSkin" scaleX="1" scaleY="1" right="75" verticalCenter="0"/>
 	<e:Component id="user_2" width="120" height="165" anchorOffsetX="0" anchorOffsetY="0" skinName="DZHeadSkin" scaleX="1" scaleY="1" right="370" bottom="125"/>
 	<e:Component id="user_3" width="120" height="165" anchorOffsetX="0" anchorOffsetY="0" skinName="DZHeadSkin" scaleX="1" scaleY="1" left="370" bottom="125"/>

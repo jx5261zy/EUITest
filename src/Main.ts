@@ -29,6 +29,8 @@
 
 class Main extends eui.UILayer {
 
+    /**操作时间 */
+    private iOperateTime:number = 10;
 
     /**界面中所有的按钮 */
     private _btn_return:eui.Image;
@@ -42,6 +44,10 @@ class Main extends eui.UILayer {
 
     /**皮肤 按钮 容器 */
     private _btnContainer:ButtonContainer;
+    /**公共牌容器 */
+    private _pubCardContainer:Array<DZCardView>;
+
+    private mainUser:DZUser;
 
 
 
@@ -159,15 +165,33 @@ class Main extends eui.UILayer {
     {
         switch(key.keyCode)
         {
-            case 87:Main.instance.ShowOperateBtns();
+            //W
+            case 87:
+                Main.instance.ShowOperateBtns();
+                console.log("显示按钮组");
             break;
 
-            case 83:Main.instance.HideOperateBtns();
+            //S
+            case 83:
+                Main.instance.HideOperateBtns();
+                console.log("隐藏按钮组");
             break;
 
-            case 32:Main.instance.SendPubCard();
+            //space
+            case 32:
+                Main.instance.SendPubCard();
+                console.log("发一张公共牌");
             break;
 
+            //U
+            case 85:
+                Main.instance.mainUser.StartOperationBarAnim(Main.instance.iOperateTime);
+                console.log("开始玩家操作倒计时");
+            break;
+
+            case 70:
+
+            break;
         }
     }
 
@@ -214,12 +238,22 @@ class Main extends eui.UILayer {
     protected startCreateScene(): void {
         Main.instance = this;
         document.onkeydown = this.OnKeyDown;
+
         this._bg = new eui.Component();
         this._bg.skinName = "resource/dezhoupoker/eui_skin/game/DZPokerOnGameSkin.exml";
         this._bg.createChildren();
         this.addChild(this._bg);
+        this._pubCardContainer = new Array<DZCardView>();
 
-        //增加
+        //循环将桌子上的所有玩家头像框隐藏
+        for(let i = 0; i < 6; i++)
+        {
+            this._bg["user_" + i].visible = false;
+        }
+
+        pool.ObjectPool.instance.createObjectPool(DZCardController.DZ_CARD_POOLNAME,DZCardView,100);
+
+        //获取皮肤中的组件
         this._btn_return = this._bg["btn_return"];
         this._btn_drop_down = this._bg["btn_drop_down"];
         this._btn_abandon = this._bg["btn_abandon"];
@@ -228,6 +262,7 @@ class Main extends eui.UILayer {
         this._btn_allin = this._bg["btn_allin"];
         this._gp_cingl = this._bg["gp_cingl"];
 
+        //增加按钮
         this._btnContainer = new ButtonContainer();
         this._btnContainer.addEventListener(egret.TouchEvent.TOUCH_TAP,this.OnBtnClick,this);
         this._btnContainer.addButton(this._btn_abandon);
@@ -239,7 +274,11 @@ class Main extends eui.UILayer {
         this._btnContainer.addButton(this._gp_cingl);
         
         
-
+        this.mainUser = new DZUser(111,10,2,UserData);
+        this.mainUser.nickname = "绘图铅笔2B";
+        this.mainUser.gold = 11111;
+        this.mainUser.InitFaceGroup(this._bg["user_" + this.mainUser.chairID]);
+        
         
         // var targetPos = new egret.Point();
         // targetPos.x = this._bg["gp_user_0"].x;
@@ -261,12 +300,12 @@ class Main extends eui.UILayer {
         //     console.log("user_" + i + "x:" + point.x + ",y:" + point.y);
         // }
 
-        //装到组件中就可以转换坐标了
+        //装到组件中就可以转换坐标了，囧，又不可以了
         // for(let i = 0; i < 6; i++)
         // {
         //     let point:egret.Point = new egret.Point();
         //     var logo = this._bg["user_" + i]["img_zhuang"];
-        //     // var parent:egret.DisplayObjectContainer = logo.parent;
+        //     var parent:egret.DisplayObjectContainer = logo.parent;
             
         //     point = logo.parent.localToGlobal(logo.x,logo.y);
         //     console.log("user_" + i + "x:" + point.x + ",y:" + point.y);
@@ -319,12 +358,13 @@ class Main extends eui.UILayer {
         // this.SendBankerLogoAnim(0);
         // this.SendPubCard();
 
+
     }
 
 
     /**翻牌动画 
-     * @param index : 牌在组里的下表
-     * @param direction : 翻转的方向，1由正-》反  2由反-》正
+     * @param index:牌在组里的下表
+     * @param direction:翻转的方向，1由正-》反  2由反-》正
      */
     public TurnPubCardAnim(index:number,direction:PokerDir):void
     {
@@ -359,7 +399,7 @@ class Main extends eui.UILayer {
     public ShowOperateBtns():void
     {
         var bottom = this._bg["gp_operation_btns"];
-        //TODO：下沉之前要无效话按钮
+        //TODO：下沉之前要无效化按钮
         egret.Tween.get(bottom).to({x:0,y:650},500);
     }
     /**隐藏底部操作按钮 按钮下沉*/
@@ -374,30 +414,41 @@ class Main extends eui.UILayer {
     /**往公共牌区域发一张牌的动画 */
     public SendPubCard()
     {
+        if(this._pubCardContainer.length >= 5)
+            return;
+
         var start = this._bg["pos_send_card"];
-        var poker:eui.Component = new eui.Component();
-        poker.skinName = "resource/dezhoupoker/eui_skin/component/DZPokerSkin.exml";
+        var poker = DZCardController.CreatePokerFormPool();
         poker.scaleX = poker.scaleY = 0.1;
         poker.x = start.x;
         poker.y = start.y;
         this._bg.addChild(poker);
         var target = this.GetPubTargetPos();
-        this.pubCardNum++;
+        this._pubCardContainer.push(poker);
 
         egret.Tween.get(poker).to({x:target.x,y:target.y,scaleX:1,scaleY:1},200)
             .call(()=>{this._bg["gp_public_cards"].addChild(poker);});
-
     }
 
-    private pubCardNum:number = 0;
+    /**公共牌的数量，由于没有获得子节点的方法，所以申请变量自行控制 */
+    /**获取公共牌发送的目标点，用于Tween动画 */
     public GetPubTargetPos():egret.Point
     {
         var point:egret.Point = new egret.Point;
         point.x = this._bg["gp_public_cards"].x;
         point.y = this._bg["gp_public_cards"].y;
         var cardW:number = 116;
-        point.x = point.x + cardW * this.pubCardNum;
+        point.x = point.x + cardW * this._pubCardContainer.length;
         return point;
+    }
+
+
+    /**给卡牌赋值
+     * @param
+     */
+    public SendPubCardData(_cardType:CardType,_cardValue:number,_component:eui.Component):void
+    {
+
     }
 
 
@@ -454,6 +505,12 @@ class Main extends eui.UILayer {
         panel.verticalCenter = 0;
         this.addChild(panel);
     }
+
+    private InitUserData()
+    {
+        UserData.nickname = "绘图铅笔2B";
+        UserData.gold = 11111;
+    }
 }
 
 
@@ -462,3 +519,13 @@ enum PokerDir
     F2B,
     B2F,
 }
+
+enum CardType
+{
+    DIAMONDS,
+    CLUB,
+    HEART,
+    SPADE,
+}
+
+

@@ -38,9 +38,10 @@ var Main = (function (_super) {
     __extends(Main, _super);
     function Main() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
+        /**操作时间 */
+        _this.iOperateTime = 10;
         _this.isThemeLoadEnd = false;
         _this.isResourceLoadEnd = false;
-        _this.pubCardNum = 0;
         return _this;
     }
     Main.getInstance = function () {
@@ -137,14 +138,27 @@ var Main = (function (_super) {
     };
     Main.prototype.OnKeyDown = function (key) {
         switch (key.keyCode) {
+            //W
             case 87:
                 Main.instance.ShowOperateBtns();
+                console.log("显示按钮组");
                 break;
+            //S
             case 83:
                 Main.instance.HideOperateBtns();
+                console.log("隐藏按钮组");
                 break;
+            //space
             case 32:
                 Main.instance.SendPubCard();
+                console.log("发一张公共牌");
+                break;
+            //U
+            case 85:
+                Main.instance.mainUser.StartOperationBarAnim(Main.instance.iOperateTime);
+                console.log("开始玩家操作倒计时");
+                break;
+            case 70:
                 break;
         }
     };
@@ -184,15 +198,21 @@ var Main = (function (_super) {
         this._bg.skinName = "resource/dezhoupoker/eui_skin/game/DZPokerOnGameSkin.exml";
         this._bg.createChildren();
         this.addChild(this._bg);
-        //增加
+        this._pubCardContainer = new Array();
+        //循环将桌子上的所有玩家头像框隐藏
+        for (var i = 0; i < 6; i++) {
+            this._bg["user_" + i].visible = false;
+        }
+        pool.ObjectPool.instance.createObjectPool(DZCardController.DZ_CARD_POOLNAME, DZCardView, 100);
+        //获取皮肤中的组件
         this._btn_return = this._bg["btn_return"];
         this._btn_drop_down = this._bg["btn_drop_down"];
         this._btn_abandon = this._bg["btn_abandon"];
         this._btn_pass = this._bg["btn_pass"];
         this._btn_add = this._bg["btn_add"];
         this._btn_allin = this._bg["btn_allin"];
-        // this._btn_cingl = this._bg["btn_cingl"];
         this._gp_cingl = this._bg["gp_cingl"];
+        //增加按钮
         this._btnContainer = new ButtonContainer();
         this._btnContainer.addEventListener(egret.TouchEvent.TOUCH_TAP, this.OnBtnClick, this);
         this._btnContainer.addButton(this._btn_abandon);
@@ -202,7 +222,10 @@ var Main = (function (_super) {
         this._btnContainer.addButton(this._btn_pass);
         this._btnContainer.addButton(this._btn_return);
         this._btnContainer.addButton(this._gp_cingl);
-        // this._btnContainer.addButton(this._btn_cingl);
+        this.mainUser = new DZUser(111, 10, 2, UserData);
+        this.mainUser.nickname = "绘图铅笔2B";
+        this.mainUser.gold = 11111;
+        this.mainUser.InitFaceGroup(this._bg["user_" + this.mainUser.chairID]);
         // var targetPos = new egret.Point();
         // targetPos.x = this._bg["gp_user_0"].x;
         // targetPos.y = this._bg["gp_user_0"].y;
@@ -219,12 +242,12 @@ var Main = (function (_super) {
         //     this.localToGlobal(this._bg["zhuang_" + i].x,this._bg["zhuang_" + i].y,point);
         //     console.log("user_" + i + "x:" + point.x + ",y:" + point.y);
         // }
-        //装到组件中就可以转换坐标了
+        //装到组件中就可以转换坐标了，囧，又不可以了
         // for(let i = 0; i < 6; i++)
         // {
         //     let point:egret.Point = new egret.Point();
         //     var logo = this._bg["user_" + i]["img_zhuang"];
-        //     // var parent:egret.DisplayObjectContainer = logo.parent;
+        //     var parent:egret.DisplayObjectContainer = logo.parent;
         //     point = logo.parent.localToGlobal(logo.x,logo.y);
         //     console.log("user_" + i + "x:" + point.x + ",y:" + point.y);
         // }
@@ -267,8 +290,8 @@ var Main = (function (_super) {
         // this.SendPubCard();
     };
     /**翻牌动画
-     * @param index : 牌在组里的下表
-     * @param direction : 翻转的方向，1由正-》反  2由反-》正
+     * @param index:牌在组里的下表
+     * @param direction:翻转的方向，1由正-》反  2由反-》正
      */
     Main.prototype.TurnPubCardAnim = function (index, direction) {
         var poker = this._bg["gp_public_cards"].getChildAt(index);
@@ -296,7 +319,7 @@ var Main = (function (_super) {
     /**底部操作条上升 */
     Main.prototype.ShowOperateBtns = function () {
         var bottom = this._bg["gp_operation_btns"];
-        //TODO：下沉之前要无效话按钮
+        //TODO：下沉之前要无效化按钮
         egret.Tween.get(bottom).to({ x: 0, y: 650 }, 500);
     };
     /**隐藏底部操作按钮 按钮下沉*/
@@ -308,25 +331,33 @@ var Main = (function (_super) {
     /**往公共牌区域发一张牌的动画 */
     Main.prototype.SendPubCard = function () {
         var _this = this;
+        if (this._pubCardContainer.length >= 5)
+            return;
         var start = this._bg["pos_send_card"];
-        var poker = new eui.Component();
-        poker.skinName = "resource/dezhoupoker/eui_skin/component/DZPokerSkin.exml";
+        var poker = DZCardController.CreatePokerFormPool();
         poker.scaleX = poker.scaleY = 0.1;
         poker.x = start.x;
         poker.y = start.y;
         this._bg.addChild(poker);
         var target = this.GetPubTargetPos();
-        this.pubCardNum++;
+        this._pubCardContainer.push(poker);
         egret.Tween.get(poker).to({ x: target.x, y: target.y, scaleX: 1, scaleY: 1 }, 200)
             .call(function () { _this._bg["gp_public_cards"].addChild(poker); });
     };
+    /**公共牌的数量，由于没有获得子节点的方法，所以申请变量自行控制 */
+    /**获取公共牌发送的目标点，用于Tween动画 */
     Main.prototype.GetPubTargetPos = function () {
         var point = new egret.Point;
         point.x = this._bg["gp_public_cards"].x;
         point.y = this._bg["gp_public_cards"].y;
         var cardW = 116;
-        point.x = point.x + cardW * this.pubCardNum;
+        point.x = point.x + cardW * this._pubCardContainer.length;
         return point;
+    };
+    /**给卡牌赋值
+     * @param
+     */
+    Main.prototype.SendPubCardData = function (_cardType, _cardValue, _component) {
     };
     /**
      * 根据name关键字创建一个Bitmap对象。name属性请参考resources/resource.json配置文件的内容。
@@ -376,6 +407,10 @@ var Main = (function (_super) {
         panel.verticalCenter = 0;
         this.addChild(panel);
     };
+    Main.prototype.InitUserData = function () {
+        UserData.nickname = "绘图铅笔2B";
+        UserData.gold = 11111;
+    };
     return Main;
 }(eui.UILayer));
 __reflect(Main.prototype, "Main");
@@ -384,4 +419,11 @@ var PokerDir;
     PokerDir[PokerDir["F2B"] = 0] = "F2B";
     PokerDir[PokerDir["B2F"] = 1] = "B2F";
 })(PokerDir || (PokerDir = {}));
+var CardType;
+(function (CardType) {
+    CardType[CardType["DIAMONDS"] = 0] = "DIAMONDS";
+    CardType[CardType["CLUB"] = 1] = "CLUB";
+    CardType[CardType["HEART"] = 2] = "HEART";
+    CardType[CardType["SPADE"] = 3] = "SPADE";
+})(CardType || (CardType = {}));
 //# sourceMappingURL=Main.js.map

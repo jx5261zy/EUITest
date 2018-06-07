@@ -15,7 +15,6 @@ var __extends = (this && this.__extends) || function (d, b) {
  */
 var DZCardView = (function (_super) {
     __extends(DZCardView, _super);
-    /**皮肤组件 */
     function DZCardView() {
         var _this = _super.call(this) || this;
         _this.isFront = false; //牌的正反属性
@@ -23,15 +22,30 @@ var DZCardView = (function (_super) {
         _this.touchEnabled = _this.touchChildren = false;
         return _this;
     }
+    Object.defineProperty(DZCardView.prototype, "value", {
+        get: function () {
+            return this._value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(DZCardView.prototype, "type", {
+        get: function () {
+            return this._type;
+        },
+        enumerable: true,
+        configurable: true
+    });
     DZCardView.prototype.createChildren = function () {
         _super.prototype.createChildren.call(this);
     };
     DZCardView.prototype.Dispose = function () {
     };
-    /**从对象池中生成一个扑克牌的皮肤 */
-    // public static CreatePokerView():DZCardView
-    // {
-    // }
+    DZCardView.prototype.SetData = function (_value, _type, _isFront) {
+        this._value = _value;
+        this._type = _type;
+        this.isFront = _isFront;
+    };
     DZCardView.prototype.moveToTargetPos = function (targetX, targetY, controlPoints, duration, delay, onMoveStartCallBack, onMoveComplete, oMoveCallBackThisObj, moveCompleteIsFlip) {
         if (controlPoints === void 0) { controlPoints = null; }
         if (duration === void 0) { duration = 0; }

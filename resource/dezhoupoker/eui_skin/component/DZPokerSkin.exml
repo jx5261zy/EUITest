@@ -4,7 +4,7 @@
 		<e:Group id="gp_poker" width="116" x="58" height="146" y="73" anchorOffsetX="58" anchorOffsetY="73" skewY="0" scaleY="1" scaleX="1">
 			<e:Image id="img_poker_back" left="0" top="0" anchorOffsetX="58" right="0" bottom="0" anchorOffsetY="73" width="116" height="146" source="dz_back_bg_png" x="0" y="0" scaleX="1" scaleY="1"/>
 			<e:Group id="gp_poker_forward" scaleX="1" scaleY="1" left="0" right="0" top="0" bottom="0" visible="false">
-				<e:Image id="bg" left="0" top="0" right="0" bottom="0" source="dz_poker_bg_png" x="0" y="0" scaleX="1" scaleY="1"/>
+				<e:Image id="img_poker_bg" left="0" top="0" right="0" bottom="0" source="dz_poker_bg_png" x="0" y="0" scaleX="1" scaleY="1"/>
 				<e:Image id="img_value" source="dz_r_11_png" scaleX="1" scaleY="1" anchorOffsetX="0" anchorOffsetY="0" height="45" x="10" y="10" width="32"/>
 				<e:Image id="img_type" source="dz_type_0_png" scaleX="1" scaleY="1" width="30" height="33" x="10" y="57"/>
 				<e:Image id="img_type_b" source="dz_type0_11_png" anchorOffsetX="0" anchorOffsetY="0" scaleX="1" scaleY="1" top="20" left="20" bottom="6" right="6" x="20" y="20"/>

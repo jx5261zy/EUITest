@@ -64,6 +64,38 @@ class DZCardController extends egret.EventDispatcher
     }
 
 
+    public static GetValueRes(value:number,type:CardType):string
+    {
+        let outStr:string = "dz_r_";
+        if(type == CardType.SPADE || type == CardType.CLUB)
+            outStr = "dz_b_";
+
+        return outStr + value + "_png"; 
+    }
+
+    public static GetTypeRes(value:number,type:CardType):string
+    {
+        let outStr = "dz_type";
+        if(value > 10)
+        {
+            return outStr + type + "_" + value + "_png";
+        }
+        return outStr + "_" + type + "_png";
+    }
+
+
+    //对象池相关
+    public static DZ_CARD_POOLNAME:string = "DZPokerPoolName";
+    public static CreatePokerFormPool():DZCardView
+    {
+        return pool.ObjectPool.instance.getObj(DZCardController.DZ_CARD_POOLNAME);
+    }
+    public static RecyclePokerToPool(obj:DZCardView)
+    {
+        pool.ObjectPool.instance.pushObj(DZCardController.DZ_CARD_POOLNAME,obj);
+    }
+
+
 
 //class end
 }

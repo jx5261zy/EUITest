@@ -51,7 +51,28 @@ var DZCardController = (function (_super) {
      */
     DZCardController.prototype.AbandonCardAnim = function (_user) {
     };
+    DZCardController.GetValueRes = function (value, type) {
+        var outStr = "dz_r_";
+        if (type == CardType.SPADE || type == CardType.CLUB)
+            outStr = "dz_b_";
+        return outStr + value + "_png";
+    };
+    DZCardController.GetTypeRes = function (value, type) {
+        var outStr = "dz_type";
+        if (value > 10) {
+            return outStr + type + "_" + value + "_png";
+        }
+        return outStr + "_" + type + "_png";
+    };
+    DZCardController.CreatePokerFormPool = function () {
+        return pool.ObjectPool.instance.getObj(DZCardController.DZ_CARD_POOLNAME);
+    };
+    DZCardController.RecyclePokerToPool = function (obj) {
+        pool.ObjectPool.instance.pushObj(DZCardController.DZ_CARD_POOLNAME, obj);
+    };
     return DZCardController;
 }(egret.EventDispatcher));
+//对象池相关
+DZCardController.DZ_CARD_POOLNAME = "DZPokerPoolName";
 __reflect(DZCardController.prototype, "DZCardController");
 //# sourceMappingURL=DZCardController.js.map
