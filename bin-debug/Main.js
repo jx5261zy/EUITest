@@ -43,6 +43,11 @@ var Main = (function (_super) {
         _this.pubCardNum = 0;
         return _this;
     }
+    Main.getInstance = function () {
+        if (Main.instance == null)
+            Main.instance = this;
+        return Main.instance;
+    };
     Main.prototype.createChildren = function () {
         _super.prototype.createChildren.call(this);
         //inject the custom material parser
@@ -143,6 +148,31 @@ var Main = (function (_super) {
                 break;
         }
     };
+    Main.prototype.OnBtnClick = function (evt) {
+        switch (evt.data) {
+            case this._btn_add:
+                console.log("点击了加注按钮");
+                break;
+            case this._btn_abandon:
+                console.log("点击了放弃按钮");
+                break;
+            case this._btn_allin:
+                console.log("点击了全下按钮");
+                break;
+            case this._btn_drop_down:
+                console.log("点击了下拉菜单按钮");
+                break;
+            case this._btn_pass:
+                console.log("点击了过牌按钮");
+                break;
+            case this._btn_return:
+                console.log("点击了返回按钮");
+                break;
+            case this._gp_cingl:
+                console.log("点击了跟按钮");
+                break;
+        }
+    };
     /**
      * 创建场景界面
      * Create scene interface
@@ -151,9 +181,28 @@ var Main = (function (_super) {
         Main.instance = this;
         document.onkeydown = this.OnKeyDown;
         this._bg = new eui.Component();
-        this._bg.skinName = "resource/eui_skin/game/DZPokerOnGameSkin.exml";
+        this._bg.skinName = "resource/dezhoupoker/eui_skin/game/DZPokerOnGameSkin.exml";
         this._bg.createChildren();
         this.addChild(this._bg);
+        //增加
+        this._btn_return = this._bg["btn_return"];
+        this._btn_drop_down = this._bg["btn_drop_down"];
+        this._btn_abandon = this._bg["btn_abandon"];
+        this._btn_pass = this._bg["btn_pass"];
+        this._btn_add = this._bg["btn_add"];
+        this._btn_allin = this._bg["btn_allin"];
+        // this._btn_cingl = this._bg["btn_cingl"];
+        this._gp_cingl = this._bg["gp_cingl"];
+        this._btnContainer = new ButtonContainer();
+        this._btnContainer.addEventListener(egret.TouchEvent.TOUCH_TAP, this.OnBtnClick, this);
+        this._btnContainer.addButton(this._btn_abandon);
+        this._btnContainer.addButton(this._btn_add);
+        this._btnContainer.addButton(this._btn_allin);
+        this._btnContainer.addButton(this._btn_drop_down);
+        this._btnContainer.addButton(this._btn_pass);
+        this._btnContainer.addButton(this._btn_return);
+        this._btnContainer.addButton(this._gp_cingl);
+        // this._btnContainer.addButton(this._btn_cingl);
         // var targetPos = new egret.Point();
         // targetPos.x = this._bg["gp_user_0"].x;
         // targetPos.y = this._bg["gp_user_0"].y;
@@ -261,14 +310,15 @@ var Main = (function (_super) {
         var _this = this;
         var start = this._bg["pos_send_card"];
         var poker = new eui.Component();
-        poker.skinName = "resource/eui_skin/component/DZPokerSkin.exml";
+        poker.skinName = "resource/dezhoupoker/eui_skin/component/DZPokerSkin.exml";
         poker.scaleX = poker.scaleY = 0.1;
         poker.x = start.x;
         poker.y = start.y;
         this._bg.addChild(poker);
         var target = this.GetPubTargetPos();
-        egret.Tween.get(poker).to({ x: target.x, y: target.y, scaleX: 1, scaleY: 1 }, 1000)
-            .call(function () { _this._bg["gp_public_cards"].addChild(poker); _this.pubCardNum++; });
+        this.pubCardNum++;
+        egret.Tween.get(poker).to({ x: target.x, y: target.y, scaleX: 1, scaleY: 1 }, 200)
+            .call(function () { _this._bg["gp_public_cards"].addChild(poker); });
     };
     Main.prototype.GetPubTargetPos = function () {
         var point = new egret.Point;

@@ -16,14 +16,14 @@
   },
   "autoGenerateExmlsList": true,
   "exmls": [
-    "resource/eui_skin/component/DZChipSkin.exml",
-    "resource/eui_skin/component/DZHeadSkin.exml",
-    "resource/eui_skin/component/DZPokerSkin.exml",
-    "resource/eui_skin/game/DZPokerOnGameSkin.exml",
-    "resource/eui_skin/view/DZAudioSetSkin.exml",
-    "resource/eui_skin/view/DZDropDownSkin.exml",
-    "resource/eui_skin/view/DZHelpSkin.exml",
-    "resource/eui_skin/view/DZPlayerInfoSkin.exml",
-    "resource/eui_skin/view/DZPopWindowSkin.exml"
+    "resource/dezhoupoker/eui_skin/component/DZChipSkin.exml",
+    "resource/dezhoupoker/eui_skin/component/DZHeadSkin.exml",
+    "resource/dezhoupoker/eui_skin/component/DZPokerSkin.exml",
+    "resource/dezhoupoker/eui_skin/game/DZPokerOnGameSkin.exml",
+    "resource/dezhoupoker/eui_skin/view/DZAudioSetSkin.exml",
+    "resource/dezhoupoker/eui_skin/view/DZDropDownSkin.exml",
+    "resource/dezhoupoker/eui_skin/view/DZHelpSkin.exml",
+    "resource/dezhoupoker/eui_skin/view/DZPlayerInfoSkin.exml",
+    "resource/dezhoupoker/eui_skin/view/DZPopWindowSkin.exml"
   ]
 }

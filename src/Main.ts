@@ -28,6 +28,32 @@
 //////////////////////////////////////////////////////////////////////////////////////
 
 class Main extends eui.UILayer {
+
+
+    /**界面中所有的按钮 */
+    private _btn_return:eui.Image;
+    private _btn_drop_down:eui.Image ;
+    private _btn_abandon:eui.Image;
+    private _btn_pass:eui.Image;
+    private _btn_add:eui.Image;
+    private _btn_allin:eui.Image;
+    /**看上去是个组，其实就是当做按钮用的，哇哈哈哈 */
+    private _gp_cingl:eui.Group;
+
+    /**皮肤 按钮 容器 */
+    private _btnContainer:ButtonContainer;
+
+
+
+    public static getInstance():Main
+    {
+        if(Main.instance == null)
+            Main.instance = this;
+        return Main.instance;
+    }
+
+
+
     /**
      * 加载进度界面
      * loading process interface
@@ -126,6 +152,8 @@ class Main extends eui.UILayer {
     }
     private textfield:egret.TextField;
 
+
+
     private static instance;
     private OnKeyDown(key)
     {
@@ -140,10 +168,44 @@ class Main extends eui.UILayer {
             case 32:Main.instance.SendPubCard();
             break;
 
-            
-
         }
     }
+
+
+    private OnBtnClick(evt:egret.Event):void
+    {
+        switch(evt.data)
+        {
+            case this._btn_add:
+                console.log("点击了加注按钮");
+            break;
+
+            case this._btn_abandon:
+                console.log("点击了放弃按钮");
+            break;
+
+            case this._btn_allin:
+                console.log("点击了全下按钮");
+            break;
+
+            case this._btn_drop_down:
+                console.log("点击了下拉菜单按钮");
+            break;
+
+            case this._btn_pass:
+                console.log("点击了过牌按钮");
+            break;
+
+            case this._btn_return:
+                console.log("点击了返回按钮");
+            break;
+
+            case this._gp_cingl:
+                console.log("点击了跟按钮");
+            break;
+        }
+    }
+
 
     /**
      * 创建场景界面
@@ -153,9 +215,30 @@ class Main extends eui.UILayer {
         Main.instance = this;
         document.onkeydown = this.OnKeyDown;
         this._bg = new eui.Component();
-        this._bg.skinName = "resource/eui_skin/game/DZPokerOnGameSkin.exml";
+        this._bg.skinName = "resource/dezhoupoker/eui_skin/game/DZPokerOnGameSkin.exml";
         this._bg.createChildren();
         this.addChild(this._bg);
+
+        //增加
+        this._btn_return = this._bg["btn_return"];
+        this._btn_drop_down = this._bg["btn_drop_down"];
+        this._btn_abandon = this._bg["btn_abandon"];
+        this._btn_pass = this._bg["btn_pass"];
+        this._btn_add = this._bg["btn_add"];
+        this._btn_allin = this._bg["btn_allin"];
+        this._gp_cingl = this._bg["gp_cingl"];
+
+        this._btnContainer = new ButtonContainer();
+        this._btnContainer.addEventListener(egret.TouchEvent.TOUCH_TAP,this.OnBtnClick,this);
+        this._btnContainer.addButton(this._btn_abandon);
+        this._btnContainer.addButton(this._btn_add);
+        this._btnContainer.addButton(this._btn_allin);
+        this._btnContainer.addButton(this._btn_drop_down);
+        this._btnContainer.addButton(this._btn_pass);
+        this._btnContainer.addButton(this._btn_return);
+        this._btnContainer.addButton(this._gp_cingl);
+        
+        
 
         
         // var targetPos = new egret.Point();
@@ -293,15 +376,16 @@ class Main extends eui.UILayer {
     {
         var start = this._bg["pos_send_card"];
         var poker:eui.Component = new eui.Component();
-        poker.skinName = "resource/eui_skin/component/DZPokerSkin.exml";
+        poker.skinName = "resource/dezhoupoker/eui_skin/component/DZPokerSkin.exml";
         poker.scaleX = poker.scaleY = 0.1;
         poker.x = start.x;
         poker.y = start.y;
         this._bg.addChild(poker);
         var target = this.GetPubTargetPos();
+        this.pubCardNum++;
 
-        egret.Tween.get(poker).to({x:target.x,y:target.y,scaleX:1,scaleY:1},1000)
-            .call(()=>{this._bg["gp_public_cards"].addChild(poker);this.pubCardNum++});
+        egret.Tween.get(poker).to({x:target.x,y:target.y,scaleX:1,scaleY:1},200)
+            .call(()=>{this._bg["gp_public_cards"].addChild(poker);});
 
     }
 
