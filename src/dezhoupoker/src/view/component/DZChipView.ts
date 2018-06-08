@@ -9,17 +9,16 @@
 
 class DZChipView extends MoveObject
 {
-    public static DZ_CHIP_POOL:string = "DZ_CHIP_POOL";
+
 
     public constructor()
     {
         super();
+        this.skinName = "DZChipSkin";
+        this.touchEnabled = this.touchChildren = false;
     }
 
-    public static createDZChipView():DZChipView
-    {
-        return pool.ObjectPool.instance.getObj(DZChipView.DZ_CHIP_POOL);
-    }
+
 
 
 //class end   

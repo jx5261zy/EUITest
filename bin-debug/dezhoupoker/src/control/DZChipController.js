@@ -27,7 +27,15 @@ var DZChipController = (function (_super) {
     /**从底池向玩家分发筹码 */
     DZChipController.prototype.MovePotChipsToUser = function () {
     };
+    DZChipController.CreateChipFormPool = function () {
+        return pool.ObjectPool.instance.getObj(DZChipController.DZ_CHIP_POOLNAME);
+    };
+    DZChipController.RecycleChipToPool = function (obj) {
+        pool.ObjectPool.instance.pushObj(DZChipController.DZ_CHIP_POOLNAME, obj);
+    };
     return DZChipController;
 }(egret.EventDispatcher));
+//对象池相关
+DZChipController.DZ_CHIP_POOLNAME = "DZ_CHIP_POOL";
 __reflect(DZChipController.prototype, "DZChipController");
 //# sourceMappingURL=DZChipController.js.map

@@ -9,10 +9,7 @@
 
 class DZCardController extends egret.EventDispatcher
 {
-    /**翻牌缓动动画的时间 */
-    private static turnCardTime:number = 200;
-    /**发牌缓动动画的时间 */
-    private static sendCardTime:number = 200;
+
     // private static _instance:DZCardController;
     // private static _isInstantation:boolean = false;
     // public static get instance():DZCardController
@@ -89,7 +86,7 @@ class DZCardController extends egret.EventDispatcher
 
 
     //对象池相关
-    public static DZ_CARD_POOLNAME:string = "DZPokerPoolName";
+    public static DZ_CARD_POOLNAME:string = "DZ_CARD_POOLNAME";
     public static CreatePokerFormPool():DZCardView
     {
         return pool.ObjectPool.instance.getObj(DZCardController.DZ_CARD_POOLNAME);

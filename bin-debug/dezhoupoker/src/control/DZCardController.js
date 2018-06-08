@@ -74,11 +74,7 @@ var DZCardController = (function (_super) {
     };
     return DZCardController;
 }(egret.EventDispatcher));
-/**翻牌缓动动画的时间 */
-DZCardController.turnCardTime = 200;
-/**发牌缓动动画的时间 */
-DZCardController.sendCardTime = 200;
 //对象池相关
-DZCardController.DZ_CARD_POOLNAME = "DZPokerPoolName";
+DZCardController.DZ_CARD_POOLNAME = "DZ_CARD_POOLNAME";
 __reflect(DZCardController.prototype, "DZCardController");
 //# sourceMappingURL=DZCardController.js.map

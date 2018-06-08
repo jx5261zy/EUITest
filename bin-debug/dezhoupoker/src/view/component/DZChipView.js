@@ -16,13 +16,12 @@ var __extends = (this && this.__extends) || function (d, b) {
 var DZChipView = (function (_super) {
     __extends(DZChipView, _super);
     function DZChipView() {
-        return _super.call(this) || this;
+        var _this = _super.call(this) || this;
+        _this.skinName = "DZChipSkin";
+        _this.touchEnabled = _this.touchChildren = false;
+        return _this;
     }
-    DZChipView.createDZChipView = function () {
-        return pool.ObjectPool.instance.getObj(DZChipView.DZ_CHIP_POOL);
-    };
     return DZChipView;
 }(MoveObject));
-DZChipView.DZ_CHIP_POOL = "DZ_CHIP_POOL";
 __reflect(DZChipView.prototype, "DZChipView");
 //# sourceMappingURL=DZChipView.js.map

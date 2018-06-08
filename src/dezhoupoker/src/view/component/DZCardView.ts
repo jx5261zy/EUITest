@@ -9,10 +9,6 @@
 
 class DZCardView extends MoveObject
 {
-    //卡牌大个花色小于10的图片宽高，避免过大
-    private static img_type_b_w:number = 60;
-    private static img_type_b_h:number = 80;
-    
     public isFront:boolean = false;//牌的正反属性
 
     /**卡牌的数值 */
@@ -77,9 +73,15 @@ class DZCardView extends MoveObject
         }
         this.img_type.source = DZCardController.GetTypeRes(this._value,this._type);
         this.img_type_b.source = DZCardController.GetTypeRes(this._value,this._type);
-        //更改包括10以下的大个花色的图标 避免过大
-        this.img_type_b.width = DZCardView.img_type_b_w;
-        this.img_type_b.height = DZCardView.img_type_b_h;
+        //更改包括10以下的大个花色的图标 避免尺寸过大
+        this.img_type_b.width = DZDefine.img_type_b_w;
+        this.img_type_b.height = DZDefine.img_type_b_h;
+    }
+
+
+    public ShowMask()
+    {
+        this.img_mask.visible = true;
     }
 
 	public moveToTargetPos(targetX: number,targetY: number,controlPoints: Array<any> = null,duration: number = 0,delay: number = 0,onMoveStartCallBack: Function = null,onMoveComplete: Function = null,oMoveCallBackThisObj: any = null,moveCompleteIsFlip:boolean = false): void {

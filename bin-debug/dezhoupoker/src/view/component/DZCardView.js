@@ -57,9 +57,12 @@ var DZCardView = (function (_super) {
         }
         this.img_type.source = DZCardController.GetTypeRes(this._value, this._type);
         this.img_type_b.source = DZCardController.GetTypeRes(this._value, this._type);
-        //更改包括10以下的大个花色的图标 避免过大
-        this.img_type_b.width = DZCardView.img_type_b_w;
-        this.img_type_b.height = DZCardView.img_type_b_h;
+        //更改包括10以下的大个花色的图标 避免尺寸过大
+        this.img_type_b.width = DZDefine.img_type_b_w;
+        this.img_type_b.height = DZDefine.img_type_b_h;
+    };
+    DZCardView.prototype.ShowMask = function () {
+        this.img_mask.visible = true;
     };
     DZCardView.prototype.moveToTargetPos = function (targetX, targetY, controlPoints, duration, delay, onMoveStartCallBack, onMoveComplete, oMoveCallBackThisObj, moveCompleteIsFlip) {
         if (controlPoints === void 0) { controlPoints = null; }
@@ -73,8 +76,5 @@ var DZCardView = (function (_super) {
     };
     return DZCardView;
 }(MoveObject));
-//卡牌大个花色小于10的图片宽高，避免过大
-DZCardView.img_type_b_w = 60;
-DZCardView.img_type_b_h = 80;
 __reflect(DZCardView.prototype, "DZCardView");
 //# sourceMappingURL=DZCardView.js.map

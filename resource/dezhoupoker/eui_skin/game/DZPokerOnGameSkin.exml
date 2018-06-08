@@ -39,4 +39,10 @@
 	<e:Component id="user_3" width="120" height="165" anchorOffsetX="0" anchorOffsetY="0" skinName="DZHeadSkin" scaleX="1" scaleY="1" left="370" bottom="125"/>
 	<e:Component id="user_4" width="120" height="165" anchorOffsetX="0" anchorOffsetY="0" skinName="DZHeadSkin" scaleX="1" scaleY="1" verticalCenter="0" left="75"/>
 	<e:Component id="user_5" width="120" height="165" anchorOffsetX="0" anchorOffsetY="0" skinName="DZHeadSkin" scaleX="1" scaleY="1" left="314" top="36"/>
+	<e:Image id="user_chip_0" width="109" height="31" x="905" y="210" source="dz_chip_bg_png"/>
+	<e:Image id="user_chip_1" width="109" height="31" x="1015" y="300" source="dz_chip_bg_png"/>
+	<e:Image id="user_chip_2" width="109" height="31" x="725" y="462" source="dz_chip_bg_png"/>
+	<e:Image id="user_chip_3" width="109" height="31" x="503" y="462" source="dz_chip_bg_png"/>
+	<e:Image id="user_chip_4" width="109" height="31" x="210.42" y="300" source="dz_chip_bg_png"/>
+	<e:Image id="user_chip_5" width="109" height="31" x="319.42" y="210" source="dz_chip_bg_png"/>
 </e:Skin>
