@@ -30,11 +30,14 @@
 class Main extends eui.UILayer {
 
     /**操作时间 */
-    private iOperateTime:number = 10;
+    private static iOperateTime:number = 15;
+    /**主玩家以外的玩家牌距离头像框的偏移 */
+    private static cardOffsetHeadX:number = 93;
+    private static cardOffsetHeadY:number = 60;
 
     /**界面中所有的按钮 */
     private _btn_return:eui.Image;
-    private _btn_drop_down:eui.Image ;
+    private _btn_drop_down:eui.Image;
     private _btn_abandon:eui.Image;
     private _btn_pass:eui.Image;
     private _btn_add:eui.Image;
@@ -46,8 +49,12 @@ class Main extends eui.UILayer {
     private _btnContainer:ButtonContainer;
     /**公共牌容器 */
     private _pubCardContainer:Array<DZCardView>;
+    /**发牌的起点 */
+    private _cardStartPos:eui.Rect;
 
     private mainUser:DZUser;
+
+    private chairID_User:Array<DZUser>;
 
 
 
@@ -185,8 +192,10 @@ class Main extends eui.UILayer {
                 var poker:DZCardView = Main.instance.SendPubCard();
                 if(poker != null)
                 {
-                    poker.SetData(Main.value[Main.valueIndex],CardType.SPADE,false);
-                    Main.valueIndex++;
+                    var value = Math.round(Math.random() * 10 + Math.random() * 10 % 4);
+                    var type = Math.round(Math.random() * 10 % 3);
+                    // var type = CardType.DIAMONDS;
+                    poker.SetData(value,type,false);
                     poker.SetDisplay();
                     console.log("发一张公共牌");
                 }
@@ -194,14 +203,26 @@ class Main extends eui.UILayer {
 
             //U
             case 85:
-                Main.instance.mainUser.StartOperationBarAnim(Main.instance.iOperateTime);
+                Main.instance.mainUser.StartOperationBarAnim(Main.iOperateTime);
                 console.log("开始玩家操作倒计时");
             break;
 
             //F
             case 70:
-                Main.instance.TurnPubCardAnim(Main.count,PokerDir.B2F);
-                Main.count++;
+                for(let i = 0; i < Main.instance._pubCardContainer.length; i++)
+                {
+                    if(!Main.instance._pubCardContainer[i].isFront)
+                    {
+                        Main.instance.TurnPubCardAnim(i,PokerDir.B2F);
+                        break;
+                    }
+                }
+            break;
+
+            //C
+            case 67:
+                Main.instance.SendUsersCardsAnim();
+                console.log("发送所有玩家的手牌");
             break;
         }
     }
@@ -255,7 +276,8 @@ class Main extends eui.UILayer {
         this._bg.createChildren();
         this.addChild(this._bg);
         this._pubCardContainer = new Array<DZCardView>();
-
+        this._cardStartPos = this._bg["pos_send_card"];
+        this.chairID_User = new Array<DZUser>();
         //循环将桌子上的所有玩家头像框隐藏
         for(let i = 0; i < 6; i++)
         {
@@ -286,10 +308,23 @@ class Main extends eui.UILayer {
         this._btnContainer.addButton(this._gp_cingl);
         
         
-        this.mainUser = new DZUser(111,10,2,UserData);
+        this.mainUser = new DZUser(111,10,0,UserData);
         this.mainUser.nickname = "绘图铅笔2B";
         this.mainUser.gold = 11111;
         this.mainUser.InitFaceGroup(this._bg["user_" + this.mainUser.chairID]);
+        this.chairID_User[this.mainUser.chairID] = this.mainUser;
+
+
+        for(let i = 1; i < 6; i++)
+        {
+            var user = new DZUser(111 + i,10,i,UserData);
+            user.nickname = "匿名用户_" + i;
+            user.gold = 11111;
+            user.InitFaceGroup(this._bg["user_" + user.chairID]);
+            this.chairID_User[user.chairID] = user;
+        }
+
+        
         
         
         // var targetPos = new egret.Point();
@@ -412,6 +447,53 @@ class Main extends eui.UILayer {
 
     }
 
+    /**播放发所有玩家手牌的动画 */
+    public SendUsersCardsAnim()
+    {
+        var start = this._cardStartPos;
+        this.chairID_User.forEach(element => {
+            var firstCard = DZCardController.CreatePokerFormPool();
+            firstCard.x = start.x;
+            firstCard.y = start.y;
+            firstCard.alpha = 0;
+            firstCard.scaleX = firstCard.scaleY = 0.01;
+            var secondCard = DZCardController.CreatePokerFormPool();
+            secondCard.x = start.x;
+            secondCard.y = start.y;
+            secondCard.alpha = 0;
+            secondCard.scaleX = secondCard.scaleY = 0.01;
+            firstCard.isFront = false;
+            secondCard.isFront = false;
+            this._bg.addChild(firstCard);
+            this._bg.addChild(secondCard);
+            if(element == this.mainUser)
+            {
+                var target:egret.Point = this.GetUserCardPos(element.chairID);
+                egret.Tween.get(firstCard).to({x:target.x,y:target.y,rotation:-10,scaleX:0.4,scaleY:0.4,alpha:1},1000);
+                egret.Tween.get(secondCard).to({x:(target.x + 30),y:target.y,rotation:20,scaleX:0.4,scaleY:0.4,alpha:1},1000);
+            }
+            else
+            {
+                var target:egret.Point = this.GetUserCardPos(element.chairID);
+                egret.Tween.get(firstCard).to({x:target.x,y:target.y,rotation:-10,scaleX:0.4,scaleY:0.4,alpha:1},1000);
+                egret.Tween.get(secondCard).to({x:(target.x + 30),y:target.y,rotation:20,scaleX:0.4,scaleY:0.4,alpha:1},1000);
+            }
+        });
+    }
+
+    /**获取玩家的手牌发送目标点 */
+    public GetUserCardPos(chairID:number,isMainUser:boolean = false):egret.Point
+    {
+        var chair = this._bg["user_" + chairID];
+        if(chair == null)
+            return null;
+
+        var point = new egret.Point();
+        point.x = chair.x + 93;
+        point.y = chair.y + 60;
+        return point;
+    }
+
     /**底部操作条上升 */
     public ShowOperateBtns():void
     {
@@ -434,7 +516,7 @@ class Main extends eui.UILayer {
         if(this._pubCardContainer.length >= 5)
             return null;
 
-        var start = this._bg["pos_send_card"];
+        var start = this._cardStartPos;
         var poker = DZCardController.CreatePokerFormPool();
         poker.isFront = false;//先设置为反面
         poker.scaleX = poker.scaleY = 0.1;
@@ -470,8 +552,6 @@ class Main extends eui.UILayer {
     {
         _poker.SetData(_cardValue,_cardType,_isFront);
     }
-
-
 
 
     /**
@@ -526,11 +606,6 @@ class Main extends eui.UILayer {
         this.addChild(panel);
     }
 
-    private InitUserData()
-    {
-        UserData.nickname = "绘图铅笔2B";
-        UserData.gold = 11111;
-    }
 }
 
 

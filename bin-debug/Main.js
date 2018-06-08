@@ -38,8 +38,6 @@ var Main = (function (_super) {
     __extends(Main, _super);
     function Main() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
-        /**操作时间 */
-        _this.iOperateTime = 10;
         _this.isThemeLoadEnd = false;
         _this.isResourceLoadEnd = false;
         return _this;
@@ -152,21 +150,32 @@ var Main = (function (_super) {
             case 32:
                 var poker = Main.instance.SendPubCard();
                 if (poker != null) {
-                    poker.SetData(Main.value[Main.valueIndex], CardType.SPADE, false);
-                    Main.valueIndex++;
+                    var value = Math.round(Math.random() * 10 + Math.random() * 10 % 4);
+                    var type = Math.round(Math.random() * 10 % 3);
+                    // var type = CardType.DIAMONDS;
+                    poker.SetData(value, type, false);
                     poker.SetDisplay();
                     console.log("发一张公共牌");
                 }
                 break;
             //U
             case 85:
-                Main.instance.mainUser.StartOperationBarAnim(Main.instance.iOperateTime);
+                Main.instance.mainUser.StartOperationBarAnim(Main.iOperateTime);
                 console.log("开始玩家操作倒计时");
                 break;
             //F
             case 70:
-                Main.instance.TurnPubCardAnim(Main.count, PokerDir.B2F);
-                Main.count++;
+                for (var i = 0; i < Main.instance._pubCardContainer.length; i++) {
+                    if (!Main.instance._pubCardContainer[i].isFront) {
+                        Main.instance.TurnPubCardAnim(i, PokerDir.B2F);
+                        break;
+                    }
+                }
+                break;
+            //C
+            case 67:
+                Main.instance.SendUsersCardsAnim();
+                console.log("发送所有玩家的手牌");
                 break;
         }
     };
@@ -207,6 +216,8 @@ var Main = (function (_super) {
         this._bg.createChildren();
         this.addChild(this._bg);
         this._pubCardContainer = new Array();
+        this._cardStartPos = this._bg["pos_send_card"];
+        this.chairID_User = new Array();
         //循环将桌子上的所有玩家头像框隐藏
         for (var i = 0; i < 6; i++) {
             this._bg["user_" + i].visible = false;
@@ -231,10 +242,18 @@ var Main = (function (_super) {
         this._btnContainer.addButton(this._btn_pass);
         this._btnContainer.addButton(this._btn_return);
         this._btnContainer.addButton(this._gp_cingl);
-        this.mainUser = new DZUser(111, 10, 2, UserData);
+        this.mainUser = new DZUser(111, 10, 0, UserData);
         this.mainUser.nickname = "绘图铅笔2B";
         this.mainUser.gold = 11111;
         this.mainUser.InitFaceGroup(this._bg["user_" + this.mainUser.chairID]);
+        this.chairID_User[this.mainUser.chairID] = this.mainUser;
+        for (var i = 1; i < 6; i++) {
+            var user = new DZUser(111 + i, 10, i, UserData);
+            user.nickname = "匿名用户_" + i;
+            user.gold = 11111;
+            user.InitFaceGroup(this._bg["user_" + user.chairID]);
+            this.chairID_User[user.chairID] = user;
+        }
         // var targetPos = new egret.Point();
         // targetPos.x = this._bg["gp_user_0"].x;
         // targetPos.y = this._bg["gp_user_0"].y;
@@ -330,6 +349,48 @@ var Main = (function (_super) {
     /**发庄logo */
     Main.prototype.SendBankerLogoAnim = function (chairID) {
     };
+    /**播放发所有玩家手牌的动画 */
+    Main.prototype.SendUsersCardsAnim = function () {
+        var _this = this;
+        var start = this._cardStartPos;
+        this.chairID_User.forEach(function (element) {
+            var firstCard = DZCardController.CreatePokerFormPool();
+            firstCard.x = start.x;
+            firstCard.y = start.y;
+            firstCard.alpha = 0;
+            firstCard.scaleX = firstCard.scaleY = 0.01;
+            var secondCard = DZCardController.CreatePokerFormPool();
+            secondCard.x = start.x;
+            secondCard.y = start.y;
+            secondCard.alpha = 0;
+            secondCard.scaleX = secondCard.scaleY = 0.01;
+            firstCard.isFront = false;
+            secondCard.isFront = false;
+            _this._bg.addChild(firstCard);
+            _this._bg.addChild(secondCard);
+            if (element == _this.mainUser) {
+                var target = _this.GetUserCardPos(element.chairID);
+                egret.Tween.get(firstCard).to({ x: target.x, y: target.y, rotation: -10, scaleX: 0.4, scaleY: 0.4, alpha: 1 }, 1000);
+                egret.Tween.get(secondCard).to({ x: (target.x + 30), y: target.y, rotation: 20, scaleX: 0.4, scaleY: 0.4, alpha: 1 }, 1000);
+            }
+            else {
+                var target = _this.GetUserCardPos(element.chairID);
+                egret.Tween.get(firstCard).to({ x: target.x, y: target.y, rotation: -10, scaleX: 0.4, scaleY: 0.4, alpha: 1 }, 1000);
+                egret.Tween.get(secondCard).to({ x: (target.x + 30), y: target.y, rotation: 20, scaleX: 0.4, scaleY: 0.4, alpha: 1 }, 1000);
+            }
+        });
+    };
+    /**获取玩家的手牌发送目标点 */
+    Main.prototype.GetUserCardPos = function (chairID, isMainUser) {
+        if (isMainUser === void 0) { isMainUser = false; }
+        var chair = this._bg["user_" + chairID];
+        if (chair == null)
+            return null;
+        var point = new egret.Point();
+        point.x = chair.x + 93;
+        point.y = chair.y + 60;
+        return point;
+    };
     /**底部操作条上升 */
     Main.prototype.ShowOperateBtns = function () {
         var bottom = this._bg["gp_operation_btns"];
@@ -347,7 +408,7 @@ var Main = (function (_super) {
         var _this = this;
         if (this._pubCardContainer.length >= 5)
             return null;
-        var start = this._bg["pos_send_card"];
+        var start = this._cardStartPos;
         var poker = DZCardController.CreatePokerFormPool();
         poker.isFront = false; //先设置为反面
         poker.scaleX = poker.scaleY = 0.1;
@@ -424,12 +485,13 @@ var Main = (function (_super) {
         panel.verticalCenter = 0;
         this.addChild(panel);
     };
-    Main.prototype.InitUserData = function () {
-        UserData.nickname = "绘图铅笔2B";
-        UserData.gold = 11111;
-    };
     return Main;
 }(eui.UILayer));
+/**操作时间 */
+Main.iOperateTime = 15;
+/**主玩家以外的玩家牌距离头像框的偏移 */
+Main.cardOffsetHeadX = 93;
+Main.cardOffsetHeadY = 60;
 Main.count = 0;
 Main.value = [10, 11, 12, 13, 1];
 Main.valueIndex = 0;
