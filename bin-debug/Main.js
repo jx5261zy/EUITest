@@ -177,6 +177,11 @@ var Main = (function (_super) {
                 Main.instance.SendUsersCardsAnim();
                 console.log("发送所有玩家的手牌");
                 break;
+            //X
+            case 88:
+                Main.instance.TurnCardAnim(Main.instance.mainUser.chairID);
+                console.log("翻开主玩家手牌");
+                break;
         }
     };
     Main.prototype.OnBtnClick = function (evt) {
@@ -216,6 +221,7 @@ var Main = (function (_super) {
         this._bg.createChildren();
         this.addChild(this._bg);
         this._pubCardContainer = new Array();
+        this._userCardContainer = {};
         this._cardStartPos = this._bg["pos_send_card"];
         this.chairID_User = new Array();
         //循环将桌子上的所有玩家头像框隐藏
@@ -254,68 +260,30 @@ var Main = (function (_super) {
             user.InitFaceGroup(this._bg["user_" + user.chairID]);
             this.chairID_User[user.chairID] = user;
         }
-        // var targetPos = new egret.Point();
-        // targetPos.x = this._bg["gp_user_0"].x;
-        // targetPos.y = this._bg["gp_user_0"].y;
-        // this._bg["gp_user_0"].x = 1124;
-        // this._bg["gp_user_0"].y = -242;
-        // this._bg["gp_user_0"].alpha = 0;
-        // this._bg["gp_user_0"].visible = true;
-        // egret.Tween.get(this._bg["gp_user_0"]).to({x:targetPos.x,y:targetPos.y,alpha:1},700);
-        //傻逼引擎的坐标转换
-        // for(let i = 0; i < 6; i++)
-        // {
-        //     let point = new egret.Point();
-        //     let parent:egret.DisplayObjectContainer = this._bg;
-        //     this.localToGlobal(this._bg["zhuang_" + i].x,this._bg["zhuang_" + i].y,point);
-        //     console.log("user_" + i + "x:" + point.x + ",y:" + point.y);
-        // }
-        //装到组件中就可以转换坐标了，囧，又不可以了
-        // for(let i = 0; i < 6; i++)
-        // {
-        //     let point:egret.Point = new egret.Point();
-        //     var logo = this._bg["user_" + i]["img_zhuang"];
-        //     var parent:egret.DisplayObjectContainer = logo.parent;
-        //     point = logo.parent.localToGlobal(logo.x,logo.y);
-        //     console.log("user_" + i + "x:" + point.x + ",y:" + point.y);
-        // }
-        // var poker = new eui.Image();
-        // poker.source = RES.getRes("dz_back_bg_png");
-        // poker.x = 600;
-        // poker.y = 350;
-        // console.log("未加入组x:" + poker.x + ",y:" + poker.y);
-        // var gp = new eui.Group();
-        // this._bg.addChild(gp);
-        // gp.x = 200;
-        // gp.y = 100;
-        // gp.addChild(poker);
-        // console.log("加入组x:" + poker.x + ",y:" + poker.y);
-        // let point = new egret.Point();
-        // point = this.localToGlobal(poker.x,poker.y);
-        // console.log("加入组转换世界坐标x:" + poker.x + ",y:" + poker.y);        
-        // console.log(this._bg["img_bg"].name);
-        // this._bg["img_bg"].visible = false;
-        // var poker = new eui.Component();
-        // poker.skinName = "resource/eui_skin/component/DZPokerSkin.exml";
-        // this._bg["gp_public_cards"].addChild(poker);
-        // poker["gp_poker_forward"].visible = false;
-        // poker["img_poker_back"].visible = true;
-        // poker.anchorOffsetX = poker.width * 0.5;
-        // poker.anchorOffsetY = poker.height * 0.5;
-        // poker["img_poker_back"].visible = true;
-        // poker["gp_poker_forward"].visible = false;
-        // poker.skewY = 180;
-        // egret.Tween.get(poker).to({skewY:90},200,egret.Ease.quadOut).call(()=>{poker["gp_poker_forward"].visible = true;poker["img_poker_back"].visible = false;})
-        //     .to({skewY:180},200,egret.Ease.quadOut);
-        // egret.Tween.get(poker).to({scaleX:0}, 300, egret.Ease.sineOut).call(()=>{poker["gp_poker_forward"].visible = false;poker["img_poker_back"].visible = true;})
-        //     .to({scaleX:1}, 300, egret.Ease.sineIn);
-        //最终效果的翻牌动画
-        // egret.Tween.get(poker["gp_poker"]).to({skewY:90},300,egret.Ease.quadOut).call(()=>{poker["gp_poker_forward"].visible = false;poker["img_poker_back"].visible = true;})
-        //     .to({skewY:180},300,egret.Ease.quadOut);
-        // this.TurnPubCardAnim(0,PokerDir.F2B);
-        // this.TurnPubCardAnim(1,PokerDir.B2F);
-        // this.SendBankerLogoAnim(0);
-        // this.SendPubCard();
+    };
+    /**翻单个用户的手牌动画
+     * @param _user : 需要翻牌的用户
+     */
+    Main.prototype.TurnCardAnim = function (chairID) {
+        var userCardArr = this._userCardContainer["user_" + chairID];
+        if (userCardArr == null)
+            return;
+        var firstCard = userCardArr[0];
+        var secondCard = userCardArr[1];
+        if (firstCard == null || secondCard == null)
+            return;
+        if (firstCard.isFront || secondCard.isFront)
+            return;
+        firstCard.isFront = true;
+        secondCard.isFront = true;
+        firstCard["gp_poker"].skewY = 180;
+        secondCard["gp_poker"].skewY = 180;
+        egret.Tween.get(firstCard["gp_poker"]).to({ skewY: 270 }, 1000, egret.Ease.quadOut)
+            .call(function () { firstCard["gp_poker_forward"].visible = true; firstCard["img_poker_back"].visible = false; })
+            .to({ skewY: 360 }, 1000, egret.Ease.quadOut);
+        egret.Tween.get(secondCard["gp_poker"]).to({ skewY: 270 }, 1000, egret.Ease.quadOut)
+            .call(function () { secondCard["gp_poker_forward"].visible = true; secondCard["img_poker_back"].visible = false; })
+            .to({ skewY: 360 }, 1000, egret.Ease.quadOut);
     };
     /**翻牌动画
      * @param index:牌在组里的下表
@@ -354,6 +322,7 @@ var Main = (function (_super) {
         var _this = this;
         var start = this._cardStartPos;
         this.chairID_User.forEach(function (element) {
+            //创建两张牌
             var firstCard = DZCardController.CreatePokerFormPool();
             firstCard.x = start.x;
             firstCard.y = start.y;
@@ -368,6 +337,8 @@ var Main = (function (_super) {
             secondCard.isFront = false;
             _this._bg.addChild(firstCard);
             _this._bg.addChild(secondCard);
+            var userCard = [firstCard, secondCard];
+            _this._userCardContainer["user_" + element.chairID] = userCard;
             if (element == _this.mainUser) {
                 var target = _this.GetUserCardPos(element.chairID);
                 egret.Tween.get(firstCard).to({ x: target.x, y: target.y, rotation: -10, scaleX: 0.4, scaleY: 0.4, alpha: 1 }, 1000);
