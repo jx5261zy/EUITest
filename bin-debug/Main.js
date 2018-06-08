@@ -150,15 +150,23 @@ var Main = (function (_super) {
                 break;
             //space
             case 32:
-                Main.instance.SendPubCard();
-                console.log("发一张公共牌");
+                var poker = Main.instance.SendPubCard();
+                if (poker != null) {
+                    poker.SetData(Main.value[Main.valueIndex], CardType.SPADE, false);
+                    Main.valueIndex++;
+                    poker.SetDisplay();
+                    console.log("发一张公共牌");
+                }
                 break;
             //U
             case 85:
                 Main.instance.mainUser.StartOperationBarAnim(Main.instance.iOperateTime);
                 console.log("开始玩家操作倒计时");
                 break;
+            //F
             case 70:
+                Main.instance.TurnPubCardAnim(Main.count, PokerDir.B2F);
+                Main.count++;
                 break;
         }
     };
@@ -203,6 +211,7 @@ var Main = (function (_super) {
         for (var i = 0; i < 6; i++) {
             this._bg["user_" + i].visible = false;
         }
+        //创建扑克牌对象池
         pool.ObjectPool.instance.createObjectPool(DZCardController.DZ_CARD_POOLNAME, DZCardView, 100);
         //获取皮肤中的组件
         this._btn_return = this._bg["btn_return"];
@@ -294,10 +303,14 @@ var Main = (function (_super) {
      * @param direction:翻转的方向，1由正-》反  2由反-》正
      */
     Main.prototype.TurnPubCardAnim = function (index, direction) {
-        var poker = this._bg["gp_public_cards"].getChildAt(index);
+        // var poker = this._bg["gp_public_cards"].getChildAt(index);
+        var poker = this._pubCardContainer[index];
+        if (poker == null || poker.isFront)
+            return;
         switch (direction) {
             case PokerDir.F2B:
                 {
+                    poker.isFront = false;
                     egret.Tween.get(poker["gp_poker"]).to({ skewY: 90 }, 1000, egret.Ease.quadOut)
                         .call(function () { poker["gp_poker_forward"].visible = false; poker["img_poker_back"].visible = true; })
                         .to({ skewY: 180 }, 1000, egret.Ease.quadOut);
@@ -305,6 +318,7 @@ var Main = (function (_super) {
                 break;
             case PokerDir.B2F:
                 {
+                    poker.isFront = true;
                     poker["gp_poker"].skewY = 180;
                     egret.Tween.get(poker["gp_poker"]).to({ skewY: 270 }, 1000, egret.Ease.quadOut)
                         .call(function () { poker["gp_poker_forward"].visible = true; poker["img_poker_back"].visible = false; })
@@ -332,9 +346,10 @@ var Main = (function (_super) {
     Main.prototype.SendPubCard = function () {
         var _this = this;
         if (this._pubCardContainer.length >= 5)
-            return;
+            return null;
         var start = this._bg["pos_send_card"];
         var poker = DZCardController.CreatePokerFormPool();
+        poker.isFront = false; //先设置为反面
         poker.scaleX = poker.scaleY = 0.1;
         poker.x = start.x;
         poker.y = start.y;
@@ -343,6 +358,7 @@ var Main = (function (_super) {
         this._pubCardContainer.push(poker);
         egret.Tween.get(poker).to({ x: target.x, y: target.y, scaleX: 1, scaleY: 1 }, 200)
             .call(function () { _this._bg["gp_public_cards"].addChild(poker); });
+        return poker;
     };
     /**公共牌的数量，由于没有获得子节点的方法，所以申请变量自行控制 */
     /**获取公共牌发送的目标点，用于Tween动画 */
@@ -357,7 +373,8 @@ var Main = (function (_super) {
     /**给卡牌赋值
      * @param
      */
-    Main.prototype.SendPubCardData = function (_cardType, _cardValue, _component) {
+    Main.prototype.SendPubCardData = function (_cardType, _cardValue, _poker, _isFront) {
+        _poker.SetData(_cardValue, _cardType, _isFront);
     };
     /**
      * 根据name关键字创建一个Bitmap对象。name属性请参考resources/resource.json配置文件的内容。
@@ -413,6 +430,9 @@ var Main = (function (_super) {
     };
     return Main;
 }(eui.UILayer));
+Main.count = 0;
+Main.value = [10, 11, 12, 13, 1];
+Main.valueIndex = 0;
 __reflect(Main.prototype, "Main");
 var PokerDir;
 (function (PokerDir) {

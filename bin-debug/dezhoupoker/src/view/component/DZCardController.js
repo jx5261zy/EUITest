@@ -51,12 +51,14 @@ var DZCardController = (function (_super) {
      */
     DZCardController.prototype.AbandonCardAnim = function (_user) {
     };
+    /**获得卡牌值资源 */
     DZCardController.GetValueRes = function (value, type) {
         var outStr = "dz_r_";
         if (type == CardType.SPADE || type == CardType.CLUB)
             outStr = "dz_b_";
         return outStr + value + "_png";
     };
+    /**获得卡牌花色资源 */
     DZCardController.GetTypeRes = function (value, type) {
         var outStr = "dz_type";
         if (value > 10) {

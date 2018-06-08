@@ -9,6 +9,10 @@
 
 class DZCardController extends egret.EventDispatcher
 {
+    /**翻牌缓动动画的时间 */
+    private static turnCardTime:number = 200;
+    /**发牌缓动动画的时间 */
+    private static sendCardTime:number = 200;
     // private static _instance:DZCardController;
     // private static _isInstantation:boolean = false;
     // public static get instance():DZCardController
@@ -63,7 +67,7 @@ class DZCardController extends egret.EventDispatcher
 
     }
 
-
+    /**获得卡牌值资源 */
     public static GetValueRes(value:number,type:CardType):string
     {
         let outStr:string = "dz_r_";
@@ -72,7 +76,7 @@ class DZCardController extends egret.EventDispatcher
 
         return outStr + value + "_png"; 
     }
-
+    /**获得卡牌花色资源 */
     public static GetTypeRes(value:number,type:CardType):string
     {
         let outStr = "dz_type";

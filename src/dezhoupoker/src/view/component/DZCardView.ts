@@ -9,6 +9,10 @@
 
 class DZCardView extends MoveObject
 {
+    //卡牌大个花色小于10的图片宽高，避免过大
+    private static img_type_b_w:number = 60;
+    private static img_type_b_h:number = 80;
+    
     public isFront:boolean = false;//牌的正反属性
 
     /**卡牌的数值 */
@@ -54,12 +58,28 @@ class DZCardView extends MoveObject
 
     }
 
-
+    /**赋值 */
     public SetData(_value:number,_type:CardType,_isFront:boolean):void
     {
         this._value = _value;
         this._type = _type;
         this.isFront = _isFront;
+    }
+    /**赋显 */
+    public SetDisplay():void
+    {
+        this.img_value.source = DZCardController.GetValueRes(this._value,this._type);
+        if(this._value > 10)
+        {
+            this.img_type.source = DZCardController.GetTypeRes(this._value - 10,this._type);
+            this.img_type_b.source = DZCardController.GetTypeRes(this._value,this._type);
+            return;
+        }
+        this.img_type.source = DZCardController.GetTypeRes(this._value,this._type);
+        this.img_type_b.source = DZCardController.GetTypeRes(this._value,this._type);
+        //更改包括10以下的大个花色的图标 避免过大
+        this.img_type_b.width = DZCardView.img_type_b_w;
+        this.img_type_b.height = DZCardView.img_type_b_h;
     }
 
 	public moveToTargetPos(targetX: number,targetY: number,controlPoints: Array<any> = null,duration: number = 0,delay: number = 0,onMoveStartCallBack: Function = null,onMoveComplete: Function = null,oMoveCallBackThisObj: any = null,moveCompleteIsFlip:boolean = false): void {

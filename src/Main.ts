@@ -161,6 +161,9 @@ class Main extends eui.UILayer {
 
 
     private static instance;
+    private static count = 0;
+    private static value = [10,11,12,13,1];
+    private static valueIndex = 0;
     private OnKeyDown(key)
     {
         switch(key.keyCode)
@@ -179,8 +182,14 @@ class Main extends eui.UILayer {
 
             //space
             case 32:
-                Main.instance.SendPubCard();
-                console.log("发一张公共牌");
+                var poker:DZCardView = Main.instance.SendPubCard();
+                if(poker != null)
+                {
+                    poker.SetData(Main.value[Main.valueIndex],CardType.SPADE,false);
+                    Main.valueIndex++;
+                    poker.SetDisplay();
+                    console.log("发一张公共牌");
+                }
             break;
 
             //U
@@ -189,8 +198,10 @@ class Main extends eui.UILayer {
                 console.log("开始玩家操作倒计时");
             break;
 
+            //F
             case 70:
-
+                Main.instance.TurnPubCardAnim(Main.count,PokerDir.B2F);
+                Main.count++;
             break;
         }
     }
@@ -251,6 +262,7 @@ class Main extends eui.UILayer {
             this._bg["user_" + i].visible = false;
         }
 
+        //创建扑克牌对象池
         pool.ObjectPool.instance.createObjectPool(DZCardController.DZ_CARD_POOLNAME,DZCardView,100);
 
         //获取皮肤中的组件
@@ -368,11 +380,15 @@ class Main extends eui.UILayer {
      */
     public TurnPubCardAnim(index:number,direction:PokerDir):void
     {
-        var poker = this._bg["gp_public_cards"].getChildAt(index);
+        // var poker = this._bg["gp_public_cards"].getChildAt(index);
+        var poker = this._pubCardContainer[index];
+        if(poker == null || poker.isFront)
+            return;
         switch(direction)
         {
             case PokerDir.F2B:
             {
+                poker.isFront = false;
                 egret.Tween.get(poker["gp_poker"]).to({skewY:90},1000,egret.Ease.quadOut)
                     .call(()=>{poker["gp_poker_forward"].visible = false;poker["img_poker_back"].visible = true;})
                     .to({skewY:180},1000,egret.Ease.quadOut);
@@ -380,6 +396,7 @@ class Main extends eui.UILayer {
 
             case PokerDir.B2F:
             {
+                poker.isFront = true;
                 poker["gp_poker"].skewY = 180;
                 egret.Tween.get(poker["gp_poker"]).to({skewY:270},1000,egret.Ease.quadOut)
                     .call(()=>{poker["gp_poker_forward"].visible = true;poker["img_poker_back"].visible = false;})
@@ -412,13 +429,14 @@ class Main extends eui.UILayer {
 
 
     /**往公共牌区域发一张牌的动画 */
-    public SendPubCard()
+    public SendPubCard():DZCardView
     {
         if(this._pubCardContainer.length >= 5)
-            return;
+            return null;
 
         var start = this._bg["pos_send_card"];
         var poker = DZCardController.CreatePokerFormPool();
+        poker.isFront = false;//先设置为反面
         poker.scaleX = poker.scaleY = 0.1;
         poker.x = start.x;
         poker.y = start.y;
@@ -428,6 +446,8 @@ class Main extends eui.UILayer {
 
         egret.Tween.get(poker).to({x:target.x,y:target.y,scaleX:1,scaleY:1},200)
             .call(()=>{this._bg["gp_public_cards"].addChild(poker);});
+
+        return poker;
     }
 
     /**公共牌的数量，由于没有获得子节点的方法，所以申请变量自行控制 */
@@ -446,9 +466,9 @@ class Main extends eui.UILayer {
     /**给卡牌赋值
      * @param
      */
-    public SendPubCardData(_cardType:CardType,_cardValue:number,_component:eui.Component):void
+    public SendPubCardData(_cardType:CardType,_cardValue:number,_poker:DZCardView,_isFront:boolean):void
     {
-
+        _poker.SetData(_cardValue,_cardType,_isFront);
     }
 
 
