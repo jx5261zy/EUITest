@@ -41,11 +41,11 @@ var Main = (function (_super) {
         _this.isThemeLoadEnd = false;
         _this.isResourceLoadEnd = false;
         return _this;
+        //class end
     }
     Main.getInstance = function () {
-        if (Main.instance == null)
-            Main.instance = this;
-        return Main.instance;
+        if (Main.instance != null)
+            return Main.instance;
     };
     Main.prototype.createChildren = function () {
         _super.prototype.createChildren.call(this);
@@ -182,6 +182,20 @@ var Main = (function (_super) {
                 break;
             //X
             case 88:
+                for (var i = 0; i < 6; i++) {
+                    Main.instance.TurnCardAnim(i);
+                    var value = Math.round(Math.random() * 10 + Math.random() * 10 % 4);
+                    var type = Math.round(Math.random() * 10 % 3);
+                    var value1 = Math.round(Math.random() * 10 + Math.random() * 10 % 4);
+                    var type1 = Math.round(Math.random() * 10 % 3);
+                    var _value = [value, value1];
+                    var _type = [type, type1];
+                    Main.instance.SetUserCardData(i, _value, _type);
+                }
+                console.log("翻开主玩家手牌");
+                break;
+            //Z
+            case 90:
                 Main.instance.TurnCardAnim(Main.instance.mainUser.chairID);
                 var value = Math.round(Math.random() * 10 + Math.random() * 10 % 4);
                 var type = Math.round(Math.random() * 10 % 3);
@@ -190,7 +204,32 @@ var Main = (function (_super) {
                 var _value = [value, value1];
                 var _type = [type, type1];
                 Main.instance.SetUserCardData(Main.instance.mainUser.chairID, _value, _type);
-                console.log("翻开主玩家手牌");
+                break;
+            //B
+            case 66:
+                var bankerID = Math.round(Math.random() * 10 % Main.instance.chairID_User.length);
+                if (bankerID == 6)
+                    bankerID--;
+                // var bankerID = 2;
+                console.log("bankerID:" + bankerID);
+                Main.instance.chairID_User[bankerID].isBanker = true;
+                Main.instance.SendBankerLogoAnim(bankerID);
+                break;
+            //I
+            case 73:
+                Main.instance.SetOperationBtnsDisplay(DZDefine.Q_CINGL_ADD);
+                break;
+            //O
+            case 79:
+                Main.instance.SetOperationBtnsDisplay(DZDefine.Q_CINGL_ALLIN);
+                break;
+            //P
+            case 80:
+                Main.instance.SetOperationBtnsDisplay(DZDefine.Q_PASS_ADD);
+                break;
+            //H
+            case 72:
+                Main.instance.mainUser.FlareBar();
                 break;
         }
     };
@@ -231,12 +270,13 @@ var Main = (function (_super) {
         this._bg.createChildren();
         this.addChild(this._bg);
         this._pubCardContainer = new Array();
-        this._userCardContainer = {};
+        this._userCardContainer = new Array();
         this._cardStartPos = this._bg["pos_send_card"];
         this.chairID_User = new Array();
-        //循环将桌子上的所有玩家头像框隐藏
+        //循环将桌子上的所有玩家头像框，下注框隐藏
         for (var i = 0; i < 6; i++) {
             this._bg["user_" + i].visible = false;
+            this._bg["user_chip_" + i].visible = false;
         }
         //创建扑克牌对象池
         pool.ObjectPool.instance.createObjectPool(DZCardController.DZ_CARD_POOLNAME, DZCardView);
@@ -259,36 +299,28 @@ var Main = (function (_super) {
         this._btnContainer.addButton(this._btn_pass);
         this._btnContainer.addButton(this._btn_return);
         this._btnContainer.addButton(this._gp_cingl);
-        this.mainUser = new DZUser(111, 10, 0, UserData);
-        this.mainUser.nickname = "绘图铅笔2B";
-        this.mainUser.gold = 11111;
-        this.mainUser.InitFaceGroup(this._bg["user_" + this.mainUser.chairID]);
-        this.chairID_User[this.mainUser.chairID] = this.mainUser;
-        for (var i = 1; i < 6; i = i + 2) {
-            var user = new DZUser(111 + i, 10, i, UserData);
-            user.nickname = "匿名用户_" + i;
-            user.gold = 11111;
-            user.InitFaceGroup(this._bg["user_" + user.chairID]);
-            this.chairID_User[user.chairID] = user;
-        }
-        var chip = DZChipController.CreateChipFormPool();
-        this._bg.addChild(chip);
+        this._bg["gp_operation_btns"].y = 750;
+        this.SetUsers();
+        this.StartGame();
     };
+    //!!!!!!!!!!!TODO : BUG手牌可以无限翻，isFront属性会莫名改变
     /**翻单个用户的手牌动画
-     * @param _user : 需要翻牌的用户
+     * @param chairID : 需要翻牌的椅子号
      */
     Main.prototype.TurnCardAnim = function (chairID) {
-        var userCardArr = this._userCardContainer["user_" + chairID];
+        var userCardArr = this._userCardContainer[chairID];
         if (userCardArr == null)
             return;
         var firstCard = userCardArr[0];
         var secondCard = userCardArr[1];
         if (firstCard == null || secondCard == null)
             return;
+        console.log("1:" + firstCard.isFront + "  2:" + secondCard.isFront);
         if (firstCard.isFront || secondCard.isFront)
             return;
         firstCard.isFront = true;
         secondCard.isFront = true;
+        console.log("1:" + firstCard.isFront + "  2:" + secondCard.isFront);
         firstCard["gp_poker"].skewY = 180;
         secondCard["gp_poker"].skewY = 180;
         var turnPoint = this.GetUserFrontCardPos(chairID);
@@ -299,44 +331,78 @@ var Main = (function (_super) {
         firstCard.rotation = secondCard.rotation = 0;
         firstCard.scaleX = firstCard.scaleY = DZDefine.f_scale;
         secondCard.scaleX = secondCard.scaleY = DZDefine.f_scale;
+        if (firstCard.isAction || secondCard.isAction)
+            return;
+        firstCard.isAction = secondCard.isAction = true;
+        console.log("1:" + firstCard.isFront + "  2:" + secondCard.isFront);
         egret.Tween.get(firstCard["gp_poker"]).to({ skewY: 270 }, DZDefine.turnCardTime, egret.Ease.quadOut)
             .call(function () { firstCard["gp_poker_forward"].visible = true; firstCard["img_poker_back"].visible = false; })
-            .to({ skewY: 360 }, DZDefine.turnCardTime, egret.Ease.quadOut);
+            .to({ skewY: 360 }, DZDefine.turnCardTime, egret.Ease.quadOut)
+            .call(function () { firstCard.isAction = false; firstCard.isFront = true; console.log("1:" + firstCard.isFront + "  2:" + secondCard.isFront); });
         egret.Tween.get(secondCard["gp_poker"]).to({ skewY: 270 }, DZDefine.turnCardTime, egret.Ease.quadOut)
             .call(function () { secondCard["gp_poker_forward"].visible = true; secondCard["img_poker_back"].visible = false; })
-            .to({ skewY: 360 }, DZDefine.turnCardTime, egret.Ease.quadOut);
+            .to({ skewY: 360 }, DZDefine.turnCardTime, egret.Ease.quadOut)
+            .call(function () { secondCard.isAction = false; secondCard.isFront = true; console.log("1:" + firstCard.isFront + "  2:" + secondCard.isFront); });
     };
-    /**翻牌动画
-     * @param index:牌在组里的下表
-     * @param direction:翻转的方向，1由正-》反  2由反-》正
+    /**翻公共牌动画
+     * @param index:牌在组里的下标
+     * @param direction:翻转的方向，1由正->反  2由反->正
      */
     Main.prototype.TurnPubCardAnim = function (index, direction) {
         // var poker = this._bg["gp_public_cards"].getChildAt(index);
         var poker = this._pubCardContainer[index];
-        if (poker == null || poker.isFront)
+        if (poker == null || poker.isFront || poker.isAction)
             return;
         switch (direction) {
             case PokerDir.F2B:
                 {
                     poker.isFront = false;
+                    poker.isAction = true;
                     egret.Tween.get(poker["gp_poker"]).to({ skewY: 90 }, DZDefine.turnCardTime, egret.Ease.quadOut)
                         .call(function () { poker["gp_poker_forward"].visible = false; poker["img_poker_back"].visible = true; })
-                        .to({ skewY: 180 }, DZDefine.turnCardTime, egret.Ease.quadOut);
+                        .to({ skewY: 180 }, DZDefine.turnCardTime, egret.Ease.quadOut)
+                        .call(function () { poker.isAction = false; });
                 }
                 break;
             case PokerDir.B2F:
                 {
                     poker.isFront = true;
+                    poker.isAction = true;
                     poker["gp_poker"].skewY = 180;
                     egret.Tween.get(poker["gp_poker"]).to({ skewY: 270 }, DZDefine.turnCardTime, egret.Ease.quadOut)
                         .call(function () { poker["gp_poker_forward"].visible = true; poker["img_poker_back"].visible = false; })
-                        .to({ skewY: 360 }, DZDefine.turnCardTime, egret.Ease.quadOut);
+                        .to({ skewY: 360 }, DZDefine.turnCardTime, egret.Ease.quadOut)
+                        .call(function () { poker.isAction = false; });
                 }
                 break;
         }
     };
     /**发庄logo */
     Main.prototype.SendBankerLogoAnim = function (chairID) {
+        var start = new egret.Point(this._bg.width / 2, this._bg.height / 2);
+        var logo = new eui.Image("dz_zhuang_png");
+        this._bg.addChild(logo);
+        logo.x = start.x;
+        logo.y = start.y;
+        logo.width = logo.height = 20;
+        logo.name = "img_zhuang";
+        var target = this.GetBankerLogoPos(chairID);
+        egret.Tween.get(logo).to({ x: target.x, y: target.y }, DZDefine.sendBankerTime);
+    };
+    /**获得庄logo该去的位置
+     * @param chairID ： 椅子号
+     */
+    Main.prototype.GetBankerLogoPos = function (chairID) {
+        //在桌子右边的玩家特殊处理
+        if (chairID == 1) {
+            return new egret.Point(1095, 428);
+        }
+        //约束后会让获得的组件的坐标为零，所以要用帧末的数据，傻逼设计
+        this.validateNow();
+        var user = this.chairID_User[chairID].headComponent;
+        console.log("x:" + user.x + "  y:" + user.y);
+        var point = new egret.Point(user.x + DZDefine.b_logoOffsetHeadX, user.y + DZDefine.b_logoOffsetHeadY);
+        return point;
     };
     /**播放发所有玩家手牌的动画 */
     Main.prototype.SendUsersCardsAnim = function () {
@@ -354,27 +420,35 @@ var Main = (function (_super) {
             secondCard.y = start.y;
             secondCard.alpha = 0;
             secondCard.scaleX = secondCard.scaleY = 0.01;
-            firstCard.isFront = false;
-            secondCard.isFront = false;
+            firstCard.isFront = secondCard.isFront = false;
+            firstCard.isAction = secondCard.isAction = false;
             _this._bg.addChild(firstCard);
             _this._bg.addChild(secondCard);
             var userCard = [firstCard, secondCard];
-            _this._userCardContainer["user_" + element.chairID] = userCard;
-            if (element == _this.mainUser) {
-                var target = _this.GetUserBackCardPos(element.chairID);
-                egret.Tween.get(firstCard).to({ x: target.x, y: target.y, rotation: DZDefine.firstCardAngle, scaleX: DZDefine.b_scale, scaleY: DZDefine.b_scale, alpha: 1 }, DZDefine.sendCardTime);
-                egret.Tween.get(secondCard).to({ x: (target.x + DZDefine.cardDis), y: target.y, rotation: DZDefine.secondCardAngle, scaleX: DZDefine.b_scale, scaleY: DZDefine.b_scale, alpha: 1 }, DZDefine.sendCardTime);
-            }
-            else {
-                var target = _this.GetUserBackCardPos(element.chairID);
-                egret.Tween.get(firstCard).to({ x: target.x, y: target.y, rotation: DZDefine.firstCardAngle, scaleX: DZDefine.b_scale, scaleY: DZDefine.b_scale, alpha: 1 }, DZDefine.sendCardTime);
-                egret.Tween.get(secondCard).to({ x: (target.x + DZDefine.cardDis), y: target.y, rotation: DZDefine.secondCardAngle, scaleX: DZDefine.b_scale, scaleY: DZDefine.b_scale, alpha: 1 }, DZDefine.sendCardTime);
-            }
+            _this._userCardContainer[element.chairID] = userCard;
+            // if(element == this.mainUser)
+            // {
+            //     var target:egret.Point = this.GetUserBackCardPos(element.chairID);
+            //     firstCard.isAction = secondCard.isAction = true;
+            //     egret.Tween.get(firstCard).to({x:target.x,y:target.y,rotation:DZDefine.firstCardAngle,scaleX:DZDefine.b_scale,scaleY:DZDefine.b_scale,alpha:1},DZDefine.sendCardTime)
+            //                 .call(()=>{firstCard.isAction = false;});
+            //     egret.Tween.get(secondCard).to({x:(target.x + DZDefine.cardDis),y:target.y,rotation:DZDefine.secondCardAngle,scaleX:DZDefine.b_scale,scaleY:DZDefine.b_scale,alpha:1},DZDefine.sendCardTime)
+            //                 .call(()=>{secondCard.isAction = false;});
+            // }
+            // else
+            // {
+            var target = _this.GetUserBackCardPos(element.chairID);
+            firstCard.isAction = secondCard.isAction = true;
+            egret.Tween.get(firstCard).to({ x: target.x, y: target.y, rotation: DZDefine.firstCardAngle, scaleX: DZDefine.b_scale, scaleY: DZDefine.b_scale, alpha: 1 }, DZDefine.sendCardTime)
+                .call(function () { firstCard.isAction = false; });
+            egret.Tween.get(secondCard).to({ x: (target.x + DZDefine.cardDis), y: target.y, rotation: DZDefine.secondCardAngle, scaleX: DZDefine.b_scale, scaleY: DZDefine.b_scale, alpha: 1 }, DZDefine.sendCardTime)
+                .call(function () { secondCard.isAction = false; });
+            // }
         });
     };
     /**为玩家的手牌赋值 */
     Main.prototype.SetUserCardData = function (chairID, cardValue, cardType) {
-        var userCardArr = this._userCardContainer["user_" + chairID];
+        var userCardArr = this._userCardContainer[chairID];
         if (userCardArr == null)
             return;
         var firstCard = userCardArr[0];
@@ -386,34 +460,67 @@ var Main = (function (_super) {
         secondCard.SetData(cardValue[1], cardType[1], false);
         secondCard.SetDisplay();
     };
-    /**获取玩家的手牌发送目标点 背面 */
+    /**获取玩家的手牌发送目标位置 背面 */
     Main.prototype.GetUserBackCardPos = function (chairID, isMainUser) {
         if (isMainUser === void 0) { isMainUser = false; }
-        var chair = this._bg["user_" + chairID];
+        // var chair = this._bg["user_" + chairID];
+        //约束后会让获得的组件的坐标为零，所以要用帧末的数据，傻逼设计
+        this.validateNow();
+        var chair = this.chairID_User[chairID].headComponent;
         if (chair == null)
             return null;
         var point = new egret.Point(chair.x + DZDefine.b_cardOffsetHeadX, chair.y + DZDefine.b_cardOffsetHeadY);
         return point;
     };
-    /**获取玩家的展示手牌时的点 */
+    /**获取玩家的展示手牌时的位置 */
     Main.prototype.GetUserFrontCardPos = function (chairID, isMainUser) {
         if (isMainUser === void 0) { isMainUser = false; }
-        var chair = this._bg["user_" + chairID];
+        // var chair = this._bg["user_" + chairID];
+        //约束后会让获得的组件的坐标为零，所以要用帧末的数据，傻逼设计
+        this.validateNow();
+        var chair = this.chairID_User[chairID].headComponent;
         if (chair == null)
             return null;
         var point = new egret.Point(chair.x + DZDefine.f_cardOffsetHeadX, chair.y + DZDefine.f_cardOffsetHeadY);
         return point;
     };
+    /**根据情况显示不同的操作按钮
+     * @param status:不同情况
+     */
+    Main.prototype.SetOperationBtnsDisplay = function (status) {
+        //先把所有的按钮都隐藏
+        this._btn_add.visible = false;
+        this._btn_allin.visible = false;
+        this._btn_pass.visible = false;
+        this._gp_cingl.visible = false;
+        switch (status) {
+            case DZDefine.Q_CINGL_ADD:
+                this._gp_cingl.visible = true;
+                //将之前无效化过的按钮激活
+                if (!this._gp_cingl.touchEnabled)
+                    this._btnContainer.setBtnEnabled(this._gp_cingl, true);
+                this._btn_add.visible = true;
+                break;
+            case DZDefine.Q_CINGL_ALLIN:
+                this._gp_cingl.visible = true;
+                //全下的状态下是不可以选择跟注的，所以无效化按钮
+                this._btnContainer.setBtnEnabled(this._gp_cingl, false, true);
+                this._btn_allin.visible = true;
+                break;
+            case DZDefine.Q_PASS_ADD:
+                this._btn_pass.visible = true;
+                this._btn_add.visible = true;
+                break;
+        }
+    };
     /**底部操作条上升 */
     Main.prototype.ShowOperateBtns = function () {
         var bottom = this._bg["gp_operation_btns"];
-        //TODO：下沉之前要无效化按钮
         egret.Tween.get(bottom).to({ x: 0, y: 650 }, DZDefine.operationBtns);
     };
     /**隐藏底部操作按钮 按钮下沉*/
     Main.prototype.HideOperateBtns = function () {
         var bottom = this._bg["gp_operation_btns"];
-        //TODO：上升之前要激活按钮
         egret.Tween.get(bottom).to({ x: 0, y: 750 }, DZDefine.operationBtns);
     };
     /**往公共牌区域发一张牌的动画 */
@@ -428,11 +535,13 @@ var Main = (function (_super) {
         poker.scaleX = poker.scaleY = 0.1;
         poker.x = start.x;
         poker.y = start.y;
+        poker.isAction = false;
         this._bg.addChild(poker);
         var target = this.GetPubTargetPos();
         this._pubCardContainer.push(poker);
+        poker.isAction = true;
         egret.Tween.get(poker).to({ x: target.x, y: target.y, scaleX: 1, scaleY: 1, alpha: 1 }, DZDefine.sendCardTime)
-            .call(function () { _this._bg["gp_public_cards"].addChild(poker); });
+            .call(function () { _this._bg["gp_public_cards"].addChild(poker); poker.isAction = false; });
         return poker;
     };
     /**公共牌的数量，由于没有获得子节点的方法，所以申请变量自行控制 */
@@ -452,52 +561,83 @@ var Main = (function (_super) {
         _poker.SetData(_cardValue, _cardType, _isFront);
     };
     /**
-     * 根据name关键字创建一个Bitmap对象。name属性请参考resources/resource.json配置文件的内容。
-     * Create a Bitmap object according to name keyword.As for the property of name please refer to the configuration file of resources/resource.json.
+     * 创建一个游戏timer 唯一的
+     * @param chairID
+     * @param timerID
+     * @param time
      */
-    Main.prototype.createBitmapByName = function (name) {
-        var result = new egret.Bitmap();
-        var texture = RES.getRes(name);
-        result.texture = texture;
-        return result;
+    Main.prototype.SetGameTimer = function (chairID, timerID, time) {
+        if (this._timer == null) {
+            this._timer = new GameTimer(1000 / 30);
+            this._timer.addEventListener(egret.TimerEvent.TIMER, this.onGameTimerEvent, this);
+        }
+        this._timer.chairID = chairID;
+        this._timer.timerID = timerID;
+        this._timer.totalTime = time;
+        this._timer.start();
     };
-    /**
-     * 描述文件加载成功，开始播放动画
-     * Description file loading is successful, start to play the animation
-     */
-    Main.prototype.startAnimation = function (result) {
-        var _this = this;
-        var parser = new egret.HtmlTextParser();
-        var textflowArr = result.map(function (text) { return parser.parse(text); });
-        var textfield = this.textfield;
-        var count = -1;
-        var change = function () {
-            count++;
-            if (count >= textflowArr.length) {
-                count = 0;
-            }
-            var textFlow = textflowArr[count];
-            // 切换描述内容
-            // Switch to described content
-            textfield.textFlow = textFlow;
-            var tw = egret.Tween.get(textfield);
-            tw.to({ "alpha": 1 }, 200);
-            tw.wait(2000);
-            tw.to({ "alpha": 0 }, 200);
-            tw.call(change, _this);
-        };
-        change();
+    Main.prototype.onGameTimerEvent = function (e) {
+        var remainTime = this._timer.remainTime;
+        if (remainTime == 0) {
+            this._timer.stop();
+        }
+        this.OnGameTimer(this._timer.chairID, this._timer.timerID, remainTime);
     };
-    /**
-     * 点击按钮
-     * Click the button
-     */
-    Main.prototype.onButtonClick = function (e) {
-        var panel = new eui.Panel();
-        panel.title = "Title";
-        panel.horizontalCenter = 0;
-        panel.verticalCenter = 0;
-        this.addChild(panel);
+    Main.prototype.OnGameTimer = function (chairID, timerID, remainTime) {
+        switch (timerID) {
+            case DZDefine.Operation_Timer:
+                if (remainTime == 0)
+                    console.log("Time Over");
+                else
+                    console.log(remainTime);
+                break;
+        }
+    };
+    //测试代码
+    Main.prototype.StartGame = function () {
+        //先给一个庄
+        var bankerID = Math.round(Math.random() * 10 % this.chairID_User.length);
+        if (bankerID == 6)
+            bankerID--;
+        // var bankerID = 2;
+        console.log("bankerID:" + bankerID);
+        this.chairID_User[bankerID].isBanker = true;
+        this.SendBankerLogoAnim(bankerID);
+        this.SendUsersCardsAnim();
+        for (var i = 0; i < 6; i++)
+            Main.instance.TurnCardAnim(i);
+    };
+    Main.prototype.SetUsers = function () {
+        this.mainUser = new DZUser(111, 10, 0, UserData);
+        this.mainUser.nickname = "绘图铅笔2B";
+        this.mainUser.gold = 11111;
+        this.mainUser.InitFaceGroup(this._bg["user_" + this.mainUser.chairID]);
+        this.chairID_User[this.mainUser.chairID] = this.mainUser;
+        var user1 = new DZUser(112, 10, 1, UserData);
+        user1.nickname = "Holly";
+        user1.gold = 10000;
+        user1.InitFaceGroup(this._bg["user_" + user1.chairID]);
+        this.chairID_User[user1.chairID] = user1;
+        var user2 = new DZUser(112, 10, 2, UserData);
+        user2.nickname = "Shit";
+        user2.gold = 10000;
+        user2.InitFaceGroup(this._bg["user_" + user2.chairID]);
+        this.chairID_User[user2.chairID] = user2;
+        var user3 = new DZUser(112, 10, 3, UserData);
+        user3.nickname = "Mother";
+        user3.gold = 10000;
+        user3.InitFaceGroup(this._bg["user_" + user3.chairID]);
+        this.chairID_User[user3.chairID] = user3;
+        var user4 = new DZUser(112, 10, 4, UserData);
+        user4.nickname = "Fucker";
+        user4.gold = 10000;
+        user4.InitFaceGroup(this._bg["user_" + user4.chairID]);
+        this.chairID_User[user4.chairID] = user4;
+        var user5 = new DZUser(112, 10, 5, UserData);
+        user5.nickname = "Stupid";
+        user5.gold = 10000;
+        user5.InitFaceGroup(this._bg["user_" + user5.chairID]);
+        this.chairID_User[user5.chairID] = user5;
     };
     return Main;
 }(eui.UILayer));

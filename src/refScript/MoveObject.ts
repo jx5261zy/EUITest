@@ -5,7 +5,7 @@
  *
  */
 class MoveObject extends eui.Component{
-	public isMoving:boolean;
+	public isAction:boolean;
 private _isMoveStart: boolean;
 private _targetX: number;
 private _targetY: number;

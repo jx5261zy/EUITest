@@ -11,6 +11,7 @@ class DZUser extends GameUser
     public headComponent:eui.Component;
 
     public isAbandon:boolean = false;
+    public isBanker:boolean = false;
 
     /**头像组件 */
     private img_bg:eui.Image;
@@ -137,7 +138,6 @@ class DZUser extends GameUser
     {
         
     }
-
 
 
 //class end

@@ -33,11 +33,11 @@
 		<e:HorizontalLayout gap="3"/>
 		</e:layout>
 	</e:Group>
-	<e:Component id="user_0" width="120" height="165" anchorOffsetX="0" anchorOffsetY="0" skinName="DZHeadSkin" scaleX="1" scaleY="1" right="314" top="36" enabled="true"/>
-	<e:Component id="user_1" width="120" height="165" anchorOffsetX="0" anchorOffsetY="0" skinName="DZHeadSkin" scaleX="1" scaleY="1" right="75" verticalCenter="0"/>
+	<e:Component id="user_0" width="120" height="165" anchorOffsetX="0" anchorOffsetY="0" skinName="DZHeadSkin" scaleX="1" scaleY="1" enabled="true" right="314" top="36"/>
+	<e:Component id="user_1" width="120" height="165" anchorOffsetX="0" anchorOffsetY="0" skinName="DZHeadSkin" scaleX="1" scaleY="1" x="1139" verticalCenter="0"/>
 	<e:Component id="user_2" width="120" height="165" anchorOffsetX="0" anchorOffsetY="0" skinName="DZHeadSkin" scaleX="1" scaleY="1" right="370" bottom="125"/>
-	<e:Component id="user_3" width="120" height="165" anchorOffsetX="0" anchorOffsetY="0" skinName="DZHeadSkin" scaleX="1" scaleY="1" left="370" bottom="125"/>
-	<e:Component id="user_4" width="120" height="165" anchorOffsetX="0" anchorOffsetY="0" skinName="DZHeadSkin" scaleX="1" scaleY="1" verticalCenter="0" left="75"/>
+	<e:Component id="user_3" width="120" height="165" anchorOffsetX="0" anchorOffsetY="0" skinName="DZHeadSkin" scaleX="1" scaleY="1" bottom="125" left="370"/>
+	<e:Component id="user_4" width="120" height="165" anchorOffsetX="0" anchorOffsetY="0" skinName="DZHeadSkin" scaleX="1" scaleY="1" x="75" verticalCenter="0"/>
 	<e:Component id="user_5" width="120" height="165" anchorOffsetX="0" anchorOffsetY="0" skinName="DZHeadSkin" scaleX="1" scaleY="1" left="314" top="36"/>
 	<e:Image id="user_chip_0" width="109" height="31" x="905" y="210" source="dz_chip_bg_png"/>
 	<e:Image id="user_chip_1" width="109" height="31" x="1015" y="300" source="dz_chip_bg_png"/>

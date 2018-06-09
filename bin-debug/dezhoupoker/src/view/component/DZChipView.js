@@ -21,6 +21,21 @@ var DZChipView = (function (_super) {
         _this.touchEnabled = _this.touchChildren = false;
         return _this;
     }
+    Object.defineProperty(DZChipView.prototype, "value", {
+        get: function () {
+            return this._value;
+        },
+        set: function (_value) {
+            this._value = _value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    DZChipView.prototype.SetDisplay = function () {
+        if (this._value == 0)
+            return;
+        this.img_chip_bg.source = DZChipController.GetDisplayRes(this._value);
+    };
     return DZChipView;
 }(MoveObject));
 __reflect(DZChipView.prototype, "DZChipView");

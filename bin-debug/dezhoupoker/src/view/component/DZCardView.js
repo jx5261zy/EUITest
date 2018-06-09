@@ -43,6 +43,7 @@ var DZCardView = (function (_super) {
     };
     /**赋值 */
     DZCardView.prototype.SetData = function (_value, _type, _isFront) {
+        if (_isFront === void 0) { _isFront = false; }
         this._value = _value;
         this._type = _type;
         this.isFront = _isFront;

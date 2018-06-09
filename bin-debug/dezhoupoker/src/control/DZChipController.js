@@ -27,6 +27,22 @@ var DZChipController = (function (_super) {
     /**从底池向玩家分发筹码 */
     DZChipController.prototype.MovePotChipsToUser = function () {
     };
+    /**根据值获得显示资源 */
+    DZChipController.GetDisplayRes = function (_value) {
+        var outStr = "dz_userchip_";
+        var _str = "";
+        if (_value > 0 && _value <= 50)
+            _str = "0_png";
+        else if (_value > 50 && _value <= 100)
+            _str = "1_png";
+        else if (_value > 100 && _value <= 200)
+            _str = "2_png";
+        else if (_value > 200 && _value <= 500)
+            _str = "3_png";
+        else if (_value > 500)
+            _str = "4_png";
+        return outStr + _str;
+    };
     DZChipController.CreateChipFormPool = function () {
         return pool.ObjectPool.instance.getObj(DZChipController.DZ_CHIP_POOLNAME);
     };

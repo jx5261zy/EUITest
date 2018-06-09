@@ -18,6 +18,7 @@ var DZUser = (function (_super) {
     function DZUser(_userID, _tableID, _chairID, _role) {
         var _this = _super.call(this, _userID, _tableID, _chairID, _role) || this;
         _this.isAbandon = false;
+        _this.isBanker = false;
         _this._isFaceGropuInited = false;
         return _this;
     }
@@ -88,6 +89,18 @@ var DZUser = (function (_super) {
     };
     /**改变玩家的操作状态  弃牌，加注，跟注，让牌，全下 */
     DZUser.prototype.ChangeState = function () {
+    };
+    /**高亮框闪烁 */
+    DZUser.prototype.FlareBar = function () {
+        var _this = this;
+        this.img_time_bar.visible = true;
+        egret.Tween.get(this.img_time_bar).to({ scaleX: 1.4, scaleY: 1.4, alpha: 0 }, 300)
+            .to({ scaleX: 1, scale: 1, alpha: 1 }, 300)
+            .to({ scaleX: 1.4, scaleY: 1.4, alpha: 0 }, 300)
+            .to({ scaleX: 1, scale: 1, alpha: 1 }, 300)
+            .to({ scaleX: 1.4, scaleY: 1.4, alpha: 0 }, 300)
+            .to({ scaleX: 1, scale: 1, alpha: 1 }, 300)
+            .call(function () { _this.img_time_bar.visible = false; });
     };
     return DZUser;
 }(GameUser));

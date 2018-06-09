@@ -55,7 +55,7 @@ class DZCardView extends MoveObject
     }
 
     /**赋值 */
-    public SetData(_value:number,_type:CardType,_isFront:boolean):void
+    public SetData(_value:number,_type:CardType,_isFront:boolean = false):void
     {
         this._value = _value;
         this._type = _type;
