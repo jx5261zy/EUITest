@@ -18,6 +18,7 @@ var DZChipController = (function (_super) {
     function DZChipController() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    // public static chipContainer:Array<eui.Image>;
     /**移动筹码 */
     DZChipController.prototype.MoveUserChip = function (_userID) {
     };

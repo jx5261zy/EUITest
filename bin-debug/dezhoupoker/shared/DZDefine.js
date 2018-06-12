@@ -56,5 +56,7 @@ DZDefine.Q_CINGL_ADD = 0;
 DZDefine.Q_CINGL_ALLIN = 1;
 /**弃 过 加 */
 DZDefine.Q_PASS_ADD = 2;
+/**一个位图字体的宽度 */
+DZDefine.bplb_Width = 26;
 __reflect(DZDefine.prototype, "DZDefine");
 //# sourceMappingURL=DZDefine.js.map

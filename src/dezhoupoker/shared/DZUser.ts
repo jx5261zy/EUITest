@@ -12,6 +12,8 @@ class DZUser extends GameUser
 
     public isAbandon:boolean = false;
     public isBanker:boolean = false;
+    /**手牌数组 */
+    public cardArr:DZCardView[];
 
     /**头像组件 */
     private img_bg:eui.Image;
@@ -110,6 +112,13 @@ class DZUser extends GameUser
     public HideHeadMask():void
     {
 
+    }
+
+
+    /**下注 */
+    public Bet()
+    {
+        
     }
 
 

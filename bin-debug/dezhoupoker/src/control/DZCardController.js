@@ -29,27 +29,137 @@ var DZCardController = (function (_super) {
     //     }
     //     return this._instance
     // }
-    /**播放发所有玩家手牌的动画 */
-    DZCardController.prototype.SendUsersCardsAnim = function () {
+    /**播放发玩家手牌的动画 */
+    DZCardController.SendUserCardsAnim = function (start, target) {
+        var firstCard = DZCardController.CreatePokerFormPool();
+        firstCard.x = start.x;
+        firstCard.y = start.y;
+        firstCard.alpha = 0;
+        firstCard.scaleX = firstCard.scaleY = 0.01;
+        var secondCard = DZCardController.CreatePokerFormPool();
+        secondCard.x = start.x;
+        secondCard.y = start.y;
+        secondCard.alpha = 0;
+        secondCard.scaleX = secondCard.scaleY = 0.01;
+        firstCard.isFront = secondCard.isFront = false;
+        firstCard.isAction = secondCard.isAction = false;
+        DZCardController.tableComponent.addChild(firstCard);
+        DZCardController.tableComponent.addChild(secondCard);
+        var userCard = [firstCard, secondCard];
+        firstCard.isAction = secondCard.isAction = true;
+        egret.Tween.get(firstCard).to({ x: target.x, y: target.y, rotation: DZDefine.firstCardAngle, scaleX: DZDefine.b_scale, scaleY: DZDefine.b_scale, alpha: 1 }, DZDefine.sendCardTime)
+            .call(function () { firstCard.isAction = false; });
+        egret.Tween.get(secondCard).to({ x: (target.x + DZDefine.cardDis), y: target.y, rotation: DZDefine.secondCardAngle, scaleX: DZDefine.b_scale, scaleY: DZDefine.b_scale, alpha: 1 }, DZDefine.sendCardTime)
+            .call(function () { secondCard.isAction = false; });
+        return userCard;
+    };
+    /**为玩家的手牌赋值 */
+    DZCardController.SetUserCardData = function (user, cardValue, cardType) {
+        if (user == null)
+            return;
+        var userCardArr = user.cardArr;
+        if (userCardArr == null)
+            return;
+        var firstCard = userCardArr[0];
+        var secondCard = userCardArr[1];
+        if (firstCard == null || secondCard == null)
+            return;
+        firstCard.SetData(cardValue[0], cardType[0], false);
+        firstCard.SetDisplay();
+        secondCard.SetData(cardValue[1], cardType[1], false);
+        secondCard.SetDisplay();
     };
     /**翻单个用户的手牌动画
-     * @param _user : 需要翻牌的用户
+     * @param user : 需要翻牌的用户
+     * @param turnPoint : 翻牌的坐标点
      */
-    DZCardController.prototype.TurnCardAnim = function (_user) {
+    DZCardController.TurnCardAnim = function (user, turnPoint) {
+        if (user == null)
+            return;
+        var userCardArr = user.cardArr;
+        if (userCardArr == null)
+            return;
+        //拿到两张牌
+        var firstCard = userCardArr[0];
+        var secondCard = userCardArr[1];
+        if (firstCard == null || secondCard == null)
+            return;
+        if (firstCard.isFront || secondCard.isFront)
+            return;
+        firstCard.isFront = true;
+        secondCard.isFront = true;
+        firstCard["gp_poker"].skewY = 180;
+        secondCard["gp_poker"].skewY = 180;
+        firstCard.x = turnPoint.x;
+        firstCard.y = turnPoint.y;
+        secondCard.x = turnPoint.x + DZDefine.cardDis;
+        secondCard.y = turnPoint.y;
+        //由于背面显示时是斜着的并且scale尺寸不合适，故调整
+        firstCard.rotation = secondCard.rotation = 0;
+        firstCard.scaleX = firstCard.scaleY = DZDefine.f_scale;
+        secondCard.scaleX = secondCard.scaleY = DZDefine.f_scale;
+        if (firstCard.isAction || secondCard.isAction)
+            return;
+        firstCard.isAction = secondCard.isAction = true;
+        console.log("1:" + firstCard.isFront + "  2:" + secondCard.isFront);
+        egret.Tween.get(firstCard["gp_poker"]).to({ skewY: 270 }, DZDefine.turnCardTime, egret.Ease.quadOut)
+            .call(function () { firstCard["gp_poker_forward"].visible = true; firstCard["img_poker_back"].visible = false; })
+            .to({ skewY: 360 }, DZDefine.turnCardTime, egret.Ease.quadOut)
+            .call(function () { firstCard.isAction = false; firstCard.isFront = true; console.log("1:" + firstCard.isFront + "  2:" + secondCard.isFront); });
+        egret.Tween.get(secondCard["gp_poker"]).to({ skewY: 270 }, DZDefine.turnCardTime, egret.Ease.quadOut)
+            .call(function () { secondCard["gp_poker_forward"].visible = true; secondCard["img_poker_back"].visible = false; })
+            .to({ skewY: 360 }, DZDefine.turnCardTime, egret.Ease.quadOut)
+            .call(function () { secondCard.isAction = false; secondCard.isFront = true; console.log("1:" + firstCard.isFront + "  2:" + secondCard.isFront); });
     };
     /**往公共牌区域发一张牌的动画 */
-    DZCardController.SendPubCard = function () {
+    DZCardController.SendPubCard = function (start, target) {
+        var poker = DZCardController.CreatePokerFormPool();
+        poker.isFront = false; //先设置为反面
+        poker.alpha = 0;
+        poker.scaleX = poker.scaleY = 0.1;
+        poker.x = start.x;
+        poker.y = start.y;
+        poker.isAction = false;
+        this.tableComponent.addChild(poker);
+        poker.isAction = true;
+        egret.Tween.get(poker).to({ x: target.x, y: target.y, scaleX: 1, scaleY: 1, alpha: 1 }, DZDefine.sendCardTime)
+            .call(function () { /**this._bg["gp_public_cards"].addChild(poker); */ poker.isAction = false; });
+        return poker;
     };
     /**单张翻公共牌动画
-     * @param index : 在Group中的下标
-     * @param
+     * @param poker : 哪张牌
+     * @param direction : 方向
      */
-    DZCardController.prototype.TurnPubCardAnim = function (index) {
+    DZCardController.TurnPubCardAnim = function (poker, direction) {
+        if (direction === void 0) { direction = PokerDir.B2F; }
+        switch (direction) {
+            case PokerDir.F2B:
+                {
+                    poker.isFront = false;
+                    poker.isAction = true;
+                    egret.Tween.get(poker["gp_poker"]).to({ skewY: 90 }, DZDefine.turnCardTime, egret.Ease.quadOut)
+                        .call(function () { poker["gp_poker_forward"].visible = false; poker["img_poker_back"].visible = true; })
+                        .to({ skewY: 180 }, DZDefine.turnCardTime, egret.Ease.quadOut)
+                        .call(function () { poker.isAction = false; });
+                }
+                break;
+            case PokerDir.B2F:
+                {
+                    poker.isFront = true;
+                    poker.isAction = true;
+                    poker["gp_poker"].skewY = 180;
+                    egret.Tween.get(poker["gp_poker"]).to({ skewY: 270 }, DZDefine.turnCardTime, egret.Ease.quadOut)
+                        .call(function () { poker["gp_poker_forward"].visible = true; poker["img_poker_back"].visible = false; })
+                        .to({ skewY: 360 }, DZDefine.turnCardTime, egret.Ease.quadOut)
+                        .call(function () { poker.isAction = false; });
+                }
+                break;
+        }
     };
     /**弃牌动画
      * @param _user : 需要弃牌的用户
      */
-    DZCardController.prototype.AbandonCardAnim = function (_user) {
+    DZCardController.AbandonCardAnim = function (_user) {
     };
     /**获得卡牌值资源 */
     DZCardController.GetValueRes = function (value, type) {

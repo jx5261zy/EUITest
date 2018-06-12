@@ -72,6 +72,9 @@ var DZUser = (function (_super) {
     /**隐藏头像遮罩 */
     DZUser.prototype.HideHeadMask = function () {
     };
+    /**下注 */
+    DZUser.prototype.Bet = function () {
+    };
     /**开始头像框操作进度条倒计时动画 */
     DZUser.prototype.StartOperationBarAnim = function (_time) {
         this._borderProgressBarDraw.startDraw(_time);
@@ -89,18 +92,6 @@ var DZUser = (function (_super) {
     };
     /**改变玩家的操作状态  弃牌，加注，跟注，让牌，全下 */
     DZUser.prototype.ChangeState = function () {
-    };
-    /**高亮框闪烁 */
-    DZUser.prototype.FlareBar = function () {
-        var _this = this;
-        this.img_time_bar.visible = true;
-        egret.Tween.get(this.img_time_bar).to({ scaleX: 1.4, scaleY: 1.4, alpha: 0 }, 300)
-            .to({ scaleX: 1, scale: 1, alpha: 1 }, 300)
-            .to({ scaleX: 1.4, scaleY: 1.4, alpha: 0 }, 300)
-            .to({ scaleX: 1, scale: 1, alpha: 1 }, 300)
-            .to({ scaleX: 1.4, scaleY: 1.4, alpha: 0 }, 300)
-            .to({ scaleX: 1, scale: 1, alpha: 1 }, 300)
-            .call(function () { _this.img_time_bar.visible = false; });
     };
     return DZUser;
 }(GameUser));

@@ -10,7 +10,8 @@
 class DZChipController extends egret.EventDispatcher
 {
 
-
+    public static tableComponent:eui.Component;
+    // public static chipContainer:Array<eui.Image>;
     /**移动筹码 */
     public MoveUserChip(_userID:number)
     {

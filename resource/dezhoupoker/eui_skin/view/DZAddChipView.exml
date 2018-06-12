@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<e:Skin class="DZAddChipView" width="207" height="510" xmlns:e="http://ns.egret.com/eui" xmlns:w="http://ns.egret.com/wing" xmlns:ns1="*">
+	<e:Image id="img_allin_bg" x="0" y="0" source="dz_slider_allin_png"/>
+	<e:Image id="img_bg" x="0" y="0" source="dz_chip_slider_bg_png"/>
+	<ns1:DZBetSlider width="46" height="415" x="80.5" y="90" skinName="BetSlider" anchorOffsetX="0" anchorOffsetY="0"/>
+</e:Skin>

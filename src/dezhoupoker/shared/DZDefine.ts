@@ -56,6 +56,8 @@ class DZDefine
     public static Q_CINGL_ALLIN = 1;
     /**弃 过 加 */
     public static Q_PASS_ADD = 2;
+    /**一个位图字体的宽度 */
+    public static bplb_Width = 26;
 
 
 //class end

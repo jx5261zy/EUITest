@@ -1,3 +1,5 @@
+declare class BetSlider extends eui.Skin{
+}
 declare class DZChipSkin extends eui.Skin{
 }
 declare class DZHeadSkin extends eui.Skin{
@@ -5,6 +7,8 @@ declare class DZHeadSkin extends eui.Skin{
 declare class DZPokerSkin extends eui.Skin{
 }
 declare class DZPokerOnGameSkin extends eui.Skin{
+}
+declare class DZAddChipView extends eui.Skin{
 }
 declare class DZAudioSetSkin extends eui.Skin{
 }
