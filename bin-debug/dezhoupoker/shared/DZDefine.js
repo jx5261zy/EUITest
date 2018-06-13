@@ -39,6 +39,8 @@ DZDefine.img_type_b_h = 80;
 DZDefine.turnCardTime = 200;
 /**发牌缓动动画的时间 */
 DZDefine.sendCardTime = 200;
+/**筹码移动的 */
+DZDefine.sendChipTime = 200;
 /**底部按钮上升/下降的时间 */
 DZDefine.operationBtns = 500;
 /**操作时间 */

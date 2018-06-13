@@ -15,11 +15,12 @@ var __extends = (this && this.__extends) || function (d, b) {
  */
 var DZUser = (function (_super) {
     __extends(DZUser, _super);
-    function DZUser(_userID, _tableID, _chairID, _role) {
+    function DZUser(_userID, _tableID, _chairID, _role, bet) {
         var _this = _super.call(this, _userID, _tableID, _chairID, _role) || this;
         _this.isAbandon = false;
         _this.isBanker = false;
         _this._isFaceGropuInited = false;
+        _this.gp_betPool = bet;
         return _this;
     }
     /** 初始化控件
@@ -73,7 +74,25 @@ var DZUser = (function (_super) {
     DZUser.prototype.HideHeadMask = function () {
     };
     /**下注 */
-    DZUser.prototype.Bet = function () {
+    DZUser.prototype.Bet = function (value) {
+        if (this.gold < value) {
+            console.log("金币不足");
+            return;
+        }
+        if (this.chip != null) {
+            this.tmpChip = this.chip;
+        }
+        this.chip = DZChipController.MoveUserChip(this);
+        this.chip.value = value;
+        this.gold -= value;
+        this.ShowHeadGold();
+        // this.gp_betPool["lb_chip_" + this.chairID].text = value;
+        var label = this.gp_betPool.getChildByName("lb_chip_" + this.chairID);
+        if (label == null)
+            console.log("label是空的");
+        else
+            label.text = value + "";
+        this.chip.SetDisplay();
     };
     /**开始头像框操作进度条倒计时动画 */
     DZUser.prototype.StartOperationBarAnim = function (_time) {

@@ -49,7 +49,7 @@ class Main extends eui.UILayer {
     /**发牌的起点 */
     private _cardStartPos:eui.Rect;
     private mainUser:DZUser;
-    private chairID_User:Array<DZUser>;
+    public chairID_User:Array<DZUser>;
     /**庄 */
     private _banker:DZUser;
     /**大盲位 */
@@ -58,11 +58,13 @@ class Main extends eui.UILayer {
     private _lowBland:DZUser;
     /**计时器 */
     private _timer:GameTimer;
+    /**底池的值 */
+    // public 
 
     public static getInstance():Main
     {
-        if(Main.instance != null)
-            return Main.instance;
+        if(Main._instance != null)
+            return Main._instance;
     }
 
 
@@ -164,26 +166,30 @@ class Main extends eui.UILayer {
     }
     private textfield:egret.TextField;
 
-    private static instance:Main;
+    private static _instance:Main;
+    public static get instance():Main
+    {
+        return this._instance;
+    }
     private OnKeyDown(key)
     {
         switch(key.keyCode)
         {
             //W
             case 87:
-                Main.instance.ShowOperateBtns();
+                Main._instance.ShowOperateBtns();
                 console.log("显示按钮组");
             break;
 
             //S
             case 83:
-                Main.instance.HideOperateBtns();
+                Main._instance.HideOperateBtns();
                 console.log("隐藏按钮组");
             break;
 
             //space
             case 32:
-                var poker:DZCardView = Main.instance.SendPubCard();
+                var poker:DZCardView = Main._instance.SendPubCard();
                 if(poker != null)
                 {
                     var value = Math.round(Math.random() * 10 + Math.random() * 10 % 4);
@@ -197,8 +203,8 @@ class Main extends eui.UILayer {
 
             //U
             case 85:
-                Main.instance.mainUser.StartOperationBarAnim(DZDefine.iOperateTime);
-                Main.instance.chairID_User.forEach(element=>{
+                Main._instance.mainUser.StartOperationBarAnim(DZDefine.iOperateTime);
+                Main._instance.chairID_User.forEach(element=>{
                     element.StartOperationBarAnim(DZDefine.iOperateTime);
                 })
                 console.log("开始玩家操作倒计时");
@@ -206,11 +212,11 @@ class Main extends eui.UILayer {
 
             //F
             case 70:
-                for(let i = 0; i < Main.instance._pubCardContainer.length; i++)
+                for(let i = 0; i < Main._instance._pubCardContainer.length; i++)
                 {
-                    if(!Main.instance._pubCardContainer[i].isFront)
+                    if(!Main._instance._pubCardContainer[i].isFront)
                     {
-                        Main.instance.TurnPubCardAnim(i,PokerDir.B2F);
+                        Main._instance.TurnPubCardAnim(i,PokerDir.B2F);
                         break;
                     }
                 }
@@ -218,7 +224,7 @@ class Main extends eui.UILayer {
 
             //C
             case 67:
-                Main.instance.SendUsersCardsAnim();
+                Main._instance.SendUsersCardsAnim();
                 console.log("发送所有玩家的手牌");
             break;
 
@@ -226,14 +232,14 @@ class Main extends eui.UILayer {
             case 88:
                 for(let i = 0; i < 6; i++)
                 {
-                    Main.instance.TurnCardAnim(i);
+                    Main._instance.TurnCardAnim(i);
                     var value = Math.round(Math.random() * 10 + Math.random() * 10 % 4);
                     var type = Math.round(Math.random() * 10 % 3);
                     var value1 = Math.round(Math.random() * 10 + Math.random() * 10 % 4);
                     var type1 = Math.round(Math.random() * 10 % 3);
                     var _value = [value,value1];
                     var _type = [type,type1];
-                    Main.instance.SetUserCardData(i,_value,_type);
+                    Main._instance.SetUserCardData(i,_value,_type);
                 }
                 
                 
@@ -242,47 +248,63 @@ class Main extends eui.UILayer {
 
             //Z
             case 90:
-                Main.instance.TurnCardAnim(Main.instance.mainUser.chairID);
+                Main._instance.TurnCardAnim(Main._instance.mainUser.chairID);
                 var value = Math.round(Math.random() * 10 + Math.random() * 10 % 4);
                 var type = Math.round(Math.random() * 10 % 3);
                 var value1 = Math.round(Math.random() * 10 + Math.random() * 10 % 4);
                 var type1 = Math.round(Math.random() * 10 % 3);
                 var _value = [value,value1];
                 var _type = [type,type1];
-                Main.instance.SetUserCardData(Main.instance.mainUser.chairID,_value,_type);
+                Main._instance.SetUserCardData(Main._instance.mainUser.chairID,_value,_type);
             break;
 
             //B
             case 66:
-                var bankerID = Math.round(Math.random() * 10 % Main.instance.chairID_User.length);
+                var bankerID = Math.round(Math.random() * 10 % Main._instance.chairID_User.length);
                 if(bankerID == 6)
                     bankerID--;
                 // var bankerID = 2;
                 console.log("bankerID:" + bankerID);
-                Main.instance.chairID_User[bankerID].isBanker = true;
-                Main.instance.SendBankerLogoAnim(bankerID);
+                Main._instance.chairID_User[bankerID].isBanker = true;
+                Main._instance.SendBankerLogoAnim(bankerID);
 
             break;
 
 
             //I
             case 73:
-                Main.instance.SetOperationBtnsDisplay(DZDefine.Q_CINGL_ADD);
+                Main._instance.SetOperationBtnsDisplay(DZDefine.Q_CINGL_ADD);
             break;
 
             //O
             case 79:
-                Main.instance.SetOperationBtnsDisplay(DZDefine.Q_CINGL_ALLIN);
+                Main._instance.SetOperationBtnsDisplay(DZDefine.Q_CINGL_ALLIN);
             break;
 
             //P
             case 80:
-                Main.instance.SetOperationBtnsDisplay(DZDefine.Q_PASS_ADD);
+                Main._instance.SetOperationBtnsDisplay(DZDefine.Q_PASS_ADD);
             break;
 
 
+            //D
+            case 68:
+                // Main.instance.mainUser.Bet(1000);
+                Main.betValue += 50;
+                Main.instance.chairID_User.forEach(ele=>{
+                    ele.Bet(Main.betValue);
+                });
+            break;
+
+            //E
+            case 69:
+                DZChipController.MoveAllChipsToPot();
+            break;
+
         }
     }
+
+    private static betValue:number = 0;
 
 
     private OnBtnClick(evt:egret.Event):void
@@ -325,60 +347,61 @@ class Main extends eui.UILayer {
      * Create scene interface
      */
     protected startCreateScene(): void {
-        // Main.instance = this;
-        // document.onkeydown = this.OnKeyDown;
+        Main._instance = this;
+        document.onkeydown = this.OnKeyDown;
 
-        // this._bg = new eui.Component();
-        // this._bg.skinName = "resource/dezhoupoker/eui_skin/game/DZPokerOnGameSkin.exml";
-        // this._bg.createChildren();
-        // this.addChild(this._bg);
-        // this._pubCardContainer = new Array<DZCardView>();
-        // this._userCardContainer = new Array<DZCardView[]>();
-        // this._cardStartPos = this._bg["pos_send_card"];
-        // this.chairID_User = new Array<DZUser>();
+        this._bg = new eui.Component();
+        this._bg.skinName = "resource/dezhoupoker/eui_skin/game/DZPokerOnGameSkin.exml";
+        this._bg.createChildren();
+        this.addChild(this._bg);
+        this._pubCardContainer = new Array<DZCardView>();
+        this._userCardContainer = new Array<DZCardView[]>();
+        this._cardStartPos = this._bg["pos_send_card"];
+        this.chairID_User = new Array<DZUser>();
         
-        // //循环将桌子上的所有玩家头像框，下注框隐藏
-        // for(let i = 0; i < 6; i++)
-        // {
-        //     this._bg["user_" + i].visible = false;
-        //     this._bg["user_chip_" + i].visible = false;
-        //     this._bg["pub_chip"].visible = false;
-        // }
+        //循环将桌子上的所有玩家头像框，下注框隐藏
+        for(let i = 0; i < 6; i++)
+        {
+            this._bg["user_" + i].visible = false;
+            this._bg["gp_chip_" + i].visible = false;
+            this._bg["gp_pub_chip"].visible = false;
+        }
 
-        // //创建扑克牌对象池
-        // pool.ObjectPool.instance.createObjectPool(DZCardController.DZ_CARD_POOLNAME,DZCardView);
-        // pool.ObjectPool.instance.createObjectPool(DZChipController.DZ_CHIP_POOLNAME,DZChipView);
+        //创建扑克牌对象池
+        pool.ObjectPool.instance.createObjectPool(DZCardController.DZ_CARD_POOLNAME,DZCardView);
+        pool.ObjectPool.instance.createObjectPool(DZChipController.DZ_CHIP_POOLNAME,DZChipView);
 
-        // DZCardController.tableComponent = this._bg;
-        // DZChipController.tableComponent = this._bg;
+        DZCardController.tableComponent = this._bg;
+        DZChipController.tableComponent = this._bg;
         
-        // //获取皮肤中的组件
-        // this._btn_return = this._bg["btn_return"];
-        // this._btn_drop_down = this._bg["btn_drop_down"];
-        // this._btn_abandon = this._bg["btn_abandon"];
-        // this._btn_pass = this._bg["btn_pass"];
-        // this._btn_add = this._bg["btn_add"];
-        // this._btn_allin = this._bg["btn_allin"];
-        // this._gp_cingl = this._bg["gp_cingl"];
+        //获取皮肤中的组件
+        this._btn_return = this._bg["btn_return"];
+        this._btn_drop_down = this._bg["btn_drop_down"];
+        this._btn_abandon = this._bg["btn_abandon"];
+        this._btn_pass = this._bg["btn_pass"];
+        this._btn_add = this._bg["btn_add"];
+        this._btn_allin = this._bg["btn_allin"];
+        this._gp_cingl = this._bg["gp_cingl"];
 
-        // //增加按钮
-        // this._btnContainer = new ButtonContainer();
-        // this._btnContainer.addEventListener(egret.TouchEvent.TOUCH_TAP,this.OnBtnClick,this);
-        // this._btnContainer.addButton(this._btn_abandon);
-        // this._btnContainer.addButton(this._btn_add);
-        // this._btnContainer.addButton(this._btn_allin);
-        // this._btnContainer.addButton(this._btn_drop_down);
-        // this._btnContainer.addButton(this._btn_pass);
-        // this._btnContainer.addButton(this._btn_return);
-        // this._btnContainer.addButton(this._gp_cingl);
+        //增加按钮
+        this._btnContainer = new ButtonContainer();
+        this._btnContainer.addEventListener(egret.TouchEvent.TOUCH_TAP,this.OnBtnClick,this);
+        this._btnContainer.addButton(this._btn_abandon);
+        this._btnContainer.addButton(this._btn_add);
+        this._btnContainer.addButton(this._btn_allin);
+        this._btnContainer.addButton(this._btn_drop_down);
+        this._btnContainer.addButton(this._btn_pass);
+        this._btnContainer.addButton(this._btn_return);
+        this._btnContainer.addButton(this._gp_cingl);
         
-        // this._bg["gp_operation_btns"].y = 750;
-        // this.SetUsers();
-        // this.StartGame();
+        this._bg["gp_operation_btns"].y = 750;
+        this.SetUsers();
+        this.StartGame();
 
-        var slider:eui.Component = new eui.Component();
-        slider.skinName = "resource/dezhoupoker/eui_skin/view/DZAddChipView.exml";
-        this.addChild(slider);
+        //加注滑动条测试
+        // var slider:eui.Component = new eui.Component();
+        // slider.skinName = "resource/dezhoupoker/eui_skin/view/DZAddChipView.exml";
+        // this.addChild(slider);
 
     }
 
@@ -681,37 +704,37 @@ class Main extends eui.UILayer {
     /**测试使用的玩家 */
     private SetUsers()
     {
-        // this.mainUser = new DZUser(111,10,0,UserData);
-        // this.mainUser.nickname = "绘图铅笔2B";
-        // this.mainUser.gold = 11111;
-        // this.mainUser.InitFaceGroup(this._bg["user_" + this.mainUser.chairID]);
-        // this.chairID_User[this.mainUser.chairID] = this.mainUser;
+        this.mainUser = new DZUser(111,10,0,UserData,this._bg["gp_chip_" + 0]);
+        this.mainUser.nickname = "绘图铅笔2B";
+        this.mainUser.gold = 11111;
+        this.mainUser.InitFaceGroup(this._bg["user_" + this.mainUser.chairID]);
+        this.chairID_User[this.mainUser.chairID] = this.mainUser;
 
-        var user1 = new DZUser(112,10,1,UserData);
+        var user1 = new DZUser(112,10,1,UserData,this._bg["gp_chip_" + 1]);
         user1.nickname = "Holly";
         user1.gold = 10000;
         user1.InitFaceGroup(this._bg["user_" + user1.chairID]);
         this.chairID_User[user1.chairID] = user1;
 
-        var user2 = new DZUser(112,10,2,UserData);
+        var user2 = new DZUser(112,10,2,UserData,this._bg["gp_chip_" + 2]);
         user2.nickname = "Shit";
         user2.gold = 10000;
         user2.InitFaceGroup(this._bg["user_" + user2.chairID]);
         this.chairID_User[user2.chairID] = user2;
 
-        // var user3 = new DZUser(112,10,3,UserData);
-        // user3.nickname = "Mother";
-        // user3.gold = 10000;
-        // user3.InitFaceGroup(this._bg["user_" + user3.chairID]);
-        // this.chairID_User[user3.chairID] = user3;
+        var user3 = new DZUser(112,10,3,UserData,this._bg["gp_chip_" + 3]);
+        user3.nickname = "Mother";
+        user3.gold = 10000;
+        user3.InitFaceGroup(this._bg["user_" + user3.chairID]);
+        this.chairID_User[user3.chairID] = user3;
 
-        var user4 = new DZUser(112,10,4,UserData);
+        var user4 = new DZUser(112,10,4,UserData,this._bg["gp_chip_" + 4]);
         user4.nickname = "Fucker";
         user4.gold = 10000;
         user4.InitFaceGroup(this._bg["user_" + user4.chairID]);
         this.chairID_User[user4.chairID] = user4;
 
-        var user5 = new DZUser(112,10,5,UserData);
+        var user5 = new DZUser(112,10,5,UserData,this._bg["gp_chip_" + 5]);
         user5.nickname = "Stupid";
         user5.gold = 10000;
         user5.InitFaceGroup(this._bg["user_" + user5.chairID]);

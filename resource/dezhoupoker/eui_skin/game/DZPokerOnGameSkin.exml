@@ -14,7 +14,7 @@
 		<e:Image id="btn_cingl" anchorOffsetX="0" anchorOffsetY="0" right="0" scaleX="1" scaleY="1" left="0" top="0" bottom="0" source="dz_cingl_btn_bg_png"/>
 			<e:Group id="gp_cingl_num" left="0" right="0" top="0" bottom="0">
 				<e:Image id="img_font_cingl" width="41" height="37" x="54.5" y="16.5" source="cingl_png" scaleX="1" scaleY="1"/>
-				<e:BitmapLabel id="cingl_num" width="78" height="35" x="108.33" y="18.16" font="dz_num_fnt" text="123" anchorOffsetX="0" anchorOffsetY="0" textAlign="left" cacheAsBitmap="true"/>
+				<e:BitmapLabel id="cingl_num" x="108.33" y="18.16" font="dz_num_fnt" text="200" anchorOffsetX="0" anchorOffsetY="0" textAlign="left" cacheAsBitmap="true"/>
 				<e:layout>
 					<e:HorizontalLayout horizontalAlign="center" verticalAlign="middle" gap="0"/>
 				</e:layout>
@@ -32,11 +32,32 @@
 	<e:Component id="user_3" width="120" height="165" anchorOffsetX="0" anchorOffsetY="0" skinName="DZHeadSkin" scaleX="1" scaleY="1" bottom="125" left="370"/>
 	<e:Component id="user_4" width="120" height="165" anchorOffsetX="0" anchorOffsetY="0" skinName="DZHeadSkin" scaleX="1" scaleY="1" x="75" verticalCenter="0"/>
 	<e:Component id="user_5" width="120" height="165" anchorOffsetX="0" anchorOffsetY="0" skinName="DZHeadSkin" scaleX="1" scaleY="1" left="314" top="36"/>
-	<e:Image id="user_chip_0" width="109" height="31" x="905" y="210" source="dz_chip_bg_png"/>
-	<e:Image id="user_chip_1" width="109" height="31" x="1015" y="300" source="dz_chip_bg_png"/>
-	<e:Image id="user_chip_2" width="109" height="31" x="725" y="462" source="dz_chip_bg_png"/>
-	<e:Image id="user_chip_3" width="109" height="31" x="503" y="462" source="dz_chip_bg_png"/>
-	<e:Image id="user_chip_4" width="109" height="31" x="210.42" y="300" source="dz_chip_bg_png"/>
-	<e:Image id="user_chip_5" width="109" height="31" x="319.42" y="210" source="dz_chip_bg_png"/>
-	<e:Image id="pub_chip" width="109" height="31" y="232.87" source="dz_chip_bg_png" horizontalCenter="0.5"/>
+	<e:Group id="gp_chip_0" width="109" height="31" x="905" y="210">
+		<e:Image id="user_chip_0" width="109" height="31" x="0" y="0" source="dz_chip_bg_png" scaleX="1" scaleY="1"/>
+		<e:Label id="lb_chip_0" text="" size="24" x="35" anchorOffsetX="0" anchorOffsetY="0" verticalCenter="0"/>
+	</e:Group>
+	<e:Group id="gp_chip_1" width="109" height="31" x="1015" y="300">
+		<e:Image id="user_chip_1" width="109" height="31" x="0" y="0" source="dz_chip_bg_png" scaleX="1" scaleY="1"/>
+		<e:Label text="" size="24" x="35" anchorOffsetX="0" anchorOffsetY="0" verticalCenter="0" id="lb_chip_1" y="-74" scaleX="1" scaleY="1"/>
+	</e:Group>
+	<e:Group id="gp_chip_2" width="109" height="31" x="725" y="462">
+		<e:Image id="user_chip_2" width="109" height="31" x="0" y="0" source="dz_chip_bg_png" scaleX="1" scaleY="1"/>
+		<e:Label text="" size="24" x="35" anchorOffsetX="0" anchorOffsetY="0" verticalCenter="0" id="lb_chip_2" y="-146" scaleX="1" scaleY="1"/>
+	</e:Group>
+	<e:Group id="gp_chip_3" width="109" height="31" x="503" y="462">
+		<e:Image id="user_chip_3" width="109" height="31" x="0" y="0" source="dz_chip_bg_png" scaleX="1" scaleY="1"/>
+		<e:Label text="" size="24" x="35" anchorOffsetX="0" anchorOffsetY="0" verticalCenter="0" id="lb_chip_3" y="16" scaleX="1" scaleY="1"/>
+	</e:Group>
+	<e:Group id="gp_chip_4" width="109" height="31" x="210.42" y="300">
+		<e:Image id="user_chip_4" width="109" height="31" x="0" y="0" source="dz_chip_bg_png" scaleX="1" scaleY="1"/>
+		<e:Label text="" size="24" x="35" anchorOffsetX="0" anchorOffsetY="0" verticalCenter="0" id="lb_chip_4" y="178" scaleX="1" scaleY="1"/>
+	</e:Group>
+	<e:Group id="gp_chip_5" width="109" height="31" x="319.42" y="210">
+		<e:Image id="user_chip_5" width="109" height="31" x="0" y="0" source="dz_chip_bg_png" scaleX="1" scaleY="1"/>
+		<e:Label size="24" x="35" anchorOffsetX="0" anchorOffsetY="0" verticalCenter="0" id="lb_chip_5" y="106" scaleX="1" scaleY="1"/>
+	</e:Group>
+	<e:Group id="gp_pub_chip" width="109" height="31" x="613" y="232.87">
+		<e:Image id="pub_chip" width="109" height="31" y="0" source="dz_chip_bg_png" horizontalCenter="0.5" x="0" scaleX="1" scaleY="1"/>
+		<e:Label id="lb_pub_chip" size="24" x="35" anchorOffsetX="0" anchorOffsetY="0" verticalCenter="0" y="-6.8700000000000045" scaleX="1" scaleY="1"/>
+	</e:Group>
 </e:Skin>

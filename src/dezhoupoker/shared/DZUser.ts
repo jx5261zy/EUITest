@@ -14,6 +14,10 @@ class DZUser extends GameUser
     public isBanker:boolean = false;
     /**手牌数组 */
     public cardArr:DZCardView[];
+    /**筹码显示组件 */
+    public chip:DZChipView;
+    /**记住上一次的筹码，方便清理内存以及清理显示 */
+    public tmpChip:DZChipView;
 
     /**头像组件 */
     private img_bg:eui.Image;
@@ -22,15 +26,17 @@ class DZUser extends GameUser
     private img_faceID:eui.Image;
     /**头像框中的时间条 */
     private img_time_bar:eui.Image;
-
+    /**对应的下注池 */
+    public gp_betPool:eui.Group;
     /**头像框的倒计时条 */
     private _borderProgressBarDraw:BorderProgressBarDraw;
 
     private _isFaceGropuInited:boolean = false;
 
-    public constructor(_userID:number,_tableID:number,_chairID:number,_role:any)
+    public constructor(_userID:number,_tableID:number,_chairID:number,_role:any,bet:eui.Group)
     {
         super(_userID,_tableID,_chairID,_role);
+        this.gp_betPool = bet;
     }
 
 
@@ -116,9 +122,26 @@ class DZUser extends GameUser
 
 
     /**下注 */
-    public Bet()
+    public Bet(value:number)
     {
-        
+        if(this.gold < value)
+        {
+            console.log("金币不足");
+            return;
+        }
+        if(this.chip != null)
+        {
+            this.tmpChip = this.chip;
+        }
+        this.chip = DZChipController.MoveUserChip(this);
+        this.chip.value = value;
+        this.gold -= value;
+        this.ShowHeadGold();
+        // this.gp_betPool["lb_chip_" + this.chairID].text = value;
+        var label:eui.Label = this.gp_betPool.getChildByName("lb_chip_" + this.chairID) as eui.Label;
+        if(label == null) console.log("label是空的");
+        else label.text = value + "";
+        this.chip.SetDisplay();
     }
 
 

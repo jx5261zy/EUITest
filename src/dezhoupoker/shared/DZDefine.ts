@@ -35,6 +35,8 @@ class DZDefine
     public static turnCardTime:number = 200;
     /**发牌缓动动画的时间 */
     public static sendCardTime:number = 200;
+    /**筹码移动的 */
+    public static sendChipTime:number = 200;
     /**底部按钮上升/下降的时间 */
     public static operationBtns:number = 500;
     /**操作时间 */
