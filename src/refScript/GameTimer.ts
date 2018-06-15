@@ -24,6 +24,7 @@ class GameTimer extends egret.Timer{
 	public constructor(delay:number,repeatCount?:number) {
         super(delay,repeatCount);
 	}
+
 	public start():void
 	{
 	    super.start();

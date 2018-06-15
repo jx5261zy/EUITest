@@ -33,10 +33,10 @@ class DZChipController extends egret.EventDispatcher
         target.y += 3;//筹码如果直接按照背景的位置有点偏，所以往下来一点正好
         egret.Tween.get(chip).to({x:target.x,y:target.y},DZDefine.sendChipTime)
                             .call(()=>{user.gp_betPool.visible = true;chip.isAction = false;
-                                           if(user.tmpChip != null)
+                                           if(user.lastChip != null)
                                             {
-                                                DZChipController.tableComponent.removeChild(user.tmpChip);
-                                                user.tmpChip.dispose();
+                                                DZChipController.tableComponent.removeChild(user.lastChip);
+                                                DZChipController.RecycleChipToPool(user.lastChip);
                                             }
                                         });
 
@@ -63,7 +63,9 @@ class DZChipController extends egret.EventDispatcher
                     egret.Tween.get(ele.chip).to({x:target.x,y:target.y},DZDefine.sendChipTime)
                                         .call(()=>  {
                                                             ele.chip.isAction = false;
-                                                            ele.chip.dispose();//移动玩销毁物体
+                                                            pot.visible = true;
+                                                            // ele.chip.dispose();//移动完销毁物体
+                                                            DZChipController.RecycleChipToPool(ele.chip);
                                                         });
             }
         });
@@ -77,7 +79,7 @@ class DZChipController extends egret.EventDispatcher
     /**从底池向玩家分发筹码 */
     public MovePotChipsToUser()
     {
-
+        
     }
 
 

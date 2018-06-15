@@ -40,9 +40,9 @@ var DZChipController = (function (_super) {
             .call(function () {
             user.gp_betPool.visible = true;
             chip.isAction = false;
-            if (user.tmpChip != null) {
-                DZChipController.tableComponent.removeChild(user.tmpChip);
-                user.tmpChip.dispose();
+            if (user.lastChip != null) {
+                DZChipController.tableComponent.removeChild(user.lastChip);
+                DZChipController.RecycleChipToPool(user.lastChip);
             }
         });
         return chip;
@@ -63,7 +63,9 @@ var DZChipController = (function (_super) {
                 egret.Tween.get(ele.chip).to({ x: target.x, y: target.y }, DZDefine.sendChipTime)
                     .call(function () {
                     ele.chip.isAction = false;
-                    ele.chip.dispose(); //移动玩销毁物体
+                    pot.visible = true;
+                    // ele.chip.dispose();//移动完销毁物体
+                    DZChipController.RecycleChipToPool(ele.chip);
                 });
             }
         });

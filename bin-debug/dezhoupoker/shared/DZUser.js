@@ -80,7 +80,7 @@ var DZUser = (function (_super) {
             return;
         }
         if (this.chip != null) {
-            this.tmpChip = this.chip;
+            this.lastChip = this.chip;
         }
         this.chip = DZChipController.MoveUserChip(this);
         this.chip.value = value;

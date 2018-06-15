@@ -554,11 +554,14 @@ var Main = (function (_super) {
             }
         }
         this.SendBankerLogoAnim(bankerID);
-        //下盲注
+        //获得盲注位
         this.GetBland();
         console.log("Banker : " + this._banker.nickname);
         console.log("lowBland : " + this._lowBland.nickname);
         console.log("highBland : " + this._highBland.nickname);
+        //下盲注
+        this._highBland.Bet(20);
+        this._lowBland.Bet(20);
         // //发所有人的手牌
         // this.SendUsersCardsAnim();
     };

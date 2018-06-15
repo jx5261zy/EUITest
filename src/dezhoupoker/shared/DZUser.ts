@@ -17,7 +17,7 @@ class DZUser extends GameUser
     /**筹码显示组件 */
     public chip:DZChipView;
     /**记住上一次的筹码，方便清理内存以及清理显示 */
-    public tmpChip:DZChipView;
+    public lastChip:DZChipView;
 
     /**头像组件 */
     private img_bg:eui.Image;
@@ -131,7 +131,7 @@ class DZUser extends GameUser
         }
         if(this.chip != null)
         {
-            this.tmpChip = this.chip;
+            this.lastChip = this.chip;
         }
         this.chip = DZChipController.MoveUserChip(this);
         this.chip.value = value;
