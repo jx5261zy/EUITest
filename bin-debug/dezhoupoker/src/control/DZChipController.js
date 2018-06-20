@@ -50,12 +50,12 @@ var DZChipController = (function (_super) {
     //TODO：记得要撰写边池，需要跟服务器商讨逻辑谁来处理
     /**移动所有玩家的筹码入底池 */
     DZChipController.MoveAllChipsToPot = function () {
-        if (Main.instance.chairID_User.length <= 0)
+        if (DZPokerOnGameView.instance.chairID_User.length <= 0)
             return;
         var pot = DZChipController.tableComponent["gp_pub_chip"];
         var target = new egret.Point(pot.x, pot.y);
         target.y += 3; //筹码如果直接按照背景的位置有点偏，所以往下来一点正好
-        var users = Main.instance.chairID_User;
+        var users = DZPokerOnGameView.instance.chairID_User;
         users.forEach(function (ele) {
             if (ele.chip != null) {
                 ele.chip.isAction = true;

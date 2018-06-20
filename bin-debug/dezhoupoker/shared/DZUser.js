@@ -15,12 +15,11 @@ var __extends = (this && this.__extends) || function (d, b) {
  */
 var DZUser = (function (_super) {
     __extends(DZUser, _super);
-    function DZUser(_userID, _tableID, _chairID, _role, bet) {
+    function DZUser(_userID, _tableID, _chairID, _role) {
         var _this = _super.call(this, _userID, _tableID, _chairID, _role) || this;
         _this.isAbandon = false;
         _this.isBanker = false;
         _this._isFaceGropuInited = false;
-        _this.gp_betPool = bet;
         return _this;
     }
     /** 初始化控件
@@ -30,24 +29,20 @@ var DZUser = (function (_super) {
         this.headComponent = _component;
         this.headComponent.visible = true;
         //初始化组件变量(多此一举)
-        // this.img_bg = this.headComponent.getChildByName("img_bg") as eui.Image;
         this.img_bg = this.headComponent["img_bg"];
         this.lb_name = this.headComponent["lb_name"];
         this.lb_gold = this.headComponent["lb_gold"];
         this.img_faceID = this.headComponent["img_faceID"];
         this.img_time_bar = this.headComponent["img_time_bar"];
-        //TODO ：倒计时条
         var barW = this.img_time_bar.width;
         var barH = this.img_time_bar.height;
         this._borderProgressBarDraw = new BorderProgressBarDraw(this.img_time_bar, barW, barH);
         Utils.loadHeadImg(this.role.iFaceUrl, this.img_bg); //加载用户头像，这个方法不清楚怎么实现的
         this.headComponent.touchChildren = false;
         this.headComponent.touchEnabled = true;
-        //TODO：给头像组件增加点击监听
+        this.headComponent.addEventListener(egret.TouchEvent.TOUCH_TAP, this.OnHeadClick, this);
         this.lb_name.text = Utils.cutStrWithDot(this.nickname, 8);
         this.ShowHeadGold();
-        if (this.userID == UserData.userID) {
-        }
     };
     /**初始化组件中的各个控件的数据 */
     DZUser.prototype.InitFaceGroup = function (_component) {
@@ -66,6 +61,7 @@ var DZUser = (function (_super) {
     };
     /**点击头像回调函数 */
     DZUser.prototype.OnHeadClick = function () {
+        console.log("你点击了" + this.nickname + "的头像");
     };
     /**显示头像遮罩 */
     DZUser.prototype.ShowHeadMask = function () {
