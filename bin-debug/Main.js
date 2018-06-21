@@ -40,6 +40,10 @@ var Main = (function (_super) {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.isThemeLoadEnd = false;
         _this.isResourceLoadEnd = false;
+        /**上一个操作的椅子号 */
+        _this.lastOpChairID = -1;
+        _this.isBlindEnd = false;
+        _this.isUserOpEnd = true;
         return _this;
         //class end
     }
@@ -141,13 +145,91 @@ var Main = (function (_super) {
         enumerable: true,
         configurable: true
     });
+    Main.prototype.OnKeyDown = function (key) {
+        switch (key.keyCode) {
+            //W 开始盲注 庄的椅子号/用户id，小盲注的量
+            case 87:
+                if (Main.instance.isBlindEnd)
+                    return;
+                DZPokerOnGameView.instance.SC_StartGame({
+                    iBankerID: 0,
+                    iLowBetValue: 10
+                });
+                break;
+            //S
+            case 83:
+                break;
+            //space
+            case 32:
+                break;
+            //U 玩家操作
+            case 85:
+                if (!Main.instance.isBlindEnd || !Main.instance.isUserOpEnd)
+                    return;
+                var curChairID;
+                if (Main.instance.lastOpChairID == 5)
+                    curChairID = Main.instance.lastOpChairID = 0;
+                else
+                    curChairID = Main.instance.lastOpChairID + 1;
+                var opType;
+                var addValue = 0;
+                var random = Math.random();
+                if (random <= 0.1) {
+                    opType = UserOp.ADD;
+                    addValue = 20;
+                }
+                else if (random > 0.1 && random < 0.7)
+                    opType = UserOp.CINGL;
+                else if (random >= 0.7)
+                    opType = UserOp.ABANDON;
+                DZPokerOnGameView.instance.SC_User_Operation({
+                    iCurChairID: curChairID,
+                    iOpType: opType,
+                    iAddValue: addValue,
+                });
+                Main.instance.isUserOpEnd = false;
+                Main.instance.lastOpChairID = curChairID;
+                break;
+            //F
+            case 70:
+                break;
+            //C
+            case 67:
+                break;
+            //X 发手牌
+            case 88:
+                DZPokerOnGameView.instance.SC_Blind_END_SendCard;
+                break;
+            //Z
+            case 90:
+                break;
+            //B
+            case 66:
+                break;
+            //I
+            case 73:
+                break;
+            //O
+            case 79:
+                break;
+            //P
+            case 80:
+                break;
+            //D
+            case 68:
+                break;
+            //E
+            case 69:
+                break;
+        }
+    };
     /**
      * 创建场景界面
      * Create scene interface
      */
     Main.prototype.startCreateScene = function () {
         Main._instance = this;
-        // document.onkeydown = this.OnKeyDown;
+        document.onkeydown = this.OnKeyDown;
         this.SetUsers();
         var dzGame = new DZPokerOnGameView(this._table);
         this.addChild(dzGame);
@@ -156,22 +238,11 @@ var Main = (function (_super) {
         // slider.skinName = "resource/dezhoupoker/eui_skin/view/DZAddChipView.exml";
         // this.addChild(slider);
     };
-    /**底部操作条上升 */
-    Main.prototype.ShowOperateBtns = function () {
-        var bottom = this._bg["gp_operation_btns"];
-        egret.Tween.get(bottom).to({ x: 0, y: 650 }, DZDefine.operationBtns)
-            .call(function () { bottom.touchChildren = true; });
-    };
-    /**隐藏底部操作按钮 按钮下沉*/
-    Main.prototype.HideOperateBtns = function () {
-        var bottom = this._bg["gp_operation_btns"];
-        bottom.touchChildren = false;
-        egret.Tween.get(bottom).to({ x: 0, y: 750 }, DZDefine.operationBtns);
-    };
     /**测试使用的玩家 */
     Main.prototype.SetUsers = function () {
         this._table = new GameTable(10);
         var mainUser = new DZUser(111, 10, 0, UserData);
+        UserData.userID = 111;
         mainUser.nickname = "绘图铅笔2B";
         mainUser.gold = 11111;
         this._table.addUser(mainUser);
@@ -198,119 +269,6 @@ var Main = (function (_super) {
     };
     return Main;
 }(eui.UILayer));
-// private OnKeyDown(key)
-// {
-//     switch(key.keyCode)
-//     {
-//         //W
-//         case 87:
-//             Main._instance.ShowOperateBtns();
-//             console.log("显示按钮组");
-//         break;
-//         //S
-//         case 83:
-//             Main._instance.HideOperateBtns();
-//             console.log("隐藏按钮组");
-//         break;
-//         //space
-//         case 32:
-//             var poker:DZCardView = Main._instance.SendPubCard();
-//             if(poker != null)
-//             {
-//                 var value = Math.round(Math.random() * 10 + Math.random() * 10 % 4);
-//                 var type = Math.round(Math.random() * 10 % 3);
-//                 // var type = CardType.DIAMONDS;
-//                 poker.SetData(value,type,false);
-//                 poker.SetDisplay();
-//                 console.log("发一张公共牌");
-//             }
-//         break;
-//         //U
-//         case 85:
-//             Main._instance.mainUser.StartOperationBarAnim(DZDefine.iOperateTime);
-//             Main._instance.chairID_User.forEach(element=>{
-//                 element.StartOperationBarAnim(DZDefine.iOperateTime);
-//             })
-//             console.log("开始玩家操作倒计时");
-//         break;
-//         //F
-//         case 70:
-//             for(let i = 0; i < Main._instance._pubCardContainer.length; i++)
-//             {
-//                 if(!Main._instance._pubCardContainer[i].isFront)
-//                 {
-//                     Main._instance.TurnPubCardAnim(i,PokerDir.B2F);
-//                     break;
-//                 }
-//             }
-//         break;
-//         //C
-//         case 67:
-//             Main._instance.SendUsersCardsAnim();
-//             console.log("发送所有玩家的手牌");
-//         break;
-//         //X
-//         case 88:
-//             for(let i = 0; i < 6; i++)
-//             {
-//                 Main._instance.TurnCardAnim(i);
-//                 var value = Math.round(Math.random() * 10 + Math.random() * 10 % 4);
-//                 var type = Math.round(Math.random() * 10 % 3);
-//                 var value1 = Math.round(Math.random() * 10 + Math.random() * 10 % 4);
-//                 var type1 = Math.round(Math.random() * 10 % 3);
-//                 var _value = [value,value1];
-//                 var _type = [type,type1];
-//                 Main._instance.SetUserCardData(i,_value,_type);
-//             }
-//             console.log("翻开主玩家手牌");
-//         break;
-//         //Z
-//         case 90:
-//             Main._instance.TurnCardAnim(Main._instance.mainUser.chairID);
-//             var value = Math.round(Math.random() * 10 + Math.random() * 10 % 4);
-//             var type = Math.round(Math.random() * 10 % 3);
-//             var value1 = Math.round(Math.random() * 10 + Math.random() * 10 % 4);
-//             var type1 = Math.round(Math.random() * 10 % 3);
-//             var _value = [value,value1];
-//             var _type = [type,type1];
-//             Main._instance.SetUserCardData(Main._instance.mainUser.chairID,_value,_type);
-//         break;
-//         //B
-//         case 66:
-//             var bankerID = Math.round(Math.random() * 10 % Main._instance.chairID_User.length);
-//             if(bankerID == 6)
-//                 bankerID--;
-//             // var bankerID = 2;
-//             console.log("bankerID:" + bankerID);
-//             Main._instance.chairID_User[bankerID].isBanker = true;
-//             Main._instance.SendBankerLogoAnim(bankerID);
-//         break;
-//         //I
-//         case 73:
-//             Main._instance.SetOperationBtnsDisplay(DZDefine.Q_CINGL_ADD);
-//         break;
-//         //O
-//         case 79:
-//             Main._instance.SetOperationBtnsDisplay(DZDefine.Q_CINGL_ALLIN);
-//         break;
-//         //P
-//         case 80:
-//             Main._instance.SetOperationBtnsDisplay(DZDefine.Q_PASS_ADD);
-//         break;
-//         //D
-//         case 68:
-//             // Main.instance.mainUser.Bet(1000);
-//             Main.betValue += 50;
-//             Main.instance.chairID_User.forEach(ele=>{
-//                 ele.Bet(Main.betValue);
-//             });
-//         break;
-//         //E
-//         case 69:
-//             DZChipController.MoveAllChipsToPot();
-//         break;
-//     }
-// }
 Main.betValue = 0;
 __reflect(Main.prototype, "Main");
 var PokerDir;

@@ -8,6 +8,7 @@ class BaseComponent extends eui.Component {
     public needShow : boolean = true;
     public inited : boolean = false;
     // public scrollerView : ScrollerNotificationView = null;
+    /**游戏桌子信息，包括桌子号，玩家信息等 */
     public _gameTable : GameTable = null;
     public constructor(table : GameTable = null) {
         super();

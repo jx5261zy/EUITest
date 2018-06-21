@@ -18,6 +18,8 @@ class DZUser extends GameUser
     public chip:DZChipView;
     /**记住上一次的筹码，方便清理内存以及清理显示 */
     public lastChip:DZChipView;
+    /**下注的金额 */
+    public betValue:number = 0;
 
     /**头像组件 */
     private img_bg:eui.Image;
@@ -27,7 +29,7 @@ class DZUser extends GameUser
     /**头像框中的时间条 */
     private img_time_bar:eui.Image;
     /**对应的下注池 */
-    public gp_betPool:eui.Group;
+    public betPool:eui.Component;
     /**头像框的倒计时条 */
     private _borderProgressBarDraw:BorderProgressBarDraw;
 
@@ -115,13 +117,11 @@ class DZUser extends GameUser
             this.lastChip = this.chip;
         }
         this.chip = DZChipController.MoveUserChip(this);
+        this.betValue += value;
+        this.betPool["lb_chip_value"].text = this.betValue;
         this.chip.value = value;
         this.gold -= value;
         this.ShowHeadGold();
-        // this.gp_betPool["lb_chip_" + this.chairID].text = value;
-        var label:eui.Label = this.gp_betPool.getChildByName("lb_chip_" + this.chairID) as eui.Label;
-        if(label == null) console.log("label是空的");
-        else label.text = value + "";
         this.chip.SetDisplay();
     }
 
@@ -154,4 +154,11 @@ class DZUser extends GameUser
 
 
 //class end
+}
+
+enum UserOp
+{
+    ABANDON,
+    CINGL,
+    ADD,
 }

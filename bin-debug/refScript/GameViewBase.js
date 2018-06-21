@@ -15,10 +15,6 @@ var GameViewBase = (function (_super) {
     __extends(GameViewBase, _super);
     function GameViewBase(table, gameType, maxPlayerCount) {
         var _this = _super.call(this, table) || this;
-        /**
-         * 创建一个游戏timer
-         */
-        // private _gameTimer: GameTimer;
         _this._timerDic = {};
         /**
          * 本地位置编号
@@ -70,65 +66,60 @@ var GameViewBase = (function (_super) {
      * @param time
      */
     GameViewBase.prototype.setGameTimer = function (chairID, timerID, time) {
-        // if(this._gameTimer == null)
-        // {
-        // 	this._gameTimer = new GameTimer(1000/30);
-        // 	this._gameTimer.addEventListener(egret.TimerEvent.TIMER,this.onGameTimerEvent,this);
-        // }
-        // this._gameTimer.chairID = chairID;
-        // this._gameTimer.timerID = timerID;
-        // this._gameTimer.totalTime = time;
-        // this._gameTimer.start();
+        if (this._gameTimer == null) {
+            this._gameTimer = new GameTimer(1000 / 30);
+            this._gameTimer.addEventListener(egret.TimerEvent.TIMER, this.onGameTimerEvent, this);
+        }
+        this._gameTimer.chairID = chairID;
+        this._gameTimer.timerID = timerID;
+        this._gameTimer.totalTime = time;
+        this._gameTimer.start();
     };
     /**
      * 停止游戏timer
      */
     GameViewBase.prototype.stopGameTimer = function () {
-        // if(this._gameTimer) {
-        // 	this._gameTimer.stop();
-        // }
+        if (this._gameTimer) {
+            this._gameTimer.stop();
+        }
     };
     GameViewBase.prototype.onGameTimerEvent = function (e) {
-        // var remainTime: number = this._gameTimer.remainTime;
-        // if(remainTime == 0)
-        // {
-        // 	this._gameTimer.stop();
-        // }
-        // this.onGameTimer(this._gameTimer.chairID,this._gameTimer.timerID,remainTime);
+        var remainTime = this._gameTimer.remainTime;
+        if (remainTime == 0) {
+            this._gameTimer.stop();
+        }
+        this.onGameTimer(this._gameTimer.chairID, this._gameTimer.timerID, remainTime);
     };
     /**
      * 创建一个计时器
      */
     GameViewBase.prototype.setTimer = function (timerID, time) {
-        // var timer:GameTimer = this._timerDic[timerID];
-        // if(timer == null)
-        // {
-        // 	timer = new GameTimer(1000/30);
-        // 	timer.addEventListener(egret.TimerEvent.TIMER,this.onTimerEvent,this);
-        // 	this._timerDic[timerID] = timer;
-        // }
-        // timer.timerID = timerID;
-        // timer.totalTime = time;
-        // timer.start();
+        var timer = this._timerDic[timerID];
+        if (timer == null) {
+            timer = new GameTimer(1000 / 30);
+            timer.addEventListener(egret.TimerEvent.TIMER, this.onTimerEvent, this);
+            this._timerDic[timerID] = timer;
+        }
+        timer.timerID = timerID;
+        timer.totalTime = time;
+        timer.start();
     };
     GameViewBase.prototype.onTimerEvent = function (e) {
-        // var timer: GameTimer = e.currentTarget;
-        // if(timer.remainTime == 0)
-        // {
-        // 	timer.stop();
-        // }
-        // this.onTimer(timer.timerID,timer.remainTime);
+        var timer = e.currentTarget;
+        if (timer.remainTime == 0) {
+            timer.stop();
+        }
+        this.onTimer(timer.timerID, timer.remainTime);
     };
     /**
      * 停止timer
      * @param timerID
      */
     GameViewBase.prototype.stopTimer = function (timerID) {
-        // var timer: GameTimer = this._timerDic[timerID];
-        // if(timer)
-        // {
-        // 	timer.stop();
-        // }
+        var timer = this._timerDic[timerID];
+        if (timer) {
+            timer.stop();
+        }
     };
     /**
      * 计时器处理

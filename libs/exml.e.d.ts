@@ -1,3 +1,5 @@
+declare class DZBetPool extends eui.Skin{
+}
 declare class BetSlider extends eui.Skin{
 }
 declare class DZChipSkin extends eui.Skin{

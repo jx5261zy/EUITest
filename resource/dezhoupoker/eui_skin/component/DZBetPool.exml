@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<e:Skin class="DZBetPool" width="109" height="31" xmlns:e="http://ns.egret.com/eui" xmlns:w="http://ns.egret.com/wing">
+	<e:Image id="img_bg" x="0" y="0" source="dz_chip_bg_png"/>
+	<e:Label id="lb_chip_value" text="10000" x="34" size="24" verticalCenter="0.5"/>
+</e:Skin>

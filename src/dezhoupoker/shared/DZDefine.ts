@@ -46,8 +46,19 @@ class DZDefine
 
 
     //----------Timer----------
+    /**发庄计时器 */
+    public static SendBanker_Timer:number = 1000; 
+    /**下盲注 */
+    public static Bland_Timer:number = 1001;
+    /**机器人作出反应的计时器 */
+    public static Rob_Operate_Timer:number = 1002;
+    //-------------------------
+
+
+    //----------GameTimer----------
     /**玩家操作 计时器类别 */
-    public static Operation_Timer:number = 1; 
+    public static Operation_Timer:number = 10000; 
+;
     //-------------------------
 
 

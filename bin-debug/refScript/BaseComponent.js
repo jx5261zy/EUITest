@@ -19,6 +19,7 @@ var BaseComponent = (function (_super) {
         _this.needShow = true;
         _this.inited = false;
         // public scrollerView : ScrollerNotificationView = null;
+        /**游戏桌子信息，包括桌子号，玩家信息等 */
         _this._gameTable = null;
         _this._gameTable = table;
         return _this;

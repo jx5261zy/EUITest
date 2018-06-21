@@ -34,11 +34,11 @@ var DZChipController = (function (_super) {
         chip.x = start.x;
         chip.y = start.y;
         chip.isAction = false;
-        var target = new egret.Point(user.gp_betPool.x, user.gp_betPool.y);
+        var target = new egret.Point(user.betPool.x, user.betPool.y);
         target.y += 3; //筹码如果直接按照背景的位置有点偏，所以往下来一点正好
         egret.Tween.get(chip).to({ x: target.x, y: target.y }, DZDefine.sendChipTime)
             .call(function () {
-            user.gp_betPool.visible = true;
+            user.betPool.visible = true;
             chip.isAction = false;
             if (user.lastChip != null) {
                 DZChipController.tableComponent.removeChild(user.lastChip);
@@ -50,12 +50,12 @@ var DZChipController = (function (_super) {
     //TODO：记得要撰写边池，需要跟服务器商讨逻辑谁来处理
     /**移动所有玩家的筹码入底池 */
     DZChipController.MoveAllChipsToPot = function () {
-        if (DZPokerOnGameView.instance.chairID_User.length <= 0)
+        if (DZPokerOnGameView.instance.table.users.length <= 0)
             return;
         var pot = DZChipController.tableComponent["gp_pub_chip"];
         var target = new egret.Point(pot.x, pot.y);
         target.y += 3; //筹码如果直接按照背景的位置有点偏，所以往下来一点正好
-        var users = DZPokerOnGameView.instance.chairID_User;
+        var users = DZPokerOnGameView.instance.table.users;
         users.forEach(function (ele) {
             if (ele.chip != null) {
                 ele.chip.isAction = true;

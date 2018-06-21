@@ -16,6 +16,7 @@
   },
   "autoGenerateExmlsList": true,
   "exmls": [
+    "resource/dezhoupoker/eui_skin/component/DZBetPool.exml",
     "resource/dezhoupoker/eui_skin/component/DZBetSlider.exml",
     "resource/dezhoupoker/eui_skin/component/DZChipSkin.exml",
     "resource/dezhoupoker/eui_skin/component/DZHeadSkin.exml",

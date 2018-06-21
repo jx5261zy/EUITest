@@ -19,6 +19,8 @@ var DZUser = (function (_super) {
         var _this = _super.call(this, _userID, _tableID, _chairID, _role) || this;
         _this.isAbandon = false;
         _this.isBanker = false;
+        /**下注的金额 */
+        _this.betValue = 0;
         _this._isFaceGropuInited = false;
         return _this;
     }
@@ -56,9 +58,6 @@ var DZUser = (function (_super) {
         if (this.headComponent)
             this.lb_gold.text = Utils.numberFormat(this.gold, 2); //gold数据在第一次服务器发送时就已经存在了
     };
-    /**头像框高亮动画 提醒玩家在桌子的哪个位置 */
-    DZUser.prototype.ShowUserTablePosAnim = function () {
-    };
     /**点击头像回调函数 */
     DZUser.prototype.OnHeadClick = function () {
         console.log("你点击了" + this.nickname + "的头像");
@@ -79,15 +78,11 @@ var DZUser = (function (_super) {
             this.lastChip = this.chip;
         }
         this.chip = DZChipController.MoveUserChip(this);
+        this.betValue += value;
+        this.betPool["lb_chip_value"].text = this.betValue;
         this.chip.value = value;
         this.gold -= value;
         this.ShowHeadGold();
-        // this.gp_betPool["lb_chip_" + this.chairID].text = value;
-        var label = this.gp_betPool.getChildByName("lb_chip_" + this.chairID);
-        if (label == null)
-            console.log("label是空的");
-        else
-            label.text = value + "";
         this.chip.SetDisplay();
     };
     /**开始头像框操作进度条倒计时动画 */
@@ -111,4 +106,10 @@ var DZUser = (function (_super) {
     return DZUser;
 }(GameUser));
 __reflect(DZUser.prototype, "DZUser");
+var UserOp;
+(function (UserOp) {
+    UserOp[UserOp["ABANDON"] = 0] = "ABANDON";
+    UserOp[UserOp["CINGL"] = 1] = "CINGL";
+    UserOp[UserOp["ADD"] = 2] = "ADD";
+})(UserOp || (UserOp = {}));
 //# sourceMappingURL=DZUser.js.map

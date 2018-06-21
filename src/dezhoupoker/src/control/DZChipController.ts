@@ -29,10 +29,11 @@ class DZChipController extends egret.EventDispatcher
         chip.x = start.x;
         chip.y = start.y;
         chip.isAction = false;
-        var target:egret.Point = new egret.Point(user.gp_betPool.x,user.gp_betPool.y);
+        var target:egret.Point = new egret.Point(user.betPool.x,user.betPool.y);
         target.y += 3;//筹码如果直接按照背景的位置有点偏，所以往下来一点正好
         egret.Tween.get(chip).to({x:target.x,y:target.y},DZDefine.sendChipTime)
-                            .call(()=>{user.gp_betPool.visible = true;chip.isAction = false;
+                            .call(()=>{user.betPool.visible = true;
+                                           chip.isAction = false;
                                            if(user.lastChip != null)
                                             {
                                                 DZChipController.tableComponent.removeChild(user.lastChip);
@@ -47,14 +48,14 @@ class DZChipController extends egret.EventDispatcher
     /**移动所有玩家的筹码入底池 */
     public static MoveAllChipsToPot()
     {
-        if(DZPokerOnGameView.instance.chairID_User.length <= 0)
+        if(DZPokerOnGameView.instance.table.users.length <= 0)
             return;
 
         var pot:eui.Group = DZChipController.tableComponent["gp_pub_chip"];
         var target:egret.Point = new egret.Point(pot.x,pot.y);
         target.y += 3;//筹码如果直接按照背景的位置有点偏，所以往下来一点正好
 
-        var users = DZPokerOnGameView.instance.chairID_User;
+        var users = DZPokerOnGameView.instance.table.users;
         users.forEach(ele=>{
             if(ele.chip != null)
             {

@@ -11,6 +11,7 @@ var __reflect = (this && this.__reflect) || function (p, c, t) {
 var DZDefine = (function () {
     function DZDefine() {
     }
+    ;
     return DZDefine;
 }());
 /**玩家手牌背面时的缩放尺寸 */
@@ -48,8 +49,16 @@ DZDefine.iOperateTime = 15;
 /**庄logo 缓动动画的时间 */
 DZDefine.sendBankerTime = 500;
 //----------Timer----------
+/**发庄计时器 */
+DZDefine.SendBanker_Timer = 1000;
+/**下盲注 */
+DZDefine.Bland_Timer = 1001;
+/**机器人作出反应的计时器 */
+DZDefine.Rob_Operate_Timer = 1002;
+//-------------------------
+//----------GameTimer----------
 /**玩家操作 计时器类别 */
-DZDefine.Operation_Timer = 1;
+DZDefine.Operation_Timer = 10000;
 //-------------------------
 //----------底部操作按钮的显示状态----------
 /**弃 跟 加 */

@@ -64,6 +64,10 @@ class DZPokerOnGameView extends GameViewBase
 
     /**桌子信息 */
     private _table:GameTable;
+    public get table():GameTable
+    {
+        return this._table;
+    }
 
     /**界面中所有的按钮 */
     private _btn_return:eui.Image;
@@ -84,7 +88,9 @@ class DZPokerOnGameView extends GameViewBase
     /**发牌的起点 */
     private _cardStartPos:eui.Rect;
     private mainUser:DZUser;
-    public chairID_User:Array<DZUser>;
+    /**当前操作的玩家的椅子号 */
+    private _curUser:DZUser;
+    /**key 椅子号 value 用户ID */
     private chairID_userID:any;
     /**庄 */
     private _banker:DZUser;
@@ -92,14 +98,19 @@ class DZPokerOnGameView extends GameViewBase
     private _highBland:DZUser;
     /**小盲位 */
     private _lowBland:DZUser;
+    /**小盲注的下注量 */
+    private _lowBetValue:number;
     /**计时器 */
     private _timer:GameTimer;
+    /**最近一次下注的值 */
+    private _lastBetValue:number = 0;
     /**底池的值 */
-    // public 
+    
 
     public constructor(_table:GameTable)
     {
         super(_table,"dezhoupoker",6);
+        DZPokerOnGameView._instance = this;
         // this.load(DZPokerOnGameView.skinPath + "resource/eui_skin/game/DZPokerOnGameSkin.exml");
         this.load("resource/dezhoupoker/eui_skin/game/DZPokerOnGameSkin.exml");
     }
@@ -120,16 +131,15 @@ class DZPokerOnGameView extends GameViewBase
         this._pubCardContainer = new Array<DZCardView>();
         this._userCardContainer = new Array<DZCardView[]>();
         this._cardStartPos = this["pos_send_card"];
-        this.chairID_User = new Array<DZUser>();
         
         //循环将桌子上的所有玩家头像框，下注框隐藏
         for(let i = 0; i < 6; i++)
         {
             this["user_" + i].visible = false;
-            this["gp_chip_" + i].visible = false;
+            this["betPool_" + i].visible = false;
         }
         //隐藏底池背景
-        this["gp_pub_chip"].visible = false;
+        this["betPool_pub"].visible = false;
 
         //创建扑克牌对象池
         pool.ObjectPool.instance.createObjectPool(DZCardController.DZ_CARD_POOLNAME,DZCardView);
@@ -160,12 +170,82 @@ class DZPokerOnGameView extends GameViewBase
         
         //底部操作条移动至摄像机视野外
         this["gp_operation_btns"].y = 750;
-
-
         this.updateChairInfo(this._gameTable);
         
 
+        //设置一个计时器作为游戏进程的推进器
+        // this.setTimer(DZDefine.SendBanker_Timer,3);
+
     }
+
+
+    /**计时器回调 */
+    protected onTimer(timerID: number,remainTime:number):void
+    {
+        switch(timerID)
+        {
+            case DZDefine.Bland_Timer:
+                if(remainTime <= 0)
+                {
+                    this.GetBland();
+                    this._lowBland.Bet(this._lowBetValue);
+                    console.log(this._lowBland.nickname + "下小盲注");
+                    this._highBland.Bet(this._lowBetValue * 2);
+                    console.log(this._highBland.nickname + "下大盲注");
+
+                    this.stopTimer(DZDefine.Bland_Timer);
+                    Main.instance.isBlindEnd = true;
+                    Main.instance.lastOpChairID = this._highBland.chairID;
+                }
+            break;
+
+            case DZDefine.Rob_Operate_Timer://机器人操作时间
+                if(remainTime < 11 && !Main.instance.isUserOpEnd)
+                {
+                    var opType:UserOp;
+                    var addValue:number = 0;
+                    var random = Math.random();
+                    if(random <= 0.1)
+                    {
+                        opType = UserOp.ADD;
+                        addValue = 20;
+                    }
+                    else if(random > 0.1 && random < 0.7)
+                        opType = UserOp.CINGL;
+                    else if(random >= 0.7)
+                        opType = UserOp.ABANDON;
+
+                    this.RobOperation(this._curUser,opType,addValue);
+                    this._curUser.HideOperationBar();
+                    this.stopTimer(DZDefine.Rob_Operate_Timer);
+                    Main.instance.isUserOpEnd = true;
+
+                }
+            break;
+
+        }
+    }
+
+
+    /**游戏进程计时器回调
+     * 只有一个，记录从游戏开始到一局游戏结束的整个时间过程 */
+    protected onGameTimer(chairID:number,timerID: number,remainTime:number)
+    {
+        switch(timerID)
+        {
+            case DZDefine.Operation_Timer:
+                if(remainTime < 3 && !Main.instance.isUserOpEnd)
+                {
+                    console.log("玩家操作");
+                    this._curUser.HideOperationBar();
+                    this.HideOperateBtns();
+                    Main.instance.isUserOpEnd = true;
+                    this.stopGameTimer();
+                }
+            break;
+        }
+    }
+
 
 
     /**翻单个用户的手牌动画
@@ -173,7 +253,8 @@ class DZPokerOnGameView extends GameViewBase
      */
     public TurnCardAnim(chairID:number):void
     {
-        var user = this.chairID_User[chairID];
+        var userID = this.chairID_userID[chairID];
+        var user = this._table.getUser(userID) as DZUser;
         var turnPoint:egret.Point = this.GetUserFrontCardPos(chairID);
         DZCardController.TurnCardAnim(user,turnPoint);
     }
@@ -219,9 +300,10 @@ class DZPokerOnGameView extends GameViewBase
         }
         //约束后会让获得的组件的坐标为零，所以要用帧末的数据，傻逼设计
         this.validateNow();
-        var user:eui.Component = this.chairID_User[chairID].headComponent;
-        console.log("x:" + user.x + "  y:" + user.y);
-        var point = new egret.Point(user.x + DZDefine.b_logoOffsetHeadX,user.y + DZDefine.b_logoOffsetHeadY);
+        var userID = this.chairID_userID[chairID];
+        var user = this._table.getUser(userID) as DZUser;
+        var head = user.headComponent;
+        var point = new egret.Point(head.x + DZDefine.b_logoOffsetHeadX,head.y + DZDefine.b_logoOffsetHeadY);
         return point;
     }
 
@@ -229,16 +311,16 @@ class DZPokerOnGameView extends GameViewBase
     /**获取玩家的展示手牌时的位置 */
     public GetUserFrontCardPos(chairID:number,isMainUser:boolean = false):egret.Point
     {
-        // var chair = this._bg["user_" + chairID];
         //约束后会让获得的组件的坐标为零，所以要用帧末的数据，傻逼设计
         this.validateNow();
-        var user = this.chairID_User[chairID];
+        // var user = this.chairID_User[chairID];
+        var userID = this.chairID_userID[chairID];
+        var user = this._table.getUser(userID) as DZUser;
         if(user == null) return;
-        var chair = this.chairID_User[chairID].headComponent;
-        if(chair == null)
+        var head = user.headComponent;
+        if(head == null)
             return null;
-
-        var point = new egret.Point(chair.x + DZDefine.f_cardOffsetHeadX,chair.y + DZDefine.f_cardOffsetHeadY);
+        var point = new egret.Point(head.x + DZDefine.f_cardOffsetHeadX,head.y + DZDefine.f_cardOffsetHeadY);
         return point;
     }
 
@@ -278,6 +360,21 @@ class DZPokerOnGameView extends GameViewBase
         }
     }
 
+    /**底部操作条上升 */
+    public ShowOperateBtns():void
+    {
+        var bottom:eui.Group = this["gp_operation_btns"];
+        egret.Tween.get(bottom).to({x:0,y:650},DZDefine.operationBtns)
+                            .call(()=>{bottom.touchChildren = true});
+    }
+    /**隐藏底部操作按钮 按钮下沉*/
+    private HideOperateBtns():void
+    {
+        var bottom:eui.Group = this["gp_operation_btns"]; 
+        bottom.touchChildren = false;
+        egret.Tween.get(bottom).to({x:0,y:750},DZDefine.operationBtns);
+    }
+
 
     /**往公共牌区域发一张牌的动画 */
     public SendPubCard():DZCardView
@@ -309,7 +406,7 @@ class DZPokerOnGameView extends GameViewBase
     public SendUsersCardsAnim()
     {
         var start:egret.Point = new egret.Point(this._cardStartPos.x,this._cardStartPos.y);
-        this.chairID_User.forEach(element => {
+        this._table.users.forEach(element => {
             var target:egret.Point = this.GetUserBackCardPos(element.chairID);
             var userCard = DZCardController.SendUserCardsAnim(start,target);
             element.cardArr = userCard;
@@ -320,7 +417,8 @@ class DZPokerOnGameView extends GameViewBase
     /**为玩家的手牌赋值 */
     public SetUserCardData(chairID:number,cardValue:number[],cardType:CardType[]):void
     {
-        var user = this.chairID_User[chairID];
+        var userID = this.chairID_userID[chairID];
+        var user = this._table.getUser(userID) as DZUser;
         DZCardController.SetUserCardData(user,cardValue,cardType);
     }
 
@@ -331,11 +429,13 @@ class DZPokerOnGameView extends GameViewBase
         // var chair = this._bg["user_" + chairID];
         //约束后会让获得的组件的坐标为零，所以要用帧末的数据，傻逼设计
         this.validateNow();
-        var chair = this.chairID_User[chairID].headComponent;
-        if(chair == null)
+        var userID = this.chairID_userID[chairID];
+        var user = this._table.getUser(userID) as DZUser;
+        var head = user.headComponent;
+        if(head == null)
             return null;
 
-        var point = new egret.Point(chair.x + DZDefine.b_cardOffsetHeadX,chair.y + DZDefine.b_cardOffsetHeadY);
+        var point = new egret.Point(head.x + DZDefine.b_cardOffsetHeadX,head.y + DZDefine.b_cardOffsetHeadY);
         return point;
     }
 
@@ -378,6 +478,7 @@ class DZPokerOnGameView extends GameViewBase
                 dz_user.gold = _user.gold;
                 dz_user.nickname = _user.nickname;
                 dz_user.status = _user.status;
+                //给桌子添加玩家
                 this._table.addUser(dz_user);
 
                 if(_user.userID == UserData.userID)
@@ -394,7 +495,7 @@ class DZPokerOnGameView extends GameViewBase
         this.UpdateChairData(_table);
         if(this._table)
         {
-            this.chairID_userID = {};//这样申请了一个容器？还是一个类啊，卧槽
+            this.chairID_userID = {};
             for(var key in this._table.users)
             {
                 this.chairID_userID[this._table.users[key].chairID + ''] = this._table.users[key].userID;
@@ -412,6 +513,7 @@ class DZPokerOnGameView extends GameViewBase
                             return;
                         }
                         user.InitFaceGroup(this["user_" + id]);
+                        user.betPool = this["betPool_" + user.chairID];
                     }
                 }
             }
@@ -429,7 +531,8 @@ class DZPokerOnGameView extends GameViewBase
         {
             if(index > 5)
                 index = 0;
-            var _low:DZUser = this.chairID_User[index];
+            var userID = this.chairID_userID[index];
+            var _low:DZUser = this._table.getUser(userID) as DZUser;
             if(_low != null)
             {
                 this._lowBland = _low;
@@ -443,8 +546,8 @@ class DZPokerOnGameView extends GameViewBase
         {
             if(index > 5)
                 index = 0;
-
-            var _high = this.chairID_User[index];
+            var userID = this.chairID_userID[index];
+            var _high = this._table.getUser(userID) as DZUser;
             if(_high != null)
             {
                 this._highBland = _high;
@@ -491,22 +594,10 @@ class DZPokerOnGameView extends GameViewBase
     }
 
 
-    /**显示底部操作按钮组 按钮上升*/
-    private ShowOperateBtns():void
-    {
-
-    }
-    /**隐藏底部操作按钮 按钮下沉*/
-    private HideOperateBtns():void
-    {
-
-    }
-
-
     /**用户操作 */
     public UserOperation():void
     {
-
+        
     }
 
 
@@ -527,13 +618,29 @@ class DZPokerOnGameView extends GameViewBase
 
     }
 
+    /**根据玩家椅子号获得玩家对象 */
+    public GetUserByChairID(chairID:number):DZUser
+    {
+        if(chairID < 0 || chairID > 5) return;
+        var userID = this.chairID_userID[chairID];
+        var user = this._table.getUser(userID) as DZUser;
+        return user;
+    }
+
 
     //----------SC_CMD_FUNC-----------
-
+    
     /**开始盲注 */
     public SC_StartGame(packet:any):void
     {
-        //TODO:给this中的 庄 座位号赋值
+        this._lowBetValue = packet.iLowBetValue;
+        var banker = this.GetUserByChairID(packet.iBankerID);
+        banker.isBanker = true;
+        this._banker = banker;
+        this.SendBankerLogoAnim(banker.chairID);
+        this.GetBland();
+        this.setTimer(DZDefine.Bland_Timer,1);//下盲注
+        
     }
 
 
@@ -543,7 +650,58 @@ class DZPokerOnGameView extends GameViewBase
         
     }
 
+    
+    /**玩家操作 */
+    public SC_User_Operation(packet:any)
+    {
+        this._curUser = this.GetUserByChairID(packet.iCurChairID);
+        var opType:UserOp = packet.iOpType;
+        var addValue:number = packet.iAddValue;
+        if(this._curUser != this.mainUser)
+        {
+            this.setTimer(DZDefine.Rob_Operate_Timer,DZDefine.iOperateTime);
+            this._curUser.StartOperationBarAnim(DZDefine.iOperateTime);
+        }
+        else
+        {
+            this.ShowOperateBtns();
+            this.mainUser.StartOperationBarAnim(DZDefine.iOperateTime);
+            this.setGameTimer(this.mainUser.chairID,DZDefine.Operation_Timer,DZDefine.iOperateTime);
+        }
+    }
+
     //--------------------------------
+
+
+
+    //*********** 测试使用代码 **********//
+    private SetBanker(chairID:number):void
+    {
+        var userID = this.chairID_userID[chairID];
+        var user = this._table.getUser(userID) as DZUser;
+        user.isBanker = true;
+        this._banker = user;
+        console.log(user.nickname + "是庄家");
+    }
+
+    private RobOperation(user:DZUser,opType:UserOp,addValue?:number)
+    {
+        switch(opType)
+        {
+            case UserOp.ABANDON:
+                console.log(this._curUser.nickname + "弃牌");
+            break;
+
+            case UserOp.ADD:
+                console.log(this._curUser.nickname + "加注" + addValue);
+            break;
+
+            case UserOp.CINGL:
+                console.log(this._curUser.nickname + "跟");
+            break;
+        }
+    }
+
 
 
 

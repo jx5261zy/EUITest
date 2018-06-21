@@ -8,7 +8,7 @@ class GameViewBase extends BaseComponent{
 	/**
 	 * 创建一个游戏timer
 	 */
-	// private _gameTimer: GameTimer;
+	private _gameTimer: GameTimer;
 	private _timerDic:any = {};
 
 	/**
@@ -64,15 +64,15 @@ class GameViewBase extends BaseComponent{
 	 */
 	public setGameTimer(chairID: number,timerID:number,time:number):void
 	{
-		// if(this._gameTimer == null)
-		// {
-		// 	this._gameTimer = new GameTimer(1000/30);
-		// 	this._gameTimer.addEventListener(egret.TimerEvent.TIMER,this.onGameTimerEvent,this);
-		// }
-		// this._gameTimer.chairID = chairID;
-		// this._gameTimer.timerID = timerID;
-		// this._gameTimer.totalTime = time;
-		// this._gameTimer.start();
+		if(this._gameTimer == null)
+		{
+			this._gameTimer = new GameTimer(1000/30);
+			this._gameTimer.addEventListener(egret.TimerEvent.TIMER,this.onGameTimerEvent,this);
+		}
+		this._gameTimer.chairID = chairID;
+		this._gameTimer.timerID = timerID;
+		this._gameTimer.totalTime = time;
+		this._gameTimer.start();
 	}
 
 	/**
@@ -80,19 +80,19 @@ class GameViewBase extends BaseComponent{
 	 */
 	public stopGameTimer():void
 	{
-		// if(this._gameTimer) {
-		// 	this._gameTimer.stop();
-		// }
+		if(this._gameTimer) {
+			this._gameTimer.stop();
+		}
 	}
 
 	private onGameTimerEvent(e:egret.Event):void
 	{
-		// var remainTime: number = this._gameTimer.remainTime;
-		// if(remainTime == 0)
-		// {
-		// 	this._gameTimer.stop();
-		// }
-		// this.onGameTimer(this._gameTimer.chairID,this._gameTimer.timerID,remainTime);
+		var remainTime: number = this._gameTimer.remainTime;
+		if(remainTime == 0)
+		{
+			this._gameTimer.stop();
+		}
+		this.onGameTimer(this._gameTimer.chairID,this._gameTimer.timerID,remainTime);
 	}
 
 	/**
@@ -100,26 +100,26 @@ class GameViewBase extends BaseComponent{
 	 */
 	public setTimer(timerID:number,time:number):void
 	{
-		// var timer:GameTimer = this._timerDic[timerID];
-		// if(timer == null)
-		// {
-		// 	timer = new GameTimer(1000/30);
-		// 	timer.addEventListener(egret.TimerEvent.TIMER,this.onTimerEvent,this);
-		// 	this._timerDic[timerID] = timer;
-		// }
-		// timer.timerID = timerID;
-		// timer.totalTime = time;
-		// timer.start();
+		var timer:GameTimer = this._timerDic[timerID];
+		if(timer == null)
+		{
+			timer = new GameTimer(1000/30);
+			timer.addEventListener(egret.TimerEvent.TIMER,this.onTimerEvent,this);
+			this._timerDic[timerID] = timer;
+		}
+		timer.timerID = timerID;
+		timer.totalTime = time;
+		timer.start();
 	}
         
 	private onTimerEvent(e:egret.TimerEvent):void
 	{
-		// var timer: GameTimer = e.currentTarget;
-		// if(timer.remainTime == 0)
-		// {
-		// 	timer.stop();
-		// }
-		// this.onTimer(timer.timerID,timer.remainTime);
+		var timer: GameTimer = e.currentTarget;
+		if(timer.remainTime == 0)
+		{
+			timer.stop();
+		}
+		this.onTimer(timer.timerID,timer.remainTime);
 	}
         
 	/**
@@ -128,11 +128,11 @@ class GameViewBase extends BaseComponent{
 	 */
 	public stopTimer(timerID:number):void
 	{
-		// var timer: GameTimer = this._timerDic[timerID];
-		// if(timer)
-		// {
-		// 	timer.stop();
-		// }
+		var timer: GameTimer = this._timerDic[timerID];
+		if(timer)
+		{
+			timer.stop();
+		}
 	}
 
 	/**
