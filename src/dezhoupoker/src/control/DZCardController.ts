@@ -29,7 +29,9 @@ class DZCardController extends egret.EventDispatcher
     // }
 
 
-    /**播放发玩家手牌的动画 */
+    /**播放发玩家手牌的动画
+     * 不会给卡牌赋值，赋显，返回一个手牌数组
+     */
     public static SendUserCardsAnim(start:egret.Point,target:egret.Point):DZCardView[]
     {
             var firstCard = DZCardController.CreatePokerFormPool();
@@ -112,15 +114,14 @@ class DZCardController extends egret.EventDispatcher
             return;
 
         firstCard.isAction = secondCard.isAction = true;
-        console.log("1:" + firstCard.isFront + "  2:" + secondCard.isFront);
         egret.Tween.get(firstCard["gp_poker"]).to({skewY:270},DZDefine.turnCardTime,egret.Ease.quadOut)
                     .call(()=>{firstCard["gp_poker_forward"].visible = true;firstCard["img_poker_back"].visible = false;})
                     .to({skewY:360},DZDefine.turnCardTime,egret.Ease.quadOut)
-                    .call(()=>{firstCard.isAction = false;firstCard.isFront = true;console.log("1:" + firstCard.isFront + "  2:" + secondCard.isFront);});
+                    .call(()=>{firstCard.isAction = false;firstCard.isFront = true;});
         egret.Tween.get(secondCard["gp_poker"]).to({skewY:270},DZDefine.turnCardTime,egret.Ease.quadOut)
                     .call(()=>{secondCard["gp_poker_forward"].visible = true;secondCard["img_poker_back"].visible = false;})
                     .to({skewY:360},DZDefine.turnCardTime,egret.Ease.quadOut)
-                    .call(()=>{secondCard.isAction = false;secondCard.isFront = true;console.log("1:" + firstCard.isFront + "  2:" + secondCard.isFront);});
+                    .call(()=>{secondCard.isAction = false;secondCard.isFront = true;});
     }
 
 

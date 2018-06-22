@@ -55,6 +55,8 @@ DZDefine.SendBanker_Timer = 1000;
 DZDefine.Bland_Timer = 1001;
 /**机器人作出反应的计时器 */
 DZDefine.Rob_Operate_Timer = 1002;
+/**玩家手牌翻牌 */
+DZDefine.TurnCard_Timer = 1003;
 //-------------------------
 //----------GameTimer----------
 /**玩家操作 计时器类别 */

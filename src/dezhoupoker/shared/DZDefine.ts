@@ -52,6 +52,8 @@ class DZDefine
     public static Bland_Timer:number = 1001;
     /**机器人作出反应的计时器 */
     public static Rob_Operate_Timer:number = 1002;
+    /**玩家手牌翻牌 */
+    public static TurnCard_Timer:number = 1003;
     //-------------------------
 
 

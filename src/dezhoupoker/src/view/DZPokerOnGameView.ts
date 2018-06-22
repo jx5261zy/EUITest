@@ -86,12 +86,12 @@ class DZPokerOnGameView extends GameViewBase
     /**所有玩家的手牌 */
     private _userCardContainer:Array<DZCardView[]>;
     /**发牌的起点 */
-    private _cardStartPos:eui.Rect;
+    public cardStart:egret.Point;
     private mainUser:DZUser;
     /**当前操作的玩家的椅子号 */
     private _curUser:DZUser;
     /**key 椅子号 value 用户ID */
-    private chairID_userID:any;
+    private chairID_userID:Array<number>;
     /**庄 */
     private _banker:DZUser;
     /**大盲位 */
@@ -130,7 +130,7 @@ class DZPokerOnGameView extends GameViewBase
         this.inited = true;
         this._pubCardContainer = new Array<DZCardView>();
         this._userCardContainer = new Array<DZCardView[]>();
-        this._cardStartPos = this["pos_send_card"];
+        this.cardStart = new egret.Point(this["pos_send_card"].x,this["pos_send_card"].y);
         
         //循环将桌子上的所有玩家头像框，下注框隐藏
         for(let i = 0; i < 6; i++)
@@ -205,21 +205,31 @@ class DZPokerOnGameView extends GameViewBase
                     var opType:UserOp;
                     var addValue:number = 0;
                     var random = Math.random();
-                    if(random <= 0.1)
-                    {
-                        opType = UserOp.ADD;
-                        addValue = 20;
-                    }
-                    else if(random > 0.1 && random < 0.7)
-                        opType = UserOp.CINGL;
-                    else if(random >= 0.7)
-                        opType = UserOp.ABANDON;
+                    // if(random <= 0.1)
+                    // {
+                    //     opType = UserOp.ADD;
+                    //     addValue = 20;
+                    // }
+                    // else if(random > 0.1 && random < 0.7)
+                    //     opType = UserOp.CINGL;
+                    // else if(random >= 0.7)
+                    //     opType = UserOp.ABANDON;
+                    opType = UserOp.CINGL;
 
                     this.RobOperation(this._curUser,opType,addValue);
                     this._curUser.HideOperationBar();
                     this.stopTimer(DZDefine.Rob_Operate_Timer);
                     Main.instance.isUserOpEnd = true;
 
+                }
+            break;
+
+            case DZDefine.TurnCard_Timer:
+                if(remainTime <= 0)
+                {
+                    var turnPoint = this.GetUserFrontCardPos(this.mainUser.chairID);
+                    DZCardController.TurnCardAnim(this.mainUser,turnPoint);
+                    this.stopTimer(DZDefine.TurnCard_Timer);
                 }
             break;
 
@@ -300,8 +310,7 @@ class DZPokerOnGameView extends GameViewBase
         }
         //约束后会让获得的组件的坐标为零，所以要用帧末的数据，傻逼设计
         this.validateNow();
-        var userID = this.chairID_userID[chairID];
-        var user = this._table.getUser(userID) as DZUser;
+        var user = this.GetUserByChairID(chairID);
         var head = user.headComponent;
         var point = new egret.Point(head.x + DZDefine.b_logoOffsetHeadX,head.y + DZDefine.b_logoOffsetHeadY);
         return point;
@@ -313,9 +322,7 @@ class DZPokerOnGameView extends GameViewBase
     {
         //约束后会让获得的组件的坐标为零，所以要用帧末的数据，傻逼设计
         this.validateNow();
-        // var user = this.chairID_User[chairID];
-        var userID = this.chairID_userID[chairID];
-        var user = this._table.getUser(userID) as DZUser;
+        var user = this.GetUserByChairID(chairID);
         if(user == null) return;
         var head = user.headComponent;
         if(head == null)
@@ -381,7 +388,7 @@ class DZPokerOnGameView extends GameViewBase
     {
         if(this._pubCardContainer.length >= 5)
             return null;
-        var start:egret.Point = new egret.Point(this._cardStartPos.x,this._cardStartPos.y);
+        var start:egret.Point = new egret.Point(this.cardStart.x,this.cardStart.y);
         var target = this.GetPubTargetPos();
         var poker = DZCardController.SendPubCard(start,target);
         this._pubCardContainer.push(poker);
@@ -405,12 +412,7 @@ class DZPokerOnGameView extends GameViewBase
     /**播放发所有玩家手牌的动画 */
     public SendUsersCardsAnim()
     {
-        var start:egret.Point = new egret.Point(this._cardStartPos.x,this._cardStartPos.y);
-        this._table.users.forEach(element => {
-            var target:egret.Point = this.GetUserBackCardPos(element.chairID);
-            var userCard = DZCardController.SendUserCardsAnim(start,target);
-            element.cardArr = userCard;
-        });
+
     }
 
 
@@ -426,11 +428,9 @@ class DZPokerOnGameView extends GameViewBase
     /**获取玩家的手牌发送目标位置 背面 */
     public GetUserBackCardPos(chairID:number,isMainUser:boolean = false):egret.Point
     {
-        // var chair = this._bg["user_" + chairID];
         //约束后会让获得的组件的坐标为零，所以要用帧末的数据，傻逼设计
         this.validateNow();
-        var userID = this.chairID_userID[chairID];
-        var user = this._table.getUser(userID) as DZUser;
+        var user = this.GetUserByChairID(chairID);
         var head = user.headComponent;
         if(head == null)
             return null;
@@ -495,7 +495,7 @@ class DZPokerOnGameView extends GameViewBase
         this.UpdateChairData(_table);
         if(this._table)
         {
-            this.chairID_userID = {};
+            this.chairID_userID = new Array<number>();
             for(var key in this._table.users)
             {
                 this.chairID_userID[this._table.users[key].chairID + ''] = this._table.users[key].userID;
@@ -608,7 +608,7 @@ class DZPokerOnGameView extends GameViewBase
     }
     private HideDropDownView():void
     {
-
+        
     }
 
 
@@ -647,7 +647,27 @@ class DZPokerOnGameView extends GameViewBase
     /**盲注结束 发手牌 */
     public SC_Blind_END_SendCard(packet:any):void
     {
-        
+        Main.instance.isSendUserCard = true;
+        for(let i = 0; i < this.chairID_userID.length; i++)
+        {
+            var user:DZUser = this.GetUserByChairID(i);
+            var target:egret.Point = this.GetUserBackCardPos(user.chairID);
+            user.cardArr = DZCardController.SendUserCardsAnim(this.cardStart,target);
+        }
+        this.setTimer(DZDefine.TurnCard_Timer,DZDefine.sendCardTime / 1000 + 0.2);
+
+    }
+
+    /**翻开所有手牌 */
+    public SC_TurnAllUserCards()
+    {
+        for(let i = 0; i < this.chairID_userID.length; i++)
+        {
+            var user = this.GetUserByChairID(i);
+            var target:egret.Point = this.GetUserFrontCardPos(user.chairID);
+            DZCardController.TurnCardAnim(user,target);
+            console.log(user.nickname + "翻开手牌");
+        }
     }
 
     
@@ -689,6 +709,7 @@ class DZPokerOnGameView extends GameViewBase
         switch(opType)
         {
             case UserOp.ABANDON:
+                this._curUser.isAbandon = true;
                 console.log(this._curUser.nickname + "弃牌");
             break;
 
@@ -697,6 +718,7 @@ class DZPokerOnGameView extends GameViewBase
             break;
 
             case UserOp.CINGL:
+                this._curUser.Bet(20);
                 console.log(this._curUser.nickname + "跟");
             break;
         }
@@ -706,4 +728,22 @@ class DZPokerOnGameView extends GameViewBase
 
 
 //class end
+}
+
+
+/**扑克牌的翻转方向 */
+enum PokerDir
+{
+    F2B,
+    B2F,
+}
+
+
+/**卡牌的花色 */
+enum CardType
+{
+    DIAMONDS,
+    CLUB,
+    HEART,
+    SPADE,
 }

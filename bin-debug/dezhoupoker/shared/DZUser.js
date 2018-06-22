@@ -19,7 +19,7 @@ var DZUser = (function (_super) {
         var _this = _super.call(this, _userID, _tableID, _chairID, _role) || this;
         _this.isAbandon = false;
         _this.isBanker = false;
-        /**下注的金额 */
+        /**总下注的金额 */
         _this.betValue = 0;
         _this._isFaceGropuInited = false;
         return _this;
@@ -64,9 +64,11 @@ var DZUser = (function (_super) {
     };
     /**显示头像遮罩 */
     DZUser.prototype.ShowHeadMask = function () {
+        this["img_head_mask"].visible = true;
     };
     /**隐藏头像遮罩 */
     DZUser.prototype.HideHeadMask = function () {
+        this["img_head_mask"].visible = false;
     };
     /**下注 */
     DZUser.prototype.Bet = function (value) {
@@ -80,10 +82,15 @@ var DZUser = (function (_super) {
         this.chip = DZChipController.MoveUserChip(this);
         this.betValue += value;
         this.betPool["lb_chip_value"].text = this.betValue;
-        this.chip.value = value;
+        // this.chip.value = value;
+        this.chip.value = this.betValue;
         this.gold -= value;
         this.ShowHeadGold();
         this.chip.SetDisplay();
+    };
+    /**弃牌 */
+    DZUser.prototype.Abandon = function () {
+        this.ShowHeadMask();
     };
     /**开始头像框操作进度条倒计时动画 */
     DZUser.prototype.StartOperationBarAnim = function (_time) {

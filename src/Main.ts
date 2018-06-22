@@ -140,6 +140,7 @@ class Main extends eui.UILayer {
     public lastOpChairID:number = -1;
     public isBlindEnd:boolean = false;
     public isUserOpEnd:boolean = true;
+    public isSendUserCard:boolean = false;
     
     public static get instance():Main
     {
@@ -155,7 +156,7 @@ class Main extends eui.UILayer {
                 DZPokerOnGameView.instance.SC_StartGame({
                                                                                                 iBankerID:0,
                                                                                                 iLowBetValue:10
-                                                                                            })
+                                                                                            });
                 
             break;
             //S
@@ -200,13 +201,17 @@ class Main extends eui.UILayer {
             case 70:
 
             break;
-            //C
+            //C 翻开所有手牌
             case 67:
-
+                DZPokerOnGameView.instance.SC_TurnAllUserCards();
             break;
             //X 发手牌
             case 88:
-                DZPokerOnGameView.instance.SC_Blind_END_SendCard
+                if(Main.instance.isSendUserCard) return;
+                DZPokerOnGameView.instance.SC_Blind_END_SendCard({
+                                                                                                                iCard0:Main.instance.userCards[0],
+                                                                                                                iCard1:Main.instance.userCards[1],
+                                                                                                            });
             break;
             //Z
             case 90:
@@ -240,9 +245,10 @@ class Main extends eui.UILayer {
         }
     }
 
-    private static betValue:number = 0;
 
-
+    // public cardsContainer:Array<DZCardView[]>;
+    public pubCards:Array<DZCardView>;
+    public userCards:Array<DZCardView>;
 
 
     /**
@@ -257,6 +263,7 @@ class Main extends eui.UILayer {
         var dzGame = new DZPokerOnGameView(this._table);
         this.addChild(dzGame);
 
+        this.RandomCards();
         //加注滑动条测试
         // var slider:eui.Component = new eui.Component();
         // slider.skinName = "resource/dezhoupoker/eui_skin/view/DZAddChipView.exml";
@@ -303,21 +310,92 @@ class Main extends eui.UILayer {
     }
 
 
+    /**循环随机玩家手牌和5张公共牌 */
+    public RandomCards()
+    {
+        
+        this.userCards = new Array<DZCardView>();
+        this.pubCards = new Array<DZCardView>();
+        var maxLoop = this._table.getUserCount() * 2;//每个人两张牌
+        var count = 0;
+        var isHave:boolean = false;
+        while(count < maxLoop)
+        {
+            var cardType:CardType = Math.round(Math.random() * 10 % 4);
+            var cardValue:number = Math.round(Math.random() * 10 + Math.random() * 10 % 4);
+            if(cardValue > 13)
+                cardValue = 13;
+
+            var card:DZCardView = new DZCardView();
+            card.SetData(cardValue,cardType);
+            for(let i = 0; i < this.userCards.length; i++)
+            {
+                var _card = this.userCards[i];
+                if(_card.value == card.value && _card.type == card.type)
+                {
+                    isHave = true;
+                    break;
+                }
+            }
+            if(isHave)
+            {
+                isHave = false;
+                continue;
+            }
+
+            this.userCards.push(card);
+            count = this.userCards.length;
+        }
+
+        count = 0;
+        isHave = false;
+        while(count < 5)
+        {
+            var cardType:CardType = Math.round(Math.random() * 10 % 4);
+            var cardValue:number = Math.round(Math.random() * 10 + Math.random() * 10 % 4);
+            if(cardValue > 13)
+                cardValue = 13;
+            var card:DZCardView = new DZCardView();
+            card.SetData(cardValue,cardType);
+            for(let i = 0; i < this.userCards.length; i++)
+            {
+                var _card = this.userCards[i];
+                if(_card.value == card.value && _card.type == card.type)
+                {
+                    isHave = true;
+                    break;
+                }
+            }
+            if(isHave)
+            {
+                isHave = false;
+                continue;
+            }
+            for(let i = 0; i < this.pubCards.length; i++)
+            {
+                var _card = this.pubCards[i];
+                if(_card.value == card.value && _card.type == card.type)
+                {
+                    isHave = true;
+                    break;
+                }
+            }
+            if(isHave)
+            {
+                isHave = false;
+                continue;
+            }
+            this.pubCards.push(card);
+            count = this.pubCards.length;
+            
+        }
+
+    }
+
+
+
 
 //class end
 }
 
 
-enum PokerDir
-{
-    F2B,
-    B2F,
-}
-
-enum CardType
-{
-    DIAMONDS,
-    CLUB,
-    HEART,
-    SPADE,
-}

@@ -44,6 +44,7 @@ var Main = (function (_super) {
         _this.lastOpChairID = -1;
         _this.isBlindEnd = false;
         _this.isUserOpEnd = true;
+        _this.isSendUserCard = false;
         return _this;
         //class end
     }
@@ -193,12 +194,18 @@ var Main = (function (_super) {
             //F
             case 70:
                 break;
-            //C
+            //C 翻开所有手牌
             case 67:
+                DZPokerOnGameView.instance.SC_TurnAllUserCards();
                 break;
             //X 发手牌
             case 88:
-                DZPokerOnGameView.instance.SC_Blind_END_SendCard;
+                if (Main.instance.isSendUserCard)
+                    return;
+                DZPokerOnGameView.instance.SC_Blind_END_SendCard({
+                    iCard0: Main.instance.userCards[0],
+                    iCard1: Main.instance.userCards[1],
+                });
                 break;
             //Z
             case 90:
@@ -233,6 +240,7 @@ var Main = (function (_super) {
         this.SetUsers();
         var dzGame = new DZPokerOnGameView(this._table);
         this.addChild(dzGame);
+        this.RandomCards();
         //加注滑动条测试
         // var slider:eui.Component = new eui.Component();
         // slider.skinName = "resource/dezhoupoker/eui_skin/view/DZAddChipView.exml";
@@ -267,20 +275,70 @@ var Main = (function (_super) {
         user5.gold = 10000;
         this._table.addUser(user5);
     };
+    /**循环随机玩家手牌和5张公共牌 */
+    Main.prototype.RandomCards = function () {
+        this.userCards = new Array();
+        this.pubCards = new Array();
+        var maxLoop = this._table.getUserCount() * 2; //每个人两张牌
+        var count = 0;
+        var isHave = false;
+        while (count < maxLoop) {
+            var cardType = Math.round(Math.random() * 10 % 4);
+            var cardValue = Math.round(Math.random() * 10 + Math.random() * 10 % 4);
+            if (cardValue > 13)
+                cardValue = 13;
+            var card = new DZCardView();
+            card.SetData(cardValue, cardType);
+            for (var i = 0; i < this.userCards.length; i++) {
+                var _card = this.userCards[i];
+                if (_card.value == card.value && _card.type == card.type) {
+                    isHave = true;
+                    break;
+                }
+            }
+            if (isHave) {
+                isHave = false;
+                continue;
+            }
+            this.userCards.push(card);
+            count = this.userCards.length;
+        }
+        count = 0;
+        isHave = false;
+        while (count < 5) {
+            var cardType = Math.round(Math.random() * 10 % 4);
+            var cardValue = Math.round(Math.random() * 10 + Math.random() * 10 % 4);
+            if (cardValue > 13)
+                cardValue = 13;
+            var card = new DZCardView();
+            card.SetData(cardValue, cardType);
+            for (var i = 0; i < this.userCards.length; i++) {
+                var _card = this.userCards[i];
+                if (_card.value == card.value && _card.type == card.type) {
+                    isHave = true;
+                    break;
+                }
+            }
+            if (isHave) {
+                isHave = false;
+                continue;
+            }
+            for (var i = 0; i < this.pubCards.length; i++) {
+                var _card = this.pubCards[i];
+                if (_card.value == card.value && _card.type == card.type) {
+                    isHave = true;
+                    break;
+                }
+            }
+            if (isHave) {
+                isHave = false;
+                continue;
+            }
+            this.pubCards.push(card);
+            count = this.pubCards.length;
+        }
+    };
     return Main;
 }(eui.UILayer));
-Main.betValue = 0;
 __reflect(Main.prototype, "Main");
-var PokerDir;
-(function (PokerDir) {
-    PokerDir[PokerDir["F2B"] = 0] = "F2B";
-    PokerDir[PokerDir["B2F"] = 1] = "B2F";
-})(PokerDir || (PokerDir = {}));
-var CardType;
-(function (CardType) {
-    CardType[CardType["DIAMONDS"] = 0] = "DIAMONDS";
-    CardType[CardType["CLUB"] = 1] = "CLUB";
-    CardType[CardType["HEART"] = 2] = "HEART";
-    CardType[CardType["SPADE"] = 3] = "SPADE";
-})(CardType || (CardType = {}));
 //# sourceMappingURL=Main.js.map
