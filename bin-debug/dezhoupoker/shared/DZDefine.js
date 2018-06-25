@@ -57,6 +57,8 @@ DZDefine.Bland_Timer = 1001;
 DZDefine.Rob_Operate_Timer = 1002;
 /**玩家手牌翻牌 */
 DZDefine.TurnCard_Timer = 1003;
+/**移除玩家筹码显示的计时器 */
+DZDefine.RecycleChip_Timer = 1004;
 //-------------------------
 //----------GameTimer----------
 /**玩家操作 计时器类别 */

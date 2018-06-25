@@ -237,9 +237,9 @@ class Main extends eui.UILayer {
             case 68:
 
             break;
-            //E
+            //E 一轮下注结束，移动所有玩家筹码入底池
             case 69:
-
+                DZPokerOnGameView.instance.SC_BetEnd();
             break;
 
         }

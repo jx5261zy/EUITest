@@ -163,6 +163,19 @@ var DZPokerOnGameView = (function (_super) {
                     this.stopTimer(DZDefine.TurnCard_Timer);
                 }
                 break;
+            case DZDefine.RecycleChip_Timer:
+                if (remainTime <= 0) {
+                    this.stopTimer(DZDefine.RecycleChip_Timer);
+                    for (var key in DZPokerOnGameView.instance.table.users) {
+                        var user = DZPokerOnGameView.instance.table.users[key];
+                        if (user.chip == null)
+                            continue;
+                        this.removeChild(user.chip);
+                        DZChipController.RecycleChipToPool(user.chip);
+                        user.chip = null;
+                    }
+                }
+                break;
         }
     };
     /**游戏进程计时器回调
@@ -502,6 +515,11 @@ var DZPokerOnGameView = (function (_super) {
             this.mainUser.StartOperationBarAnim(DZDefine.iOperateTime);
             this.setGameTimer(this.mainUser.chairID, DZDefine.Operation_Timer, DZDefine.iOperateTime);
         }
+    };
+    /**一轮下注结束，移动所有玩家筹码入底池 */
+    DZPokerOnGameView.prototype.SC_BetEnd = function () {
+        DZChipController.MoveAllChipsToPot();
+        this.setTimer(DZDefine.RecycleChip_Timer, DZDefine.sendChipTime / 1000 + 0.2);
     };
     //--------------------------------
     //*********** 测试使用代码 **********//

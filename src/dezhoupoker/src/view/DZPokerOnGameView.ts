@@ -90,8 +90,12 @@ class DZPokerOnGameView extends GameViewBase
     private mainUser:DZUser;
     /**当前操作的玩家的椅子号 */
     private _curUser:DZUser;
-    /**key 椅子号 value 用户ID */
-    private chairID_userID:Array<number>;
+    /**key 椅子号 value 用户ID 
+     * 这个数组多次使用，一定要记得及时的更新这个数组中的数据
+    */
+    public chairID_userID:Array<number>;
+    /**key 椅子号 value 用户对象 */
+    public chairID_user:Array<DZUser>;
     /**庄 */
     private _banker:DZUser;
     /**大盲位 */
@@ -184,7 +188,7 @@ class DZPokerOnGameView extends GameViewBase
     {
         switch(timerID)
         {
-            case DZDefine.Bland_Timer:
+            case DZDefine.Bland_Timer://自动下盲注的计时器
                 if(remainTime <= 0)
                 {
                     this.GetBland();
@@ -224,13 +228,29 @@ class DZPokerOnGameView extends GameViewBase
                 }
             break;
 
-            case DZDefine.TurnCard_Timer:
+            case DZDefine.TurnCard_Timer://主玩家翻牌计时器
                 if(remainTime <= 0)
                 {
                     var turnPoint = this.GetUserFrontCardPos(this.mainUser.chairID);
                     DZCardController.TurnCardAnim(this.mainUser,turnPoint);
                     this.stopTimer(DZDefine.TurnCard_Timer);
                 }
+            break;
+            
+            case DZDefine.RecycleChip_Timer://回收玩家显示的筹码对象，在这里做的原因是匿名函数的局部变量存活周期与移除代码不匹配，会导致内存为空，移除报错
+                if(remainTime <= 0)
+                {
+                    this.stopTimer(DZDefine.RecycleChip_Timer);
+                    for(var key in DZPokerOnGameView.instance.table.users)
+                    {
+                        var user = DZPokerOnGameView.instance.table.users[key] as DZUser;
+                        if(user.chip == null) continue;
+                        this.removeChild(user.chip);
+                        DZChipController.RecycleChipToPool(user.chip);
+                        user.chip = null;
+                    }
+                }
+
             break;
 
         }
@@ -688,6 +708,14 @@ class DZPokerOnGameView extends GameViewBase
             this.mainUser.StartOperationBarAnim(DZDefine.iOperateTime);
             this.setGameTimer(this.mainUser.chairID,DZDefine.Operation_Timer,DZDefine.iOperateTime);
         }
+    }
+
+
+    /**一轮下注结束，移动所有玩家筹码入底池 */
+    public SC_BetEnd()
+    {
+        DZChipController.MoveAllChipsToPot();
+        this.setTimer(DZDefine.RecycleChip_Timer,DZDefine.sendChipTime / 1000 + 0.2);
     }
 
     //--------------------------------

@@ -18,7 +18,7 @@ class DZUser extends GameUser
     public chip:DZChipView;
     /**记住上一次的筹码，方便清理内存以及清理显示 */
     public lastChip:DZChipView;
-    /**总下注的金额 */
+    /**一轮下注的金额  一轮下注结束时记得要清零 */
     public betValue:number = 0;
 
     /**头像组件 */
@@ -116,10 +116,9 @@ class DZUser extends GameUser
         {
             this.lastChip = this.chip;
         }
-        this.chip = DZChipController.MoveUserChip(this);
+        this.chip = DZChipController.UserBet(this);
         this.betValue += value;
         this.betPool["lb_chip_value"].text = this.betValue;
-        // this.chip.value = value;
         this.chip.value = this.betValue;
         this.gold -= value;
         this.ShowHeadGold();

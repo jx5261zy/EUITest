@@ -19,7 +19,7 @@ var DZUser = (function (_super) {
         var _this = _super.call(this, _userID, _tableID, _chairID, _role) || this;
         _this.isAbandon = false;
         _this.isBanker = false;
-        /**总下注的金额 */
+        /**一轮下注的金额  一轮下注结束时记得要清零 */
         _this.betValue = 0;
         _this._isFaceGropuInited = false;
         return _this;
@@ -79,10 +79,9 @@ var DZUser = (function (_super) {
         if (this.chip != null) {
             this.lastChip = this.chip;
         }
-        this.chip = DZChipController.MoveUserChip(this);
+        this.chip = DZChipController.UserBet(this);
         this.betValue += value;
         this.betPool["lb_chip_value"].text = this.betValue;
-        // this.chip.value = value;
         this.chip.value = this.betValue;
         this.gold -= value;
         this.ShowHeadGold();

@@ -65,6 +65,9 @@ var DZCardView = (function (_super) {
     DZCardView.prototype.ShowMask = function () {
         this.img_mask.visible = true;
     };
+    DZCardView.prototype.HideMask = function () {
+        this.img_mask.visible = false;
+    };
     DZCardView.prototype.moveToTargetPos = function (targetX, targetY, controlPoints, duration, delay, onMoveStartCallBack, onMoveComplete, oMoveCallBackThisObj, moveCompleteIsFlip) {
         if (controlPoints === void 0) { controlPoints = null; }
         if (duration === void 0) { duration = 0; }

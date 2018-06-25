@@ -54,6 +54,8 @@ class DZDefine
     public static Rob_Operate_Timer:number = 1002;
     /**玩家手牌翻牌 */
     public static TurnCard_Timer:number = 1003;
+    /**移除玩家筹码显示的计时器 */
+    public static RecycleChip_Timer:number = 1004;
     //-------------------------
 
 
