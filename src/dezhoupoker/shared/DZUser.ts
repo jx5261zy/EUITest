@@ -18,7 +18,7 @@ class DZUser extends GameUser
     public chip:DZChipView;
     /**记住上一次的筹码，方便清理内存以及清理显示 */
     public lastChip:DZChipView;
-    /**一轮下注的金额  一轮下注结束时记得要清零 */
+    /**一轮下注的金额  (一轮下注结束时记得要清零) */
     public betValue:number = 0;
 
     /**头像组件 */
@@ -71,10 +71,10 @@ class DZUser extends GameUser
     /**初始化组件中的各个控件的数据 */
     public InitFaceGroup(_component:eui.Component):void
     {
-        this.Init(_component);
         if(this._isFaceGropuInited)
             return;
         this._isFaceGropuInited = true;
+        this.Init(_component);
     }
 
     
@@ -95,12 +95,12 @@ class DZUser extends GameUser
     /**显示头像遮罩 */
     public ShowHeadMask():void
     {
-        this["img_head_mask"].visible = true;
+        this.headComponent["img_head_mask"].visible = true;
     }
     /**隐藏头像遮罩 */
     public HideHeadMask():void
     {
-        this["img_head_mask"].visible = false;
+        this.headComponent["img_head_mask"].visible = false;
     }
 
 
@@ -118,6 +118,8 @@ class DZUser extends GameUser
         }
         this.chip = DZChipController.UserBet(this);
         this.betValue += value;
+        //更新最后一次的下注量
+        DZPokerOnGameView.instance.lastBetValue = this.betValue;
         this.betPool["lb_chip_value"].text = this.betValue;
         this.chip.value = this.betValue;
         this.gold -= value;
@@ -130,7 +132,7 @@ class DZUser extends GameUser
     public Abandon()
     {
         this.ShowHeadMask();
-        
+        this.isAbandon = true;
     }
 
 

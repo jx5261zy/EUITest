@@ -11,8 +11,6 @@ class DZChipController extends egret.EventDispatcher
 {
 
     public static tableComponent:eui.Component;
-    // public static chipContainer:Array<eui.Image>;
-
 
     /**用户下注
      * 并不会给筹码赋值，赋显，会将筹码的内存返回出去
@@ -22,7 +20,7 @@ class DZChipController extends egret.EventDispatcher
     {
         if(user == null) return;
         var chip:DZChipView = DZChipController.CreateChipFormPool();
-        this.tableComponent.addChild(chip);
+        DZPokerOnGameView.instance.chipAndCardContanier.addChild(chip);
         var start:egret.Point = new egret.Point(user.headComponent.x,user.headComponent.y);
         start.x += user.headComponent.width / 2;
         start.y += user.headComponent.height / 2;
@@ -32,34 +30,64 @@ class DZChipController extends egret.EventDispatcher
         var target:egret.Point = new egret.Point(user.betPool.x,user.betPool.y);
         target.y += 3;//筹码如果直接按照背景的位置有点偏，所以往下来一点正好
         egret.Tween.get(chip).to({x:target.x,y:target.y},DZDefine.sendChipTime)
-                            .call(()=>{user.betPool.visible = true;
-                                           chip.isAction = false;
-                                           if(user.lastChip != null)
-                                            {
-                                                DZChipController.tableComponent.removeChild(user.lastChip);
-                                                DZChipController.RecycleChipToPool(user.lastChip);
-                                            }
+                            .call(()=>{
+                                                user.betPool.visible = true;
+                                                chip.isAction = false;
+                                                if(user.lastChip != null)
+                                                {
+                                                    DZPokerOnGameView.instance.chipAndCardContanier.removeChild(user.lastChip);
+                                                    DZChipController.RecycleChipToPool(user.lastChip);
+                                                }
+                                                // if(user.chip != null)
+                                                // {
+                                                //     DZPokerOnGameView.instance.chipAndCardContanier.removeChild(user.chip);
+                                                //     DZChipController.RecycleChipToPool(user.chip);
+                                                // }
                                         });
 
         return chip;
     }
 
 
-    public static MoveUserChip(user:DZUser,start:egret.Point,target:egret.Point)
+    /**移动玩家筹码入底池 */
+    public static MoveUserChipToPot(user:DZUser)
     {
+        if(user.chip == null) return;
+        //底池
+        var pot:eui.Component = DZChipController.tableComponent["betPool_pub"];
+        var target:egret.Point = new egret.Point(pot.x,pot.y);
+        target.y += 3;//筹码如果直接按照背景的位置有点偏，所以往下来一点正好
+        user.chip.isAction = true;
+        user.betPool.visible = false;
+        egret.Tween.get(user.chip).to({x:target.x,y:target.y},DZDefine.sendChipTime)
+                            .call(() => {
+                                                    DZPokerOnGameView.instance.chipAndCardContanier.removeChild(user.chip);
+                                                    DZChipController.RecycleChipToPool(user.chip);
+                                             });
+        DZPokerOnGameView.instance.potValue += user.betValue;//底池总值
+        user.betValue = 0;//清零玩家一轮下注
 
+        var chip = new DZChipView();
+        DZPokerOnGameView.instance.chipAndCardContanier.addChild(chip);
+        chip.x = pot.x;
+        chip.y = pot.y;
+        chip.y += 3;//筹码如果直接按照背景的位置有点偏，所以往下来一点正好
+        chip.value = DZPokerOnGameView.instance.potValue;
+        chip.SetDisplay();
+        pot.visible = true;
+        pot["lb_chip_value"].text = DZPokerOnGameView.instance.potValue;
     }
 
     //TODO：记得要撰写边池，需要跟服务器商讨逻辑谁来处理
-    /**移动所有玩家的筹码入底池 */
-    public static MoveAllChipsToPot()
+    /**移动所有玩家的筹码入底池
+     * PS : 不要问我为什么不循环调用MoveUserChipToPot方法_(´ཀ`」∠)_
+     */
+    public static MoveAllChipsToPot():void
     {
         if(DZPokerOnGameView.instance.table.users.length <= 0)
             return;
-
-        var value:number = 0;
         //底池
-        var pot:eui.Group = DZChipController.tableComponent["betPool_pub"];
+        var pot:eui.Component = DZChipController.tableComponent["betPool_pub"];
         var target:egret.Point = new egret.Point(pot.x,pot.y);
         target.y += 3;//筹码如果直接按照背景的位置有点偏，所以往下来一点正好
         var hasChip:boolean = false;
@@ -72,7 +100,7 @@ class DZChipController extends egret.EventDispatcher
                     hasChip = true;
                     user.betPool.visible = false;//玩家的下注背景隐藏
                     egret.Tween.get(user.chip).to({x:target.x,y:target.y},DZDefine.sendChipTime);
-                    value += user.betValue;//总值
+                    DZPokerOnGameView.instance.potValue += user.betValue;//底池总值
                     user.betValue = 0;//清零玩家一轮下注
             }
         }
@@ -81,14 +109,16 @@ class DZChipController extends egret.EventDispatcher
         {
             //循环结束代表所有玩家的下注都已汇入底池
             var chip = new DZChipView();
-            this.tableComponent.addChild(chip);
+            DZPokerOnGameView.instance.chipAndCardContanier.addChild(chip);
             chip.x = pot.x;
             chip.y = pot.y;
             chip.y += 3;//筹码如果直接按照背景的位置有点偏，所以往下来一点正好
-            chip.value = value;
+            chip.value = DZPokerOnGameView.instance.potValue;
             chip.SetDisplay();
             pot.visible = true;
-            pot["lb_chip_value"].text = value;
+            pot["lb_chip_value"].text = DZPokerOnGameView.instance.potValue;
+            //清零最后一次下注
+            DZPokerOnGameView.instance.lastBetValue = 0;
         }
     }
 

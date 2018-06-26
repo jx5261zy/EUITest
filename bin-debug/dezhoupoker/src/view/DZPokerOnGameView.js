@@ -45,11 +45,12 @@ var __extends = (this && this.__extends) || function (d, b) {
  */
 var DZPokerOnGameView = (function (_super) {
     __extends(DZPokerOnGameView, _super);
-    /**底池的值 */
     function DZPokerOnGameView(_table) {
         var _this = _super.call(this, _table, "dezhoupoker", 6) || this;
         /**最近一次下注的值 */
-        _this._lastBetValue = 0;
+        _this.lastBetValue = 0;
+        /**底池的值 */
+        _this.potValue = 0;
         DZPokerOnGameView._instance = _this;
         // this.load(DZPokerOnGameView.skinPath + "resource/eui_skin/game/DZPokerOnGameSkin.exml");
         _this.load("resource/dezhoupoker/eui_skin/game/DZPokerOnGameSkin.exml");
@@ -81,8 +82,11 @@ var DZPokerOnGameView = (function (_super) {
     //override时，子类的方法访问权限应与父类相同
     DZPokerOnGameView.prototype.initComponent = function () {
         this.inited = true;
+        //为各种容器申请内存
         this._pubCardContainer = new Array();
         this._userCardContainer = new Array();
+        this.chipAndCardContanier = new egret.DisplayObjectContainer();
+        this.addChild(this.chipAndCardContanier);
         this.cardStart = new egret.Point(this["pos_send_card"].x, this["pos_send_card"].y);
         //循环将桌子上的所有玩家头像框，下注框隐藏
         for (var i = 0; i < 6; i++) {
@@ -117,8 +121,6 @@ var DZPokerOnGameView = (function (_super) {
         //底部操作条移动至摄像机视野外
         this["gp_operation_btns"].y = 750;
         this.updateChairInfo(this._gameTable);
-        //设置一个计时器作为游戏进程的推进器
-        // this.setTimer(DZDefine.SendBanker_Timer,3);
     };
     /**计时器回调 */
     DZPokerOnGameView.prototype.onTimer = function (timerID, remainTime) {
@@ -128,7 +130,8 @@ var DZPokerOnGameView = (function (_super) {
                     this.GetBland();
                     this._lowBland.Bet(this._lowBetValue);
                     console.log(this._lowBland.nickname + "下小盲注");
-                    this._highBland.Bet(this._lowBetValue * 2);
+                    // this._highBland.Bet(this._lowBetValue * 2);
+                    this._highBland.Bet(this.lastBetValue * 2);
                     console.log(this._highBland.nickname + "下大盲注");
                     this.stopTimer(DZDefine.Bland_Timer);
                     Main.instance.isBlindEnd = true;
@@ -138,18 +141,17 @@ var DZPokerOnGameView = (function (_super) {
             case DZDefine.Rob_Operate_Timer:
                 if (remainTime < 11 && !Main.instance.isUserOpEnd) {
                     var opType;
-                    var addValue = 0;
+                    var addValue;
                     var random = Math.random();
-                    // if(random <= 0.1)
-                    // {
-                    //     opType = UserOp.ADD;
-                    //     addValue = 20;
-                    // }
-                    // else if(random > 0.1 && random < 0.7)
-                    //     opType = UserOp.CINGL;
-                    // else if(random >= 0.7)
-                    //     opType = UserOp.ABANDON;
-                    opType = UserOp.CINGL;
+                    if (random <= 0.1) {
+                        opType = UserOp.ADD;
+                        addValue = 20;
+                    }
+                    else if (random > 0.1 && random < 0.7)
+                        opType = UserOp.CINGL;
+                    else if (random >= 0.7)
+                        opType = UserOp.ABANDON;
+                    // opType = UserOp.ABANDON;
                     this.RobOperation(this._curUser, opType, addValue);
                     this._curUser.HideOperationBar();
                     this.stopTimer(DZDefine.Rob_Operate_Timer);
@@ -163,14 +165,14 @@ var DZPokerOnGameView = (function (_super) {
                     this.stopTimer(DZDefine.TurnCard_Timer);
                 }
                 break;
-            case DZDefine.RecycleChip_Timer:
+            case DZDefine.RecycleChips_Timer:
                 if (remainTime <= 0) {
-                    this.stopTimer(DZDefine.RecycleChip_Timer);
+                    this.stopTimer(DZDefine.RecycleChips_Timer);
                     for (var key in DZPokerOnGameView.instance.table.users) {
                         var user = DZPokerOnGameView.instance.table.users[key];
                         if (user.chip == null)
                             continue;
-                        this.removeChild(user.chip);
+                        DZPokerOnGameView.instance.chipAndCardContanier.removeChild(user.chip);
                         DZChipController.RecycleChipToPool(user.chip);
                         user.chip = null;
                     }
@@ -257,7 +259,7 @@ var DZPokerOnGameView = (function (_super) {
     /**根据情况显示不同的操作按钮
      * @param status:不同情况
      */
-    DZPokerOnGameView.prototype.SetOperationBtnsDisplay = function (status) {
+    DZPokerOnGameView.prototype.SetOperationBtnsDisplay = function (status, cinglNum) {
         //先把所有的按钮都隐藏
         this._btn_add.visible = false;
         this._btn_allin.visible = false;
@@ -265,20 +267,22 @@ var DZPokerOnGameView = (function (_super) {
         this._gp_cingl.visible = false;
         //然后根据传入的状态显示该显示的按钮
         switch (status) {
-            case DZDefine.Q_CINGL_ADD:
+            case DZDefine.ABANDON_CINGL_ADD:
                 this._gp_cingl.visible = true;
                 //将之前无效化过的按钮激活
                 if (!this._gp_cingl.touchEnabled)
                     this._btnContainer.setBtnEnabled(this._gp_cingl, true);
+                if (cinglNum != 0 && cinglNum != undefined)
+                    this["cingl_num"].text = cinglNum;
                 this._btn_add.visible = true;
                 break;
-            case DZDefine.Q_CINGL_ALLIN:
+            case DZDefine.ABANDON_CINGL_ALLIN:
                 this._gp_cingl.visible = true;
                 //全下的状态下是不可以选择跟注的，所以无效化按钮
                 this._btnContainer.setBtnEnabled(this._gp_cingl, false, true);
                 this._btn_allin.visible = true;
                 break;
-            case DZDefine.Q_PASS_ADD:
+            case DZDefine.ABANDON_PASS_ADD:
                 this._btn_pass.visible = true;
                 this._btn_add.visible = true;
                 break;
@@ -288,12 +292,12 @@ var DZPokerOnGameView = (function (_super) {
     DZPokerOnGameView.prototype.ShowOperateBtns = function () {
         var bottom = this["gp_operation_btns"];
         egret.Tween.get(bottom).to({ x: 0, y: 650 }, DZDefine.operationBtns)
-            .call(function () { bottom.touchChildren = true; });
+            .call(function () { bottom.touchChildren = true; }); //移动完毕让所有的按钮都为可以点击
     };
     /**隐藏底部操作按钮 按钮下沉*/
     DZPokerOnGameView.prototype.HideOperateBtns = function () {
         var bottom = this["gp_operation_btns"];
-        bottom.touchChildren = false;
+        bottom.touchChildren = false; //在隐藏时让所有的按钮都无法点击
         egret.Tween.get(bottom).to({ x: 0, y: 750 }, DZDefine.operationBtns);
     };
     /**往公共牌区域发一张牌的动画 */
@@ -448,7 +452,13 @@ var DZPokerOnGameView = (function (_super) {
                 console.log("点击了返回按钮");
                 break;
             case this._gp_cingl:
-                console.log("点击了跟按钮");
+                var cinglValue = this.lastBetValue - this._curUser.betValue;
+                this._curUser.Bet(cinglValue);
+                this.stopGameTimer();
+                this._curUser.HideOperationBar();
+                this.HideOperateBtns();
+                Main.instance.isUserOpEnd = true;
+                console.log("点击了跟按钮,跟注" + cinglValue);
                 break;
         }
     };
@@ -487,9 +497,12 @@ var DZPokerOnGameView = (function (_super) {
         Main.instance.isSendUserCard = true;
         for (var i = 0; i < this.chairID_userID.length; i++) {
             var user = this.GetUserByChairID(i);
+            if (user.isAbandon)
+                continue; //如果玩家弃牌了，就不发了
             var target = this.GetUserBackCardPos(user.chairID);
             user.cardArr = DZCardController.SendUserCardsAnim(this.cardStart, target);
         }
+        //发完手牌主玩家的牌要翻转
         this.setTimer(DZDefine.TurnCard_Timer, DZDefine.sendCardTime / 1000 + 0.2);
     };
     /**翻开所有手牌 */
@@ -506,11 +519,25 @@ var DZPokerOnGameView = (function (_super) {
         this._curUser = this.GetUserByChairID(packet.iCurChairID);
         var opType = packet.iOpType;
         var addValue = packet.iAddValue;
+        //如果可以加注，则加注按钮的位图文本显示的数字
+        var cinglNum = this.lastBetValue - this._curUser.betValue;
+        if (cinglNum <= 0)
+            cinglNum = 0;
         if (this._curUser != this.mainUser) {
             this.setTimer(DZDefine.Rob_Operate_Timer, DZDefine.iOperateTime);
             this._curUser.StartOperationBarAnim(DZDefine.iOperateTime);
         }
         else {
+            //判断状态给底部操作栏显示状态
+            if (this._curUser.gold <= this.lastBetValue) {
+                this.SetOperationBtnsDisplay(DZDefine.ABANDON_CINGL_ALLIN);
+            }
+            else if (this.lastBetValue == 0) {
+                this.SetOperationBtnsDisplay(DZDefine.ABANDON_PASS_ADD);
+            }
+            else if (this._curUser.gold > this.lastBetValue) {
+                this.SetOperationBtnsDisplay(DZDefine.ABANDON_CINGL_ADD, cinglNum);
+            }
             this.ShowOperateBtns();
             this.mainUser.StartOperationBarAnim(DZDefine.iOperateTime);
             this.setGameTimer(this.mainUser.chairID, DZDefine.Operation_Timer, DZDefine.iOperateTime);
@@ -519,7 +546,8 @@ var DZPokerOnGameView = (function (_super) {
     /**一轮下注结束，移动所有玩家筹码入底池 */
     DZPokerOnGameView.prototype.SC_BetEnd = function () {
         DZChipController.MoveAllChipsToPot();
-        this.setTimer(DZDefine.RecycleChip_Timer, DZDefine.sendChipTime / 1000 + 0.2);
+        //设置一个计时器用于回收玩家筹码的内存
+        this.setTimer(DZDefine.RecycleChips_Timer, DZDefine.sendChipTime / 1000 + 0.2);
     };
     //--------------------------------
     //*********** 测试使用代码 **********//
@@ -533,17 +561,27 @@ var DZPokerOnGameView = (function (_super) {
     DZPokerOnGameView.prototype.RobOperation = function (user, opType, addValue) {
         switch (opType) {
             case UserOp.ABANDON:
-                this._curUser.isAbandon = true;
+                this._curUser.Abandon();
+                DZChipController.MoveUserChipToPot(this._curUser);
                 console.log(this._curUser.nickname + "弃牌");
                 break;
             case UserOp.ADD:
+                var cinglValue = this.lastBetValue - this._curUser.betValue;
+                this._curUser.Bet(cinglValue + addValue);
                 console.log(this._curUser.nickname + "加注" + addValue);
                 break;
             case UserOp.CINGL:
-                this._curUser.Bet(20);
+                var cinglValue = this.lastBetValue - this._curUser.betValue;
+                this._curUser.Bet(cinglValue);
                 console.log(this._curUser.nickname + "跟");
                 break;
         }
+    };
+    DZPokerOnGameView.prototype.PrintInfo = function () {
+        console.log("=====最近一次的下注量：" + this.lastBetValue);
+        console.log("=====底池的值：" + this.potValue);
+        console.log("=====当前操作的玩家昵称：" + this._curUser.nickname);
+        console.log("=====当前操作玩家的下注量：" + this._curUser.betValue);
     };
     return DZPokerOnGameView;
 }(GameViewBase));

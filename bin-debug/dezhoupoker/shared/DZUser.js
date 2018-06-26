@@ -19,7 +19,7 @@ var DZUser = (function (_super) {
         var _this = _super.call(this, _userID, _tableID, _chairID, _role) || this;
         _this.isAbandon = false;
         _this.isBanker = false;
-        /**一轮下注的金额  一轮下注结束时记得要清零 */
+        /**一轮下注的金额  (一轮下注结束时记得要清零) */
         _this.betValue = 0;
         _this._isFaceGropuInited = false;
         return _this;
@@ -48,10 +48,10 @@ var DZUser = (function (_super) {
     };
     /**初始化组件中的各个控件的数据 */
     DZUser.prototype.InitFaceGroup = function (_component) {
-        this.Init(_component);
         if (this._isFaceGropuInited)
             return;
         this._isFaceGropuInited = true;
+        this.Init(_component);
     };
     /**显示头像框中的金币数量 */
     DZUser.prototype.ShowHeadGold = function () {
@@ -64,11 +64,11 @@ var DZUser = (function (_super) {
     };
     /**显示头像遮罩 */
     DZUser.prototype.ShowHeadMask = function () {
-        this["img_head_mask"].visible = true;
+        this.headComponent["img_head_mask"].visible = true;
     };
     /**隐藏头像遮罩 */
     DZUser.prototype.HideHeadMask = function () {
-        this["img_head_mask"].visible = false;
+        this.headComponent["img_head_mask"].visible = false;
     };
     /**下注 */
     DZUser.prototype.Bet = function (value) {
@@ -81,6 +81,8 @@ var DZUser = (function (_super) {
         }
         this.chip = DZChipController.UserBet(this);
         this.betValue += value;
+        //更新最后一次的下注量
+        DZPokerOnGameView.instance.lastBetValue = this.betValue;
         this.betPool["lb_chip_value"].text = this.betValue;
         this.chip.value = this.betValue;
         this.gold -= value;
@@ -90,6 +92,7 @@ var DZUser = (function (_super) {
     /**弃牌 */
     DZUser.prototype.Abandon = function () {
         this.ShowHeadMask();
+        this.isAbandon = true;
     };
     /**开始头像框操作进度条倒计时动画 */
     DZUser.prototype.StartOperationBarAnim = function (_time) {

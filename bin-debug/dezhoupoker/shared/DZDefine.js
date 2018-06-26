@@ -11,7 +11,6 @@ var __reflect = (this && this.__reflect) || function (p, c, t) {
 var DZDefine = (function () {
     function DZDefine() {
     }
-    ;
     return DZDefine;
 }());
 /**玩家手牌背面时的缩放尺寸 */
@@ -55,10 +54,12 @@ DZDefine.SendBanker_Timer = 1000;
 DZDefine.Bland_Timer = 1001;
 /**机器人作出反应的计时器 */
 DZDefine.Rob_Operate_Timer = 1002;
-/**玩家手牌翻牌 */
+/**主玩家手牌翻牌 */
 DZDefine.TurnCard_Timer = 1003;
-/**移除玩家筹码显示的计时器 */
-DZDefine.RecycleChip_Timer = 1004;
+/**移除所有玩家筹码显示的计时器 */
+DZDefine.RecycleChips_Timer = 1004;
+/**移除单个玩家筹码显示的计时器 */
+DZDefine.RecycleChip_Timer = 1005;
 //-------------------------
 //----------GameTimer----------
 /**玩家操作 计时器类别 */
@@ -66,11 +67,11 @@ DZDefine.Operation_Timer = 10000;
 //-------------------------
 //----------底部操作按钮的显示状态----------
 /**弃 跟 加 */
-DZDefine.Q_CINGL_ADD = 0;
+DZDefine.ABANDON_CINGL_ADD = 0;
 /**弃 跟(disabled) 全 */
-DZDefine.Q_CINGL_ALLIN = 1;
+DZDefine.ABANDON_CINGL_ALLIN = 1;
 /**弃 过 加 */
-DZDefine.Q_PASS_ADD = 2;
+DZDefine.ABANDON_PASS_ADD = 2;
 /**一个位图字体的宽度 */
 DZDefine.bplb_Width = 26;
 __reflect(DZDefine.prototype, "DZDefine");

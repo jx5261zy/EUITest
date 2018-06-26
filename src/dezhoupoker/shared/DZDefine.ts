@@ -52,27 +52,28 @@ class DZDefine
     public static Bland_Timer:number = 1001;
     /**机器人作出反应的计时器 */
     public static Rob_Operate_Timer:number = 1002;
-    /**玩家手牌翻牌 */
+    /**主玩家手牌翻牌 */
     public static TurnCard_Timer:number = 1003;
-    /**移除玩家筹码显示的计时器 */
-    public static RecycleChip_Timer:number = 1004;
+    /**移除所有玩家筹码显示的计时器 */
+    public static RecycleChips_Timer:number = 1004;
+    /**移除单个玩家筹码显示的计时器 */
+    public static RecycleChip_Timer:number = 1005;
     //-------------------------
 
 
     //----------GameTimer----------
     /**玩家操作 计时器类别 */
     public static Operation_Timer:number = 10000; 
-;
     //-------------------------
 
 
     //----------底部操作按钮的显示状态----------
     /**弃 跟 加 */
-    public static Q_CINGL_ADD = 0;
+    public static ABANDON_CINGL_ADD = 0;
     /**弃 跟(disabled) 全 */
-    public static Q_CINGL_ALLIN = 1;
+    public static ABANDON_CINGL_ALLIN = 1;
     /**弃 过 加 */
-    public static Q_PASS_ADD = 2;
+    public static ABANDON_PASS_ADD = 2;
     /**一个位图字体的宽度 */
     public static bplb_Width = 26;
 

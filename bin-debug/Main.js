@@ -165,13 +165,22 @@ var Main = (function (_super) {
                 break;
             //U 玩家操作
             case 85:
-                if (!Main.instance.isBlindEnd || !Main.instance.isUserOpEnd)
-                    return;
-                var curChairID;
-                if (Main.instance.lastOpChairID == 5)
-                    curChairID = Main.instance.lastOpChairID = 0;
-                else
-                    curChairID = Main.instance.lastOpChairID + 1;
+                while (true) {
+                    if (!Main.instance.isBlindEnd || !Main.instance.isUserOpEnd)
+                        return;
+                    var curChairID;
+                    if (Main.instance.lastOpChairID == 5)
+                        curChairID = Main.instance.lastOpChairID = 0;
+                    else
+                        curChairID = Main.instance.lastOpChairID + 1;
+                    var user = DZPokerOnGameView.instance.GetUserByChairID(curChairID);
+                    if (user.isAbandon) {
+                        Main.instance.lastOpChairID = curChairID;
+                        continue;
+                    }
+                    else
+                        break;
+                }
                 var opType;
                 var addValue = 0;
                 var random = Math.random();
@@ -228,6 +237,10 @@ var Main = (function (_super) {
             //E 一轮下注结束，移动所有玩家筹码入底池
             case 69:
                 DZPokerOnGameView.instance.SC_BetEnd();
+                break;
+            //M 输出重点参数的信息
+            case 77:
+                DZPokerOnGameView.instance.PrintInfo();
                 break;
         }
     };

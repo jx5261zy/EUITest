@@ -83,10 +83,12 @@ class DZCardView extends MoveObject
         this.img_mask.visible = true;
     }
 
+
     public HideMask()
     {
         this.img_mask.visible = false;
     }
+
 
 	public moveToTargetPos(targetX: number,targetY: number,controlPoints: Array<any> = null,duration: number = 0,delay: number = 0,onMoveStartCallBack: Function = null,onMoveComplete: Function = null,oMoveCallBackThisObj: any = null,moveCompleteIsFlip:boolean = false): void {
 		

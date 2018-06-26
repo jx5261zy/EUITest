@@ -28,7 +28,6 @@ class DZCardController extends egret.EventDispatcher
     //     return this._instance
     // }
 
-
     /**播放发玩家手牌的动画
      * 不会给卡牌赋值，赋显，返回一个手牌数组
      */
@@ -46,8 +45,9 @@ class DZCardController extends egret.EventDispatcher
             secondCard.scaleX = secondCard.scaleY = 0.01;
             firstCard.isFront = secondCard.isFront = false;
             firstCard.isAction = secondCard.isAction = false;
-            DZCardController.tableComponent.addChild(firstCard);
-            DZCardController.tableComponent.addChild(secondCard);
+
+            DZPokerOnGameView.instance.chipAndCardContanier.addChild(firstCard);
+            DZPokerOnGameView.instance.chipAndCardContanier.addChild(secondCard);            
 
             var userCard = [firstCard,secondCard];
 
@@ -138,7 +138,7 @@ class DZCardController extends egret.EventDispatcher
         this.tableComponent.addChild(poker);
         poker.isAction = true;
         egret.Tween.get(poker).to({x:target.x,y:target.y,scaleX:1,scaleY:1,alpha:1},DZDefine.sendCardTime)
-                            .call(()=>{/**this._bg["gp_public_cards"].addChild(poker); */poker.isAction = false;});
+                            .call(()=>{poker.isAction = false;});
         return poker;
     }
 

@@ -39,7 +39,5 @@ class DZChipView extends MoveObject
     }
 
 
-
-
 //class end   
 }

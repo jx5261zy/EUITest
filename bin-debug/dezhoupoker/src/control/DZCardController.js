@@ -45,8 +45,8 @@ var DZCardController = (function (_super) {
         secondCard.scaleX = secondCard.scaleY = 0.01;
         firstCard.isFront = secondCard.isFront = false;
         firstCard.isAction = secondCard.isAction = false;
-        DZCardController.tableComponent.addChild(firstCard);
-        DZCardController.tableComponent.addChild(secondCard);
+        DZPokerOnGameView.instance.chipAndCardContanier.addChild(firstCard);
+        DZPokerOnGameView.instance.chipAndCardContanier.addChild(secondCard);
         var userCard = [firstCard, secondCard];
         firstCard.isAction = secondCard.isAction = true;
         egret.Tween.get(firstCard).to({ x: target.x, y: target.y, rotation: DZDefine.firstCardAngle, scaleX: DZDefine.b_scale, scaleY: DZDefine.b_scale, alpha: 1 }, DZDefine.sendCardTime)
@@ -124,7 +124,7 @@ var DZCardController = (function (_super) {
         this.tableComponent.addChild(poker);
         poker.isAction = true;
         egret.Tween.get(poker).to({ x: target.x, y: target.y, scaleX: 1, scaleY: 1, alpha: 1 }, DZDefine.sendCardTime)
-            .call(function () { /**this._bg["gp_public_cards"].addChild(poker); */ poker.isAction = false; });
+            .call(function () { poker.isAction = false; });
         return poker;
     };
     /**单张翻公共牌动画
