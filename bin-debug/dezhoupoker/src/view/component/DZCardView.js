@@ -41,6 +41,12 @@ var DZCardView = (function (_super) {
     };
     DZCardView.prototype.Dispose = function () {
     };
+    /**回收之前需要做的操作 */
+    DZCardView.prototype.Recycle = function () {
+        this.isFront = false;
+        this.rotation = 0;
+        this.HideMask();
+    };
     /**赋值 */
     DZCardView.prototype.SetData = function (_value, _type, _isFront) {
         if (_isFront === void 0) { _isFront = false; }

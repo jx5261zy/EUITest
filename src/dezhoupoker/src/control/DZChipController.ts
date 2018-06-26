@@ -12,6 +12,12 @@ class DZChipController extends egret.EventDispatcher
 
     public static tableComponent:eui.Component;
 
+    // /**移动筹码 */
+    // public static MoveChip(chip:DZChipView,start:egret.Point,target:egret.Point)
+    // {
+    //     egret.Tween.get(chip).to({})
+    // }
+
     /**用户下注
      * 并不会给筹码赋值，赋显，会将筹码的内存返回出去
      * @param user : 需要下注的用户
@@ -38,11 +44,6 @@ class DZChipController extends egret.EventDispatcher
                                                     DZPokerOnGameView.instance.chipAndCardContanier.removeChild(user.lastChip);
                                                     DZChipController.RecycleChipToPool(user.lastChip);
                                                 }
-                                                // if(user.chip != null)
-                                                // {
-                                                //     DZPokerOnGameView.instance.chipAndCardContanier.removeChild(user.chip);
-                                                //     DZChipController.RecycleChipToPool(user.chip);
-                                                // }
                                         });
 
         return chip;

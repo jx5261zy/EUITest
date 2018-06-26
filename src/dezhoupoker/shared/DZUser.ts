@@ -125,6 +125,8 @@ class DZUser extends GameUser
         this.gold -= value;
         this.ShowHeadGold();
         this.chip.SetDisplay();
+
+        this.HideOperationBar();
     }
 
 
@@ -133,6 +135,8 @@ class DZUser extends GameUser
     {
         this.ShowHeadMask();
         this.isAbandon = true;
+        DZCardController.AbandonCardAnim(this);
+        this.HideOperationBar();
     }
 
 

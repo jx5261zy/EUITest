@@ -153,7 +153,6 @@ var DZPokerOnGameView = (function (_super) {
                         opType = UserOp.ABANDON;
                     // opType = UserOp.ABANDON;
                     this.RobOperation(this._curUser, opType, addValue);
-                    this._curUser.HideOperationBar();
                     this.stopTimer(DZDefine.Rob_Operate_Timer);
                     Main.instance.isUserOpEnd = true;
                 }
@@ -172,7 +171,8 @@ var DZPokerOnGameView = (function (_super) {
                         var user = DZPokerOnGameView.instance.table.users[key];
                         if (user.chip == null)
                             continue;
-                        DZPokerOnGameView.instance.chipAndCardContanier.removeChild(user.chip);
+                        if (DZPokerOnGameView.instance.chipAndCardContanier.contains(user.chip))
+                            DZPokerOnGameView.instance.chipAndCardContanier.removeChild(user.chip);
                         DZChipController.RecycleChipToPool(user.chip);
                         user.chip = null;
                     }
@@ -306,7 +306,7 @@ var DZPokerOnGameView = (function (_super) {
             return null;
         var start = new egret.Point(this.cardStart.x, this.cardStart.y);
         var target = this.GetPubTargetPos();
-        var poker = DZCardController.SendPubCard(start, target);
+        var poker = DZCardController.SendPubCardAnim(start, target);
         this._pubCardContainer.push(poker);
         return poker;
     };
@@ -437,7 +437,11 @@ var DZPokerOnGameView = (function (_super) {
                 console.log("点击了加注按钮");
                 break;
             case this._btn_abandon:
-                console.log("点击了放弃按钮");
+                this._curUser.Abandon();
+                this.HideOperateBtns();
+                DZChipController.MoveUserChipToPot(this._curUser);
+                Main.instance.isUserOpEnd = true;
+                console.log("点击了弃牌按钮");
                 break;
             case this._btn_allin:
                 console.log("点击了全下按钮");
@@ -455,7 +459,6 @@ var DZPokerOnGameView = (function (_super) {
                 var cinglValue = this.lastBetValue - this._curUser.betValue;
                 this._curUser.Bet(cinglValue);
                 this.stopGameTimer();
-                this._curUser.HideOperationBar();
                 this.HideOperateBtns();
                 Main.instance.isUserOpEnd = true;
                 console.log("点击了跟按钮,跟注" + cinglValue);
@@ -490,7 +493,7 @@ var DZPokerOnGameView = (function (_super) {
         this._banker = banker;
         this.SendBankerLogoAnim(banker.chairID);
         this.GetBland();
-        this.setTimer(DZDefine.Bland_Timer, 1); //下盲注
+        this.setTimer(DZDefine.Bland_Timer, DZDefine.sendBankerTime / 1000); //下盲注
     };
     /**盲注结束 发手牌 */
     DZPokerOnGameView.prototype.SC_Blind_END_SendCard = function (packet) {
@@ -504,6 +507,9 @@ var DZPokerOnGameView = (function (_super) {
         }
         //发完手牌主玩家的牌要翻转
         this.setTimer(DZDefine.TurnCard_Timer, DZDefine.sendCardTime / 1000 + 0.2);
+    };
+    DZPokerOnGameView.prototype.SC_SendPubCard = function () {
+        this.SendPubCard();
     };
     /**翻开所有手牌 */
     DZPokerOnGameView.prototype.SC_TurnAllUserCards = function () {
@@ -580,8 +586,10 @@ var DZPokerOnGameView = (function (_super) {
     DZPokerOnGameView.prototype.PrintInfo = function () {
         console.log("=====最近一次的下注量：" + this.lastBetValue);
         console.log("=====底池的值：" + this.potValue);
-        console.log("=====当前操作的玩家昵称：" + this._curUser.nickname);
-        console.log("=====当前操作玩家的下注量：" + this._curUser.betValue);
+        if (this._curUser != null)
+            console.log("=====当前操作的玩家昵称：" + this._curUser.nickname);
+        if (this._curUser != null)
+            console.log("=====当前操作玩家的下注量：" + this._curUser.betValue);
     };
     return DZPokerOnGameView;
 }(GameViewBase));

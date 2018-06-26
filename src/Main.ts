@@ -163,9 +163,9 @@ class Main extends eui.UILayer {
             case 83:
 
             break;
-            //space
+            //space 发一张公共牌
             case 32:
-
+                DZPokerOnGameView.instance.SC_SendPubCard();
             break;
             //U 玩家操作
             case 85:

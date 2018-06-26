@@ -53,6 +53,14 @@ class DZCardView extends MoveObject
 
     }
 
+    /**回收之前需要做的操作 */
+    public Recycle()
+    {
+        this.isFront = false;
+        this.rotation = 0;
+        this.HideMask();
+    }
+
     /**赋值 */
     public SetData(_value:number,_type:CardType,_isFront:boolean = false):void
     {

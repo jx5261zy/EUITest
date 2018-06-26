@@ -113,7 +113,7 @@ var DZCardController = (function (_super) {
             .call(function () { secondCard.isAction = false; secondCard.isFront = true; });
     };
     /**往公共牌区域发一张牌的动画 */
-    DZCardController.SendPubCard = function (start, target) {
+    DZCardController.SendPubCardAnim = function (start, target) {
         var poker = DZCardController.CreatePokerFormPool();
         poker.isFront = false; //先设置为反面
         poker.alpha = 0;
@@ -121,10 +121,14 @@ var DZCardController = (function (_super) {
         poker.x = start.x;
         poker.y = start.y;
         poker.isAction = false;
-        this.tableComponent.addChild(poker);
+        DZPokerOnGameView.instance.chipAndCardContanier.addChild(poker);
         poker.isAction = true;
         egret.Tween.get(poker).to({ x: target.x, y: target.y, scaleX: 1, scaleY: 1, alpha: 1 }, DZDefine.sendCardTime)
-            .call(function () { poker.isAction = false; });
+            .call(function () {
+            poker.isAction = false;
+            //发完牌就让牌翻过来
+            DZCardController.TurnPubCardAnim(poker);
+        });
         return poker;
     };
     /**单张翻公共牌动画
@@ -160,7 +164,27 @@ var DZCardController = (function (_super) {
     /**弃牌动画
      * @param _user : 需要弃牌的用户
      */
-    DZCardController.AbandonCardAnim = function (_user) {
+    DZCardController.AbandonCardAnim = function (user) {
+        if (!user.cardArr)
+            return;
+        if (user.cardArr.length == 0)
+            return;
+        var firstCard = user.cardArr[0];
+        var secondCard = user.cardArr[1];
+        //弃牌的目标就是发牌点吧
+        var target = DZPokerOnGameView.instance.cardStart;
+        egret.Tween.get(firstCard).to({ x: target.x, y: target.y, scaleX: 0.3, scaleY: 0.3, alpha: 0 }, DZDefine.sendCardTime)
+            .call(function () {
+            DZPokerOnGameView.instance.chipAndCardContanier.removeChild(firstCard);
+            firstCard.Recycle();
+            DZCardController.RecyclePokerToPool(firstCard);
+        });
+        egret.Tween.get(secondCard).to({ x: target.x, y: target.y, scaleX: 0.3, scaleY: 0.3, alpha: 0 }, DZDefine.sendCardTime)
+            .call(function () {
+            DZPokerOnGameView.instance.chipAndCardContanier.removeChild(secondCard);
+            secondCard.Recycle();
+            DZCardController.RecyclePokerToPool(secondCard);
+        });
     };
     /**获得卡牌值资源 */
     DZCardController.GetValueRes = function (value, type) {

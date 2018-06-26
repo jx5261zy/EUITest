@@ -88,11 +88,14 @@ var DZUser = (function (_super) {
         this.gold -= value;
         this.ShowHeadGold();
         this.chip.SetDisplay();
+        this.HideOperationBar();
     };
     /**弃牌 */
     DZUser.prototype.Abandon = function () {
         this.ShowHeadMask();
         this.isAbandon = true;
+        DZCardController.AbandonCardAnim(this);
+        this.HideOperationBar();
     };
     /**开始头像框操作进度条倒计时动画 */
     DZUser.prototype.StartOperationBarAnim = function (_time) {

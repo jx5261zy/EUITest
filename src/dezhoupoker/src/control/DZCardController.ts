@@ -11,10 +11,6 @@ class DZCardController extends egret.EventDispatcher
 {
     /**桌子皮肤 */
     public static tableComponent:eui.Component;
-    /**公共牌容器 */    
-    public static pubCardContainer:Array<DZCardView>;
-    /**所有玩家的手牌 */
-    public static userCardContainer:Array<DZCardView[]>;
 
     // private static _instance:DZCardController;
     // private static _isInstantation:boolean = false;
@@ -126,7 +122,7 @@ class DZCardController extends egret.EventDispatcher
 
 
     /**往公共牌区域发一张牌的动画 */
-    public static SendPubCard(start:egret.Point,target:egret.Point):DZCardView
+    public static SendPubCardAnim(start:egret.Point,target:egret.Point):DZCardView
     {
         var poker = DZCardController.CreatePokerFormPool();
         poker.isFront = false;//先设置为反面
@@ -135,10 +131,14 @@ class DZCardController extends egret.EventDispatcher
         poker.x = start.x;
         poker.y = start.y;
         poker.isAction = false;
-        this.tableComponent.addChild(poker);
+        DZPokerOnGameView.instance.chipAndCardContanier.addChild(poker);
         poker.isAction = true;
         egret.Tween.get(poker).to({x:target.x,y:target.y,scaleX:1,scaleY:1,alpha:1},DZDefine.sendCardTime)
-                            .call(()=>{poker.isAction = false;});
+                            .call(()=> {
+                                                poker.isAction = false;
+                                                //发完牌就让牌翻过来
+                                                DZCardController.TurnPubCardAnim(poker);
+                                            });
         return poker;
     }
 
@@ -178,9 +178,26 @@ class DZCardController extends egret.EventDispatcher
     /**弃牌动画
      * @param _user : 需要弃牌的用户
      */
-    public static AbandonCardAnim(_user:DZUser):void
+    public static AbandonCardAnim(user:DZUser):void
     {
-        
+        if(!user.cardArr) return;
+        if(user.cardArr.length == 0) return;
+        var firstCard:DZCardView = user.cardArr[0];
+        var secondCard:DZCardView = user.cardArr[1];
+        //弃牌的目标就是发牌点吧
+        var target:egret.Point = DZPokerOnGameView.instance.cardStart;
+        egret.Tween.get(firstCard).to({x:target.x,y:target.y,scaleX:0.3,scaleY:0.3,alpha:0},DZDefine.sendCardTime)
+                            .call(()=> {
+                                                DZPokerOnGameView.instance.chipAndCardContanier.removeChild(firstCard);
+                                                firstCard.Recycle();
+                                                DZCardController.RecyclePokerToPool(firstCard);
+                                            });
+        egret.Tween.get(secondCard).to({x:target.x,y:target.y,scaleX:0.3,scaleY:0.3,alpha:0},DZDefine.sendCardTime)
+                            .call(()=> {
+                                                DZPokerOnGameView.instance.chipAndCardContanier.removeChild(secondCard);
+                                                secondCard.Recycle();
+                                                DZCardController.RecyclePokerToPool(secondCard);
+                                            });
     }
 
     /**获得卡牌值资源 */
