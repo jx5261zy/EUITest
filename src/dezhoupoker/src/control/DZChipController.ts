@@ -68,14 +68,11 @@ class DZChipController extends egret.EventDispatcher
         DZPokerOnGameView.instance.potValue += user.betValue;//底池总值
         user.betValue = 0;//清零玩家一轮下注
 
-        var chip = new DZChipView();
-        DZPokerOnGameView.instance.chipAndCardContanier.addChild(chip);
-        chip.x = pot.x;
-        chip.y = pot.y;
-        chip.y += 3;//筹码如果直接按照背景的位置有点偏，所以往下来一点正好
+        var chip:DZChipView = pot["chip"] as DZChipView;
+        if(!chip.visible) chip.visible = true;
         chip.value = DZPokerOnGameView.instance.potValue;
         chip.SetDisplay();
-        pot.visible = true;
+        if(!pot.visible) pot.visible = true;
         pot["lb_chip_value"].text = DZPokerOnGameView.instance.potValue;
     }
 
@@ -108,15 +105,11 @@ class DZChipController extends egret.EventDispatcher
 
         if(hasChip)
         {
-            //循环结束代表所有玩家的下注都已汇入底池
-            var chip = new DZChipView();
-            DZPokerOnGameView.instance.chipAndCardContanier.addChild(chip);
-            chip.x = pot.x;
-            chip.y = pot.y;
-            chip.y += 3;//筹码如果直接按照背景的位置有点偏，所以往下来一点正好
+            var chip:DZChipView = pot["chip"] as DZChipView;
+            if(!chip.visible) chip.visible = true;
             chip.value = DZPokerOnGameView.instance.potValue;
             chip.SetDisplay();
-            pot.visible = true;
+            if(!pot.visible) pot.visible = true;
             pot["lb_chip_value"].text = DZPokerOnGameView.instance.potValue;
             //清零最后一次下注
             DZPokerOnGameView.instance.lastBetValue = 0;

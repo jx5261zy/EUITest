@@ -18,9 +18,23 @@ var DZBetSlider = (function (_super) {
     function DZBetSlider() {
         return _super.call(this) || this;
     }
+    Object.defineProperty(DZBetSlider.prototype, "addView", {
+        set: function (value) {
+            this._addView = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
     DZBetSlider.prototype.updateSkinDisplayList = function () {
         _super.prototype.updateSkinDisplayList.call(this);
-        this.track_fill.height = this.value / this.maximum * this.height;
+        this.track_fill_mask.height = this.value / this.maximum * this.height;
+        this.track_fill_mask.anchorOffsetY = this.track_fill_mask.height; //不停的根据高度更改锚点，保证锚点始终在最下方
+        if (this.value == this.maximum) {
+            this._addView.OnValueMax();
+        }
+        else {
+            this._addView.OnValueNormal();
+        }
     };
     return DZBetSlider;
 }(eui.VSlider));

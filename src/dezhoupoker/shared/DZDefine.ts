@@ -43,6 +43,8 @@ class DZDefine
     public static iOperateTime:number = 15;
     /**庄logo 缓动动画的时间 */
     public static sendBankerTime:number = 500;
+    /**下拉菜单 缓动动画的时间 */
+    public static dropMenuTime:number = 200;
 
 
     //----------Timer----------

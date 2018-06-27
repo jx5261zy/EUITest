@@ -194,6 +194,7 @@ class BaseComponent extends eui.Component {
 
     }
 
+    
     public quiteGameTable() : void {
         // AppFacade.getInstance().sendNotification(UnloadGame_Command.NAME, {name: GlobalPara.gameType});
     }

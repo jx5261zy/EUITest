@@ -47,6 +47,8 @@ DZDefine.operationBtns = 500;
 DZDefine.iOperateTime = 15;
 /**庄logo 缓动动画的时间 */
 DZDefine.sendBankerTime = 500;
+/**下拉菜单 缓动动画的时间 */
+DZDefine.dropMenuTime = 200;
 //----------Timer----------
 /**发庄计时器 */
 DZDefine.SendBanker_Timer = 1000;

@@ -154,7 +154,7 @@ class Main extends eui.UILayer {
             case 87:
                 if(Main.instance.isBlindEnd) return;
                 DZPokerOnGameView.instance.SC_StartGame({
-                                                                                                iBankerID:0,
+                                                                                                iBankerID:2,
                                                                                                 iLowBetValue:10
                                                                                             });
                 
@@ -225,9 +225,9 @@ class Main extends eui.UILayer {
                                                                                                                 iCard1:Main.instance.userCards[1],
                                                                                                             });
             break;
-            //Z
+            //Z 主玩家一直下20的注，这里主要是用于 测试玩家下注的筹码对象显示叠加问题 和 检测回收机制的执行结果
             case 90:
-
+                DZPokerOnGameView.instance.MainUserBet();
             break;
             //B
             case 66:
@@ -273,18 +273,23 @@ class Main extends eui.UILayer {
      * Create scene interface
      */
     protected startCreateScene(): void {
-        Main._instance = this;
-        document.onkeydown = this.OnKeyDown;
+        // Main._instance = this;
+        // document.onkeydown = this.OnKeyDown;
 
-        this.SetUsers();
-        var dzGame = new DZPokerOnGameView(this._table);
-        this.addChild(dzGame);
+        // this.SetUsers();
+        // var dzGame = new DZPokerOnGameView(this._table);
+        // this.addChild(dzGame);
 
-        this.RandomCards();
+        // this.RandomCards();
+
+
         //加注滑动条测试
         // var slider:eui.Component = new eui.Component();
-        // slider.skinName = "resource/dezhoupoker/eui_skin/view/DZAddChipView.exml";
-        // this.addChild(slider);
+        // slider.skinName = "resource/dezhoupoker/eui_skin/view/DZAddChipSkin.exml";
+        // slider["betSlider"].maximum = 100;
+        var addView:DZAddChipView = new DZAddChipView();
+        addView.betSlider.maximum = 100;
+        this.addChild(addView);
 
     }
 
@@ -293,7 +298,7 @@ class Main extends eui.UILayer {
     {
         this._table = new GameTable(10);
         var mainUser = new DZUser(111,10,0,UserData);
-        UserData.userID = 111;
+        UserData.userID = 111;//设置为主玩家
         mainUser.nickname = "绘图铅笔2B";
         mainUser.gold = 11111;
         this._table.addUser(mainUser)

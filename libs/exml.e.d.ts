@@ -10,7 +10,7 @@ declare class DZPokerSkin extends eui.Skin{
 }
 declare class DZPokerOnGameSkin extends eui.Skin{
 }
-declare class DZAddChipView extends eui.Skin{
+declare class DZAddChipSkin extends eui.Skin{
 }
 declare class DZAudioSetSkin extends eui.Skin{
 }

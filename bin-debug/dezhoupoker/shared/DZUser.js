@@ -112,8 +112,33 @@ var DZUser = (function (_super) {
         this._borderProgressBarDraw.stopDraw();
         this.img_time_bar.visible = false;
     };
-    /**改变玩家的操作状态  弃牌，加注，跟注，让牌，全下 */
-    DZUser.prototype.ChangeState = function () {
+    /**清除用户数据 */
+    DZUser.prototype.ResetData = function () {
+        this.HideOperationBar(); //隐藏计时条
+        this.betPool.visible = false; //桌面下注的组件隐藏
+        this.betPool = null;
+        this.betValue = 0;
+        this.isBanker = false;
+        this.isAbandon = false;
+        //如果显示容器包含该用户筹码，清除，并回收对象池
+        if (DZPokerOnGameView.instance.chipAndCardContanier.contains(this.chip))
+            DZPokerOnGameView.instance.chipAndCardContanier.removeChild(this.chip);
+        if (this.chip != null)
+            DZChipController.RecycleChipToPool(this.chip);
+        //保存上次筹码的变量也做一样的上述操作
+        if (DZPokerOnGameView.instance.chipAndCardContanier.contains(this.lastChip))
+            DZPokerOnGameView.instance.chipAndCardContanier.removeChild(this.lastChip);
+        if (this.lastChip != null)
+            DZChipController.RecycleChipToPool(this.lastChip);
+        //移除卡牌的显示以及卡牌回收对象池
+        if (this.cardArr) {
+            if (DZPokerOnGameView.instance.chipAndCardContanier.contains(this.cardArr[0]) && DZPokerOnGameView.instance.chipAndCardContanier.contains(this.cardArr[1])) {
+                DZPokerOnGameView.instance.chipAndCardContanier.removeChild(this.cardArr[0]);
+                DZPokerOnGameView.instance.chipAndCardContanier.removeChild(this.cardArr[1]);
+            }
+            DZCardController.RecyclePokerToPool(this.cardArr[0]);
+            DZCardController.RecyclePokerToPool(this.cardArr[1]);
+        }
     };
     return DZUser;
 }(GameUser));

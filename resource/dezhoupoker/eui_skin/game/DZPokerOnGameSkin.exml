@@ -4,7 +4,14 @@
 	<e:Rect id="pos_send_card" width="1" height="1" x="667.38" y="186.34" fillAlpha="0" strokeAlpha="0"/>
 	<e:Image id="img_bg" anchorOffsetX="0" scaleX="1" scaleY="1" anchorOffsetY="0" width="1334" height="1000" horizontalCenter="0" verticalCenter="0" source="dz_gameView_bg_jpg" name="背景" x="725" y="462"/>
 	<e:Image id="btn_return" width="80" height="80" scaleX="1" scaleY="1" source="dz_return_png" left="40" top="40" x="40" y="40"/>
-	<e:Image id="btn_drop_down" width="80" height="80" scaleX="1" scaleY="1" right="40" top="40" source="dz_drop_down_png" x="1214" y="40"/>
+	<e:ToggleButton id="btn_drop_down" label="" right="40" top="40">
+		<e:skinName>
+			<e:Skin states="up,down,disabled">
+			<e:Image width="100%" height="100%" source="dz_drop_down_png" source.down="dz_drop_up_png"/>
+			<e:Label id="labelDisplay" horizontalCenter="0" verticalCenter="0"/>
+			</e:Skin>
+		</e:skinName>
+	</e:ToggleButton>
 	<e:Group id="gp_operation_btns" height="100" y="650" left="0" right="0" x="0" scaleX="1" scaleY="1">
 		<e:Image id="btn_abandon" width="242" height="71" source="dz_abandon_btn_png" anchorOffsetX="0" anchorOffsetY="0" verticalCenter="0" right="514"/>
 		<e:Image id="btn_pass" width="242" height="71" anchorOffsetX="0" anchorOffsetY="0" verticalCenter="0" right="262" source="dz_pass_btn_png" scaleX="1" visible="false"/>
@@ -39,4 +46,6 @@
 	<e:Component x="210.42" y="300" skinName="DZBetPool" id="betPool_4"/>
 	<e:Component x="319.42" y="210" skinName="DZBetPool" id="betPool_5"/>
 	<e:Component id="betPool_pub" x="613" y="232.87" skinName="DZBetPool"/>
+	<ns1:DZDropDownView id="dropMenu" x="1081" y="119.93" skinName="DZDropDownSkin" visible="false"/>
+	<ns1:DZAddChipView id="addView" x="1108.5" y="155" skinName="DZAddChipSkin" visible="false"/>
 </e:Skin>

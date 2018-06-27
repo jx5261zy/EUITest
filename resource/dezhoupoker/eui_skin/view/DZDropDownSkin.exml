@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <e:Skin class="DZDropDownSkin" width="213" height="235" xmlns:e="http://ns.egret.com/eui" xmlns:w="http://ns.egret.com/wing">
-	<e:Image id="bg" left="0" right="0" top="0" bottom="0" source="dz_dropdown_bg_png"/>
-	<e:Group id="btn_change_table" width="100%" height="33%">
-		<e:Image id="img_change_table" width="188" height="43" y="16" source="dz_change_table_png" horizontalCenter="0" x="13" scaleX="1" scaleY="1"/>
-	</e:Group>
-	<e:Group id="btn_type_eg" width="100%" height="33%" x="0" y="78">
-		<e:Image id="img_type_eg" width="181" height="48" y="16" horizontalCenter="0" source="dz_type_eg_png" x="16" scaleX="1" scaleY="1"/>
-	</e:Group>
-	<e:Group id="btn_setting" width="100%" height="33%" x="0" y="156">
-		<e:Image id="img_setting" width="181" height="54" y="14" horizontalCenter="0" source="dz_setting_png" x="16" scaleX="1" scaleY="1"/>
+	<e:Group id="root" width="213" x="0" height="235" y="0" scaleY="1">
+		<e:Image id="bg" left="0" right="0" top="0" bottom="0" source="dz_dropdown_bg_png" x="0" y="0" scaleX="1" scaleY="1"/>
+		<e:Group id="btn_change_table" width="100%" height="33%" x="0" y="0" scaleX="1" scaleY="1">
+			<e:Image id="img_change_table" width="188" height="43" y="16" source="dz_change_table_png" horizontalCenter="0" x="13" scaleX="1" scaleY="1"/>
+		</e:Group>
+		<e:Group id="btn_type_eg" width="100%" height="33%" x="0" y="78" scaleX="1" scaleY="1">
+			<e:Image id="img_type_eg" width="181" height="48" y="16" horizontalCenter="0" source="dz_type_eg_png" x="16" scaleX="1" scaleY="1"/>
+		</e:Group>
+		<e:Group id="btn_setting" width="100%" height="33%" x="0" y="156" scaleX="1" scaleY="1">
+			<e:Image id="img_setting" width="181" height="54" y="14" horizontalCenter="0" source="dz_setting_png" x="16" scaleX="1" scaleY="1"/>
+		</e:Group>
 	</e:Group>
 </e:Skin>
