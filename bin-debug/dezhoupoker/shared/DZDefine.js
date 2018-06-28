@@ -44,7 +44,7 @@ DZDefine.sendChipTime = 200;
 /**底部按钮上升/下降的时间 */
 DZDefine.operationBtns = 500;
 /**操作时间 */
-DZDefine.iOperateTime = 15;
+DZDefine.iOperateTime = 60;
 /**庄logo 缓动动画的时间 */
 DZDefine.sendBankerTime = 500;
 /**下拉菜单 缓动动画的时间 */

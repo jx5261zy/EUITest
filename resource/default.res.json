@@ -1,7 +1,7 @@
 {
 	"groups": [
 		{
-			"keys": "description_json,dz_chip_bg_png,dz_userchip_0_png,dz_userchip_1_png,dz_userchip_2_png,dz_userchip_3_png,dz_userchip_4_png,dz_abandon_btn_png,dz_add_btn_png,dz_allin_btn_png,dz_btn_ready_png,dz_change_table_png,dz_cingl_btn_bg_png,dz_dropdown_bg_png,dz_drop_down_png,dz_drop_up_png,dz_eg_faceID_png,dz_gameView_bg_jpg,dz_head_light_png,dz_i_img_png,dz_main_headbg_png,dz_operation_bar_png,dz_pass_btn_png,dz_readyed_png,dz_return_png,dz_setting_png,dz_type_eg_png,dz_zhuang_png,dz_back_bg_png,dz_b_1_png,dz_b_10_png,dz_b_11_png,dz_b_12_png,dz_b_13_png,dz_b_2_png,dz_b_3_png,dz_b_4_png,dz_b_5_png,dz_b_6_png,dz_b_7_png,dz_b_8_png,dz_b_9_png,dz_poker_bg_png,dz_poker_mask_png,dz_r_1_png,dz_r_10_png,dz_r_11_png,dz_r_12_png,dz_r_13_png,dz_r_2_png,dz_r_3_png,dz_r_4_png,dz_r_5_png,dz_r_6_png,dz_r_7_png,dz_r_8_png,dz_r_9_png,dz_type0_11_png,dz_type0_12_png,dz_type0_13_png,dz_type1_11_png,dz_type1_12_png,dz_type1_13_png,dz_type2_11_png,dz_type2_12_png,dz_type2_13_png,dz_type3_11_png,dz_type3_12_png,dz_type3_13_png,dz_type_0_png,dz_type_1_png,dz_type_2_png,dz_type_3_png,0_png,1_png,2_png,3_png,4_png,5_png,6_png,7_png,8_png,9_png,cingl_png,dz_num_fnt,dz_num_png,dz_slider_tube_png,dz_chip_slider_bg_png,dz_slider_handle_png,dz_slider_track_bg_png,dz_slider_track_fill_png,dz_slider_allin_png,dz_add_effect_1_png,dz_add_effect_2_png",
+			"keys": "description_json,dz_chip_bg_png,dz_userchip_0_png,dz_userchip_1_png,dz_userchip_2_png,dz_userchip_3_png,dz_userchip_4_png,dz_abandon_btn_png,dz_add_btn_png,dz_allin_btn_png,dz_btn_ready_png,dz_change_table_png,dz_cingl_btn_bg_png,dz_dropdown_bg_png,dz_drop_down_png,dz_drop_up_png,dz_eg_faceID_png,dz_gameView_bg_jpg,dz_head_light_png,dz_i_img_png,dz_main_headbg_png,dz_operation_bar_png,dz_pass_btn_png,dz_readyed_png,dz_return_png,dz_setting_png,dz_type_eg_png,dz_zhuang_png,dz_back_bg_png,dz_b_1_png,dz_b_10_png,dz_b_11_png,dz_b_12_png,dz_b_13_png,dz_b_2_png,dz_b_3_png,dz_b_4_png,dz_b_5_png,dz_b_6_png,dz_b_7_png,dz_b_8_png,dz_b_9_png,dz_poker_bg_png,dz_poker_mask_png,dz_r_1_png,dz_r_10_png,dz_r_11_png,dz_r_12_png,dz_r_13_png,dz_r_2_png,dz_r_3_png,dz_r_4_png,dz_r_5_png,dz_r_6_png,dz_r_7_png,dz_r_8_png,dz_r_9_png,dz_type0_11_png,dz_type0_12_png,dz_type0_13_png,dz_type1_11_png,dz_type1_12_png,dz_type1_13_png,dz_type2_11_png,dz_type2_12_png,dz_type2_13_png,dz_type3_11_png,dz_type3_12_png,dz_type3_13_png,dz_type_0_png,dz_type_1_png,dz_type_2_png,dz_type_3_png,0_png,1_png,2_png,3_png,4_png,5_png,6_png,7_png,8_png,9_png,cingl_png,dz_num_fnt,dz_num_png,dz_slider_tube_png,dz_chip_slider_bg_png,dz_slider_handle_png,dz_slider_track_bg_png,dz_slider_track_fill_png,dz_slider_allin_png,dz_add_effect_1_png,dz_add_effect_2_png,dz_operation_statu_abandon_png,dz_operation_statu_add_png,dz_operation_statu_allin_png,dz_operation_statu_thinking_png",
 			"name": "preload"
 		}
 	],
@@ -475,6 +475,26 @@
 			"name": "dz_add_effect_2_png",
 			"type": "image",
 			"url": "assets/chip/dz_add_effect_2.png"
+		},
+		{
+			"name": "dz_operation_statu_abandon_png",
+			"type": "image",
+			"url": "assets/dz_operation_statu_abandon.png"
+		},
+		{
+			"name": "dz_operation_statu_add_png",
+			"type": "image",
+			"url": "assets/dz_operation_statu_add.png"
+		},
+		{
+			"name": "dz_operation_statu_allin_png",
+			"type": "image",
+			"url": "assets/dz_operation_statu_allin.png"
+		},
+		{
+			"name": "dz_operation_statu_thinking_png",
+			"type": "image",
+			"url": "assets/dz_operation_statu_thinking.png"
 		}
 	]
 }

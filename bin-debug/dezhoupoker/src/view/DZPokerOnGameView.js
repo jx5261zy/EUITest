@@ -49,6 +49,8 @@ var DZPokerOnGameView = (function (_super) {
         var _this = _super.call(this, _table, "dezhoupoker", 6) || this;
         /**最近一次下注的值 */
         _this.lastBetValue = 0;
+        /**跟注的量 */
+        _this.cinglValue = 0;
         /**底池的值 */
         _this.potValue = 0;
         DZPokerOnGameView._instance = _this;
@@ -87,6 +89,7 @@ var DZPokerOnGameView = (function (_super) {
         this._userCardContainer = new Array();
         this.chipAndCardContanier = new egret.DisplayObjectContainer();
         this.addChild(this.chipAndCardContanier);
+        this.swapChildrenAt(this.getChildIndex(this.chipAndCardContanier), this.getChildIndex(this.addView));
         this.cardStart = new egret.Point(this["pos_send_card"].x, this["pos_send_card"].y);
         this.dropMenu.visible = false;
         //循环将桌子上的所有玩家头像框，下注框隐藏
@@ -101,28 +104,20 @@ var DZPokerOnGameView = (function (_super) {
         pool.ObjectPool.instance.createObjectPool(DZChipController.DZ_CHIP_POOLNAME, DZChipView);
         DZCardController.tableComponent = this;
         DZChipController.tableComponent = this;
-        //获取皮肤中的组件
-        this._btn_return = this["btn_return"];
-        this._btn_drop_down = this["btn_drop_down"];
-        this._btn_abandon = this["btn_abandon"];
-        this._btn_pass = this["btn_pass"];
-        this._btn_add = this["btn_add"];
-        this._btn_allin = this["btn_allin"];
-        this._gp_cingl = this["gp_cingl"];
         //增加按钮
         this._btnContainer = new ButtonContainer();
         this._btnContainer.addEventListener(egret.TouchEvent.TOUCH_TAP, this.OnBtnClick, this);
-        this._btnContainer.addButton(this._btn_abandon);
-        this._btnContainer.addButton(this._btn_add);
-        this._btnContainer.addButton(this._btn_allin);
-        this._btnContainer.addButton(this._btn_drop_down);
-        this._btnContainer.addButton(this._btn_pass);
-        this._btnContainer.addButton(this._btn_return);
-        this._btnContainer.addButton(this._gp_cingl);
-        // this.stage.addEventListener(egret.TouchEvent.TOUCH_TAP,this.OnStageClick,this);
-        // Main.instance.stage.addEventListener(egret.TouchEvent.TOUCH_TAP,this.OnStageClick,this);
+        this._btnContainer.addButton(this.btn_abandon, null, true);
+        this._btnContainer.addButton(this.btn_add, null, true);
+        this._btnContainer.addButton(this.btn_allin, null, true);
+        this._btnContainer.addButton(this.btn_drop_down, null, true);
+        this._btnContainer.addButton(this.btn_pass, null, true);
+        this._btnContainer.addButton(this.btn_return, null, true);
+        this._btnContainer.addButton(this.gp_cingl, null, true);
+        this._btnContainer.addButton(this.btn_add_addView, null, true);
         //底部操作条移动至摄像机视野外
-        this["gp_operation_btns"].y = 750;
+        this.gp_operation_btns.y = 750;
+        this.gp_addOperation_btns.visible = false;
         this.updateChairInfo(this._gameTable);
     };
     /**计时器回调 */
@@ -267,42 +262,44 @@ var DZPokerOnGameView = (function (_super) {
      */
     DZPokerOnGameView.prototype.SetOperationBtnsDisplay = function (status, cinglNum) {
         //先把所有的按钮都隐藏
-        this._btn_add.visible = false;
-        this._btn_allin.visible = false;
-        this._btn_pass.visible = false;
-        this._gp_cingl.visible = false;
+        this.btn_add.visible = false;
+        this.btn_allin.visible = false;
+        this.btn_pass.visible = false;
+        this.gp_cingl.visible = false;
         //然后根据传入的状态显示该显示的按钮
         switch (status) {
             case DZDefine.ABANDON_CINGL_ADD:
-                this._gp_cingl.visible = true;
+                this.gp_cingl.visible = true;
                 //将之前无效化过的按钮激活
-                if (!this._gp_cingl.touchEnabled)
-                    this._btnContainer.setBtnEnabled(this._gp_cingl, true);
+                if (!this.gp_cingl.touchEnabled)
+                    this._btnContainer.setBtnEnabled(this.gp_cingl, true);
                 if (cinglNum != 0 && cinglNum != undefined)
                     this["cingl_num"].text = cinglNum;
-                this._btn_add.visible = true;
+                this.btn_add.visible = true;
                 break;
             case DZDefine.ABANDON_CINGL_ALLIN:
-                this._gp_cingl.visible = true;
+                this.gp_cingl.visible = true;
                 //全下的状态下是不可以选择跟注的，所以无效化按钮
-                this._btnContainer.setBtnEnabled(this._gp_cingl, false, true);
-                this._btn_allin.visible = true;
+                this._btnContainer.setBtnEnabled(this.gp_cingl, false, true);
+                this.btn_allin.visible = true;
                 break;
             case DZDefine.ABANDON_PASS_ADD:
-                this._btn_pass.visible = true;
-                this._btn_add.visible = true;
+                this.btn_pass.visible = true;
+                this.btn_add.visible = true;
                 break;
         }
     };
     /**底部操作条上升 */
     DZPokerOnGameView.prototype.ShowOperateBtns = function () {
-        var bottom = this["gp_operation_btns"];
+        if (!this.gp_operation_btns.visible)
+            this.gp_operation_btns.visible = true;
+        var bottom = this.gp_operation_btns;
         egret.Tween.get(bottom).to({ x: 0, y: 650 }, DZDefine.operationBtns)
             .call(function () { bottom.touchChildren = true; }); //移动完毕让所有的按钮都为可以点击
     };
     /**隐藏底部操作按钮 按钮下沉*/
     DZPokerOnGameView.prototype.HideOperateBtns = function () {
-        var bottom = this["gp_operation_btns"];
+        var bottom = this.gp_operation_btns;
         bottom.touchChildren = false; //在隐藏时让所有的按钮都无法点击
         egret.Tween.get(bottom).to({ x: 0, y: 750 }, DZDefine.operationBtns);
     };
@@ -439,10 +436,16 @@ var DZPokerOnGameView = (function (_super) {
     /**所有的按键回调 */
     DZPokerOnGameView.prototype.OnBtnClick = function (evt) {
         switch (evt.data) {
-            case this._btn_add:
+            case this.btn_add:
+                this.addView.visible = true;
+                this.addView.value = 0;
+                this.addView.maximum = this._curUser.gold;
+                this.gp_operation_btns.visible = false;
+                this.gp_addOperation_btns.visible = true;
+                Main.instance.isUserOpEnd = true;
                 console.log("点击了加注按钮");
                 break;
-            case this._btn_abandon:
+            case this.btn_abandon:
                 this._curUser.Abandon();
                 this.stopGameTimer();
                 this.HideOperateBtns();
@@ -450,29 +453,37 @@ var DZPokerOnGameView = (function (_super) {
                 Main.instance.isUserOpEnd = true;
                 console.log("点击了弃牌按钮");
                 break;
-            case this._btn_allin:
+            case this.btn_allin:
                 console.log("点击了全下按钮");
                 break;
-            case this._btn_drop_down:
-                if (this._btn_drop_down.selected)
+            case this.btn_drop_down:
+                if (this.btn_drop_down.selected)
                     this.dropMenu.Show();
                 else
                     this.dropMenu.Hide();
                 console.log("点击了下拉菜单按钮");
                 break;
-            case this._btn_pass:
+            case this.btn_pass:
                 console.log("点击了过牌按钮");
                 break;
-            case this._btn_return:
+            case this.btn_return:
                 console.log("点击了返回按钮");
                 break;
-            case this._gp_cingl:
+            case this.gp_cingl:
                 var cinglValue = this.lastBetValue - this._curUser.betValue;
                 this._curUser.Bet(cinglValue);
                 this.stopGameTimer();
                 this.HideOperateBtns();
                 Main.instance.isUserOpEnd = true;
                 console.log("点击了跟按钮,跟注" + cinglValue);
+                break;
+            case this.btn_add_addView:
+                var betValue = this.addView.value;
+                this._curUser.Bet(betValue);
+                this.gp_addOperation_btns.visible = false;
+                this.gp_operation_btns.visible = false;
+                this.addView.visible = false;
+                console.log("加注" + betValue);
                 break;
         }
     };
@@ -541,9 +552,9 @@ var DZPokerOnGameView = (function (_super) {
         var opType = packet.iOpType;
         var addValue = packet.iAddValue;
         //如果可以加注，则加注按钮的位图文本显示的数字
-        var cinglNum = this.lastBetValue - this._curUser.betValue;
-        if (cinglNum <= 0)
-            cinglNum = 0;
+        this.cinglValue = this.lastBetValue - this._curUser.betValue;
+        if (this.cinglValue <= 0)
+            this.cinglValue = 0;
         if (this._curUser != this.mainUser) {
             this.setTimer(DZDefine.Rob_Operate_Timer, DZDefine.iOperateTime);
             this._curUser.StartOperationBarAnim(DZDefine.iOperateTime);
@@ -557,7 +568,7 @@ var DZPokerOnGameView = (function (_super) {
                 this.SetOperationBtnsDisplay(DZDefine.ABANDON_PASS_ADD);
             }
             else if (this._curUser.gold > this.lastBetValue) {
-                this.SetOperationBtnsDisplay(DZDefine.ABANDON_CINGL_ADD, cinglNum);
+                this.SetOperationBtnsDisplay(DZDefine.ABANDON_CINGL_ADD, this.cinglValue);
             }
             this.ShowOperateBtns();
             this.mainUser.StartOperationBarAnim(DZDefine.iOperateTime);
@@ -599,7 +610,7 @@ var DZPokerOnGameView = (function (_super) {
         }
     };
     DZPokerOnGameView.prototype.PrintInfo = function () {
-        console.log("=====服务器发送小盲注的量：" + this._lowBetValue);
+        console.log("=====小盲注的量：" + this._lowBetValue);
         console.log("=====最近一次的下注量：" + this.lastBetValue);
         console.log("=====底池的值：" + this.potValue);
         if (this._curUser != null)

@@ -40,7 +40,7 @@ class DZDefine
     /**底部按钮上升/下降的时间 */
     public static operationBtns:number = 500;
     /**操作时间 */
-    public static iOperateTime:number = 15;
+    public static iOperateTime:number = 60;
     /**庄logo 缓动动画的时间 */
     public static sendBankerTime:number = 500;
     /**下拉菜单 缓动动画的时间 */

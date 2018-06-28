@@ -154,7 +154,7 @@ class Main extends eui.UILayer {
             case 87:
                 if(Main.instance.isBlindEnd) return;
                 DZPokerOnGameView.instance.SC_StartGame({
-                                                                                                iBankerID:2,
+                                                                                                iBankerID:3,
                                                                                                 iLowBetValue:10
                                                                                             });
                 
@@ -273,23 +273,20 @@ class Main extends eui.UILayer {
      * Create scene interface
      */
     protected startCreateScene(): void {
-        // Main._instance = this;
-        // document.onkeydown = this.OnKeyDown;
+        Main._instance = this;
+        document.onkeydown = this.OnKeyDown;
 
-        // this.SetUsers();
-        // var dzGame = new DZPokerOnGameView(this._table);
-        // this.addChild(dzGame);
+        this.SetUsers();
+        var dzGame = new DZPokerOnGameView(this._table);
+        this.addChild(dzGame);
 
-        // this.RandomCards();
+        this.RandomCards();
 
 
-        //加注滑动条测试
-        // var slider:eui.Component = new eui.Component();
-        // slider.skinName = "resource/dezhoupoker/eui_skin/view/DZAddChipSkin.exml";
-        // slider["betSlider"].maximum = 100;
-        var addView:DZAddChipView = new DZAddChipView();
-        addView.betSlider.maximum = 100;
-        this.addChild(addView);
+        //加注界面测试
+        // var addView:DZAddChipView = new DZAddChipView();
+        // addView.betSlider.maximum = 100;
+        // this.addChild(addView);
 
     }
 

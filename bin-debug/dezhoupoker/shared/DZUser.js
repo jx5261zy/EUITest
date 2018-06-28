@@ -19,6 +19,7 @@ var DZUser = (function (_super) {
         var _this = _super.call(this, _userID, _tableID, _chairID, _role) || this;
         _this.isAbandon = false;
         _this.isBanker = false;
+        _this.isAllin = false;
         /**一轮下注的金额  (一轮下注结束时记得要清零) */
         _this.betValue = 0;
         _this._isFaceGropuInited = false;
@@ -30,12 +31,16 @@ var DZUser = (function (_super) {
     DZUser.prototype.Init = function (_component) {
         this.headComponent = _component;
         this.headComponent.visible = true;
-        //初始化组件变量(多此一举)
+        //初始化组件变量
         this.img_bg = this.headComponent["img_bg"];
         this.lb_name = this.headComponent["lb_name"];
         this.lb_gold = this.headComponent["lb_gold"];
         this.img_faceID = this.headComponent["img_faceID"];
         this.img_time_bar = this.headComponent["img_time_bar"];
+        this.img_add = this.headComponent["img_add"];
+        this.img_abandon = this.headComponent["img_abandon"];
+        this.img_allin = this.headComponent["img_allin"];
+        this.img_thinking = this.headComponent["img_thinking"];
         var barW = this.img_time_bar.width;
         var barH = this.img_time_bar.height;
         this._borderProgressBarDraw = new BorderProgressBarDraw(this.img_time_bar, barW, barH);
@@ -72,6 +77,8 @@ var DZUser = (function (_super) {
     };
     /**下注 */
     DZUser.prototype.Bet = function (value) {
+        if (value <= 0)
+            return;
         if (this.gold < value) {
             console.log("金币不足");
             return;
@@ -140,13 +147,50 @@ var DZUser = (function (_super) {
             DZCardController.RecyclePokerToPool(this.cardArr[1]);
         }
     };
+    /**显示操作结果 */
+    DZUser.prototype.ShowOperationResult = function () {
+        this.lb_name.visible = false;
+        switch (this.operationResult) {
+            case UserOp.NONE:
+                break;
+            case UserOp.PASS:
+                break;
+            case UserOp.ADD:
+                this.img_add.visible = true;
+                break;
+            case UserOp.ABANDON:
+                this.img_abandon.visible = true;
+                break;
+            case UserOp.CINGL:
+                break;
+            case UserOp.ALLIN:
+                this.img_allin.visible = true;
+                break;
+            case UserOp.THINKING:
+                this.img_thinking.visible = true;
+                break;
+        }
+    };
+    DZUser.prototype.HideOperationResult = function () {
+        //把名字显示出来
+        this.lb_name.visible = true;
+        //然后把所有的操作状态的字体隐藏
+        this.img_add.visible = false;
+        this.img_abandon.visible = false;
+        this.img_allin.visible = false;
+        this.img_thinking.visible = false;
+    };
     return DZUser;
 }(GameUser));
 __reflect(DZUser.prototype, "DZUser");
 var UserOp;
 (function (UserOp) {
-    UserOp[UserOp["ABANDON"] = 0] = "ABANDON";
-    UserOp[UserOp["CINGL"] = 1] = "CINGL";
-    UserOp[UserOp["ADD"] = 2] = "ADD";
+    UserOp[UserOp["NONE"] = 0] = "NONE";
+    UserOp[UserOp["THINKING"] = 1] = "THINKING";
+    UserOp[UserOp["PASS"] = 2] = "PASS";
+    UserOp[UserOp["ABANDON"] = 3] = "ABANDON";
+    UserOp[UserOp["CINGL"] = 4] = "CINGL";
+    UserOp[UserOp["ADD"] = 5] = "ADD";
+    UserOp[UserOp["ALLIN"] = 6] = "ALLIN";
 })(UserOp || (UserOp = {}));
 //# sourceMappingURL=DZUser.js.map

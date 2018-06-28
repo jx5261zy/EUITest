@@ -153,7 +153,7 @@ var Main = (function (_super) {
                 if (Main.instance.isBlindEnd)
                     return;
                 DZPokerOnGameView.instance.SC_StartGame({
-                    iBankerID: 2,
+                    iBankerID: 3,
                     iLowBetValue: 10
                 });
                 break;
@@ -251,19 +251,16 @@ var Main = (function (_super) {
      * Create scene interface
      */
     Main.prototype.startCreateScene = function () {
-        // Main._instance = this;
-        // document.onkeydown = this.OnKeyDown;
-        // this.SetUsers();
-        // var dzGame = new DZPokerOnGameView(this._table);
-        // this.addChild(dzGame);
-        // this.RandomCards();
-        //加注滑动条测试
-        // var slider:eui.Component = new eui.Component();
-        // slider.skinName = "resource/dezhoupoker/eui_skin/view/DZAddChipSkin.exml";
-        // slider["betSlider"].maximum = 100;
-        var addView = new DZAddChipView();
-        addView.betSlider.maximum = 100;
-        this.addChild(addView);
+        Main._instance = this;
+        document.onkeydown = this.OnKeyDown;
+        this.SetUsers();
+        var dzGame = new DZPokerOnGameView(this._table);
+        this.addChild(dzGame);
+        this.RandomCards();
+        //加注界面测试
+        // var addView:DZAddChipView = new DZAddChipView();
+        // addView.betSlider.maximum = 100;
+        // this.addChild(addView);
     };
     /**测试使用的玩家 */
     Main.prototype.SetUsers = function () {

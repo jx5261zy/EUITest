@@ -12,6 +12,7 @@ class DZUser extends GameUser
 
     public isAbandon:boolean = false;
     public isBanker:boolean = false;
+    public isAllin:boolean = false;
     /**手牌数组 */
     public cardArr:DZCardView[];
     /**筹码显示组件 */
@@ -20,12 +21,18 @@ class DZUser extends GameUser
     public lastChip:DZChipView;
     /**一轮下注的金额  (一轮下注结束时记得要清零) */
     public betValue:number = 0;
+    /**一轮操作的结果 */
+    public operationResult:UserOp;
 
     /**头像组件 */
     private img_bg:eui.Image;
     private lb_name:eui.Label;
     private lb_gold:eui.Label;
     private img_faceID:eui.Image;
+    private img_add:eui.Image;
+    private img_abandon:eui.Image;
+    private img_allin:eui.Image;
+    private img_thinking:eui.Image;
     /**头像框中的时间条 */
     private img_time_bar:eui.Image;
     /**对应的下注池 */
@@ -48,12 +55,16 @@ class DZUser extends GameUser
     {
         this.headComponent = _component;
         this.headComponent.visible = true;
-        //初始化组件变量(多此一举)
+        //初始化组件变量
         this.img_bg = this.headComponent["img_bg"];
         this.lb_name = this.headComponent["lb_name"];
         this.lb_gold = this.headComponent["lb_gold"];
         this.img_faceID = this.headComponent["img_faceID"];
         this.img_time_bar = this.headComponent["img_time_bar"];
+        this.img_add = this.headComponent["img_add"];
+        this.img_abandon = this.headComponent["img_abandon"];
+        this.img_allin = this.headComponent["img_allin"];
+        this.img_thinking = this.headComponent["img_thinking"];
 
         var barW = this.img_time_bar.width;
         var barH = this.img_time_bar.height;
@@ -107,6 +118,7 @@ class DZUser extends GameUser
     /**下注 */
     public Bet(value:number)
     {
+        if(value <= 0) return;
         if(this.gold < value)
         {
             console.log("金币不足");
@@ -193,13 +205,64 @@ class DZUser extends GameUser
     }
 
 
+    /**显示操作结果 */
+    public ShowOperationResult()
+    {
+        this.lb_name.visible = false;
+        switch(this.operationResult)
+        {
+            case UserOp.NONE:
+
+            break;
+
+            case UserOp.PASS:
+
+            break;
+
+            case UserOp.ADD:
+                this.img_add.visible = true;
+            break;
+
+            case UserOp.ABANDON:
+                this.img_abandon.visible = true;
+            break;
+
+            case UserOp.CINGL:
+
+            break;
+
+            case UserOp.ALLIN:
+                this.img_allin.visible = true;
+            break;
+
+            case UserOp.THINKING:
+                this.img_thinking.visible = true;
+            break;
+        }
+    }
+    public HideOperationResult()
+    {
+        //把名字显示出来
+        this.lb_name.visible = true;
+        //然后把所有的操作状态的字体隐藏
+        this.img_add.visible = false;
+        this.img_abandon.visible = false;
+        this.img_allin.visible = false;
+        this.img_thinking.visible = false;
+    }
+
+
 
 //class end
 }
 
 enum UserOp
 {
+    NONE,
+    THINKING,
+    PASS,
     ABANDON,
     CINGL,
     ADD,
+    ALLIN,
 }
