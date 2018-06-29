@@ -153,6 +153,7 @@ class DZPokerOnGameView extends GameViewBase
         this._userCardContainer = new Array<DZCardView[]>();
         this.chipAndCardContanier = new egret.DisplayObjectContainer();
         this.addChild(this.chipAndCardContanier);
+        //交换下注界面和筹码卡牌容器的层级
         this.swapChildrenAt(this.getChildIndex(this.chipAndCardContanier),this.getChildIndex(this.addView));
 
         this.cardStart = new egret.Point(this["pos_send_card"].x,this["pos_send_card"].y);
